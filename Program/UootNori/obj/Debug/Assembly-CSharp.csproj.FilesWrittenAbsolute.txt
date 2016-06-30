@@ -1,0 +1,17 @@
+/Users/leejihoon/Desktop/Developer/Projects/GitHub/UootPlay/Program/UootNori/Temp/bin/Debug/Assembly-CSharp.dll.mdb
+/Users/leejihoon/Desktop/Developer/Projects/GitHub/UootPlay/Program/UootNori/Temp/bin/Debug/Assembly-CSharp.dll
+/Users/leejihoon/Desktop/Developer/Projects/GitHub/UootPlay/Program/UootNori/obj/Debug/Assembly-CSharp.dll
+/Users/leejihoon/Desktop/Developer/Projects/GitHub/UootPlay/Program/UootNori/obj/Debug/Assembly-CSharp.dll.mdb
+/Users/leejihoon/Desktop/Developer/Projects/GitHub/UootPlay/Program/UootNori/Temp/bin/Debug/UnityEngine.dll
+/Users/leejihoon/Desktop/Developer/Projects/GitHub/UootPlay/Program/UootNori/Temp/bin/Debug/UnityEditor.dll
+/Users/leejihoon/Desktop/Developer/Projects/GitHub/UootPlay/Program/UootNori/Temp/bin/Debug/UnityEngine.UI.dll
+/Users/leejihoon/Desktop/Developer/Projects/GitHub/UootPlay/Program/UootNori/Temp/bin/Debug/UnityEngine.Networking.dll
+/Users/leejihoon/Desktop/Developer/Projects/GitHub/UootPlay/Program/UootNori/Temp/bin/Debug/Mono.Cecil.dll
+/Users/leejihoon/Desktop/Developer/Projects/GitHub/UootPlay/Program/UootNori/Temp/bin/Debug/Unity.SerializationLogic.dll
+/Users/leejihoon/Desktop/Developer/Projects/GitHub/UootPlay/Program/UootNori/Temp/bin/Debug/Unity.DataContract.dll
+/Users/leejihoon/Desktop/Developer/Projects/GitHub/UootPlay/Program/UootNori/Temp/bin/Debug/ICSharpCode.NRefactory.dll
+/Users/leejihoon/Desktop/Developer/Projects/GitHub/UootPlay/Program/UootNori/Temp/bin/Debug/Unity.UNetWeaver.dll
+/Users/leejihoon/Desktop/Developer/Projects/GitHub/UootPlay/Program/UootNori/Temp/bin/Debug/Unity.UNetWeaver.dll.mdb
+/Users/leejihoon/Desktop/Developer/Projects/GitHub/UootPlay/Program/UootNori/Temp/bin/Debug/Unity.CecilTools.dll
+/Users/leejihoon/Desktop/Developer/Projects/GitHub/UootPlay/Program/UootNori/Temp/bin/Debug/Mono.Cecil.Pdb.dll
+/Users/leejihoon/Desktop/Developer/Projects/GitHub/UootPlay/Program/UootNori/Temp/bin/Debug/Mono.Cecil.Mdb.dll
