@@ -58,14 +58,14 @@ namespace PatternSystem
                         HashSet<string> overlap = new HashSet<string>();
                         foreach(TrigerAgent triger in trigers)
                         {
-                            if (triger.TrigerName == _habit.ActiveTriger)
+                            if (triger.name == _habit.ActiveTriger)
                                 trigerSelected = index;
-                            trigerNames.Add(triger.TrigerName);
+                            trigerNames.Add(triger.name);
                             ++index;
-                            if (overlap.Contains(triger.TrigerName))
-                                Debug.Log("Overlap Triger Name !! -> " + triger.TrigerName);
+                            if (overlap.Contains(triger.name))
+                                Debug.Log("Overlap Triger Name !! -> " + triger.name);
                             else
-                                overlap.Add(triger.TrigerName);
+                                overlap.Add(triger.name);
                         }
 
                         EditorGUILayout.BeginHorizontal();

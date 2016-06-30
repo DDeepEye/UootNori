@@ -37,10 +37,13 @@ namespace PatternSystem
                 Init();
             
             if (_arrange.transform.parent == null)
-                return;
+            {
+                TrigerAgent ta = _arrange.transform.parent.GetComponent<TrigerAgent>();
+                if(ta == null)
+                    return;
+            }
 
-            if (_arrange.transform.parent.name != TrigerAgent.DBType && _arrange.transform.parent.name != "Arrange")
-                return;
+
             
 			EditorGUILayout.BeginVertical ();
 			{

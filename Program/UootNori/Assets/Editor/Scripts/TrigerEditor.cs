@@ -37,21 +37,13 @@ namespace PatternSystem
             
             if (_triger.transform.parent == null)
             {
-                GUILayout.Box("absolute Triger to Habit child");
+                HabitAgent habit = _triger.transform.parent.GetComponent<HabitAgent>();
+                if(habit == null)
+                    GUILayout.Box("absolute Triger to Habit child");
+
                 return;
             }
-
-            if (_triger.transform.parent.name != "Habit")
-            {
-                GUILayout.Box("absolute Triger to Habit child");
-                return;
-            }
-
-			EditorGUILayout.BeginHorizontal();
-			{
-				_triger.TrigerName	 = EditorGUILayout.TextField("Key Name", _triger.TrigerName);
-			}
-			EditorGUILayout.EndHorizontal ();
+			
             for(int i = 0; i < _editorPrefabs.Count; ++i)
             {
                 string btnlabel = "Add --> ";

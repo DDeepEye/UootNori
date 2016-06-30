@@ -41,7 +41,7 @@ namespace PatternSystem
 
             if(_activeTriger.Length == 0 && trigers.Count > 0)
             {
-                _activeTriger = trigers[0].TrigerName;
+                _activeTriger = trigers[0].name;
             }
 
 			Play (_activeTriger);
