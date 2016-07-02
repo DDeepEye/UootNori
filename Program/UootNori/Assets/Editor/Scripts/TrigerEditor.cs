@@ -34,14 +34,21 @@ namespace PatternSystem
 		{
             if (_editorPrefabs.Count == 0)
                 Init();
-            
+
             if (_triger.transform.parent == null)
+            {
+                GUILayout.Box("absolute Triger to Habit child");
+                return;
+            }
+
+            if (_triger.transform.parent != null)
             {
                 HabitAgent habit = _triger.transform.parent.GetComponent<HabitAgent>();
                 if(habit == null)
+                {
                     GUILayout.Box("absolute Triger to Habit child");
-
-                return;
+                    return;
+                }
             }
 			
             for(int i = 0; i < _editorPrefabs.Count; ++i)

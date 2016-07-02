@@ -35,15 +35,22 @@ namespace PatternSystem
 		{
             if (_editorPrefabs.Count == 0)
                 Init();
-            
+
             if (_arrange.transform.parent == null)
+            {
+                return;
+            }
+            
+            if (_arrange.transform.parent != null)
             {
                 TrigerAgent ta = _arrange.transform.parent.GetComponent<TrigerAgent>();
                 if(ta == null)
-                    return;
+                {
+                    ArrangeAgent ag = _arrange.transform.parent.GetComponent<ArrangeAgent>();
+                    if (ag == null)
+                        return;
+                }   
             }
-
-
             
 			EditorGUILayout.BeginVertical ();
 			{

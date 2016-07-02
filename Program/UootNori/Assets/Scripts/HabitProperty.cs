@@ -80,9 +80,7 @@ namespace PatternSystem
 		}
     }
 
-
-
-    public class Arrange : Property
+    public abstract class BasicArrange : Container
     {
         public enum ArrangeType
         {
@@ -90,23 +88,23 @@ namespace PatternSystem
             PARALLEL,
         }
 
-        private ArrangeType _type = ArrangeType.SERIES;
-        private List<Container> _containers = new List<Container>();
-        private int _curProerty = 0;
-        private int _repeatCount;
-        private int _curCount = 0;
+        protected ArrangeType _type = ArrangeType.SERIES;
+        protected List<Container> _containers = new List<Container>();
+        protected int _curProerty = 0;
+        protected int _repeatCount = 0;
+        protected int _curCount = 0;
 
-        public Arrange(GameObject target, ArrangeType type, List<Container> containers, int repeatCount):base(target)
-		{
-			_type = type;
+        protected BasicArrange(ArrangeType type, List<Container> containers, int repeatCount)
+        {
+            _type = type;
             _containers = containers;
-			_repeatCount = repeatCount;
-		}
+            _repeatCount = repeatCount;
+        }
 
         public override void Run()
         {
             if (!IsDone)
-            {   
+            {
                 switch (_type)
                 {
                     case ArrangeType.SERIES:
@@ -173,7 +171,7 @@ namespace PatternSystem
                             p.Reset(true);
                             _curProerty = 0;
                         }
-						_isDone = true;
+                        _isDone = true;
                     }
                     else
                     {
@@ -188,6 +186,13 @@ namespace PatternSystem
                 }
             }
         }
+    }
+
+    public class Arrange : BasicArrange
+    {
+        public Arrange(ArrangeType type, List<Container> containers, int repeatCount):base(type, containers, repeatCount)
+		{	
+		}
     }
 
     public class Caller : Property

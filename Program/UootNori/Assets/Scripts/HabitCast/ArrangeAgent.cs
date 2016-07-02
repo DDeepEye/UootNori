@@ -6,8 +6,6 @@ namespace PatternSystem
 {
     public class ArrangeAgent : AttributeAgent 
     {
-        public const string DBType = "Arrange";
-
 
         public ArrangeAgent()
         {
@@ -27,7 +25,7 @@ namespace PatternSystem
                 containers.Add(att.GetContainer (target));
 			}
 
-            Arrange p = new Arrange (target, _type, containers, _repeat);
+            Arrange p = new Arrange (_type, containers, _repeat);
 
 			return p;
 		}
