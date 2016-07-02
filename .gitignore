@@ -1,3 +1,11 @@
-/obj
-/Library
-/Temp
+# =============== #
+# Unity generated #
+# =============== #
+Temp/
+Obj/
+UnityGenerated/
+Server/log/
+*.meta
+*.suo
+*.*.suo
+*.userpref
