@@ -12,8 +12,6 @@ namespace PatternSystem
         string _activeTriger = "";
         public string ActiveTriger { get { return _activeTriger; } set { _activeTriger = value; } }
 
-        private int _id = -1;
-        public int ID { set{ _id = value;} get{return _id;}}
         public string _comment = "comment";
 
         Dictionary<string, Triger> _trigers = new Dictionary<string, Triger>();

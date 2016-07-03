@@ -16,10 +16,6 @@ namespace PatternSystem
                                                                typeof(ScaleAgent),
                                                            };
 
-
-        protected int _id = -1;
-        public int ID {get { return _id; }}
-
         public static List<AttributeAgent> CollectAttribute(Transform target)
 		{
             List<AttributeAgent> attributes = new List<AttributeAgent> ();

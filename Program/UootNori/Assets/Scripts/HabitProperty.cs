@@ -48,6 +48,7 @@ namespace PatternSystem
 
     public class ChildContainer : Container
     {
+        bool _active = false;
         List<GameObject> _children;
 
         public ChildContainer(List<GameObject> children)
@@ -59,12 +60,25 @@ namespace PatternSystem
             if (IsDone || _children == null)
                 return;
 
-            foreach (GameObject chiled in _children)
+            if (!_active)
             {
-                chiled.SetActive(true);
+                foreach (GameObject child in _children)
+                {
+                    child.SetActive(true);
+                }
+                _active = true;
             }
 
-            _isDone = true;
+            int doneCount = 0;
+            foreach (GameObject child in _children)
+            {
+                PatternSystem.IsDone done = child.GetComponent<PatternSystem.IsDone>();
+                if(done._isDone)
+                    ++doneCount;
+            }
+
+            if(doneCount == _children.Count)
+                _isDone = true;
         }
     }
 
