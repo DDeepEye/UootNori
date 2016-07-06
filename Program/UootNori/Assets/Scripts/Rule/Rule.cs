@@ -1,19 +1,20 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
-using PatternSystem;
+
 
 
 namespace UootNori
 {
     public enum Animal
     {
-        OUT,
         DO,
         GE,
         KUL,
         UOOT,
         MO,
+        BACK_DO,
+        MAX,
     }
 
     public abstract class FieldAttribute
@@ -103,13 +104,7 @@ namespace UootNori
         public static PlayerData[] _players = { new PlayerData(), new PlayerData() };
     }
 
-    public class UootThrowArrange : BasicArrange
-    {
-        public UootThrowArrange(ArrangeType type, List<Container> containers, int repeatCount)
-            : base(type, containers, repeatCount)
-		{
-		}
-    }
+
 }
 
 
