@@ -29,10 +29,27 @@ public class UootThrow : Attribute {
 	
 	}
 	
+    float _curTime;
 	// Update is called once per frame
 	void Update () {
+
+        if (_isDone)
+            return;
+
+        if (_curTime < 3.0f)
+        {
+            _curTime += Time.deltaTime;
+        }
+        else
+        {
+            _curTime = 0.0f;
+            _isDone = true;
+            transform.parent.GetComponent<Attribute>().ReturnActive = "";
+        }
+        return;
         if (UootThrowAniCheck())
         {
+            
             _isDone = true;
             Attribute at = transform.parent.GetComponent<Attribute>();
             at.ReturnActive = "";
@@ -45,6 +62,10 @@ public class UootThrow : Attribute {
         AnimalProbabiley();
         ThrowToData();
         UootThrowAni();
+    }
+
+    void OnDisable()
+    {
     }
 
     void AnimalProbabiley()

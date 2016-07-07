@@ -6,6 +6,7 @@ public class PlayerNumChoice : Attribute {
 
 	// Use this for initialization
 	void Start () {
+        _isDone = true;
 	
 	}
 	

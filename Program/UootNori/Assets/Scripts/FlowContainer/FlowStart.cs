@@ -2,13 +2,12 @@
 using System.Collections;
 using FlowContainer;
 
-
-public class Title : Attribute {
+public class FlowStart : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
-        _isDone = true;
-	
+        if (transform.childCount > 0)
+            transform.GetChild(0).gameObject.SetActive(true);
 	}
 	
 	// Update is called once per frame

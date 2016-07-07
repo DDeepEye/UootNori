@@ -6,6 +6,7 @@ public class CharacterChoice : Attribute {
 
 	// Use this for initialization
 	void Start () {
+        _isDone = true;
 	
 	}
 	

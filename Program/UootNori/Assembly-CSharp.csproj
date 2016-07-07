@@ -185,6 +185,7 @@
      <Compile Include="Assets\NGUI\Scripts\UI\UIViewport.cs" />
      <Compile Include="Assets\Scripts\FlowContainer\Arrange.cs" />
      <Compile Include="Assets\Scripts\FlowContainer\Attribute.cs" />
+     <Compile Include="Assets\Scripts\FlowContainer\FlowStart.cs" />
      <Compile Include="Assets\Scripts\Rule\Calculate.cs" />
      <Compile Include="Assets\Scripts\Rule\CharacterChoice.cs" />
      <Compile Include="Assets\Scripts\Rule\FieldRull.cs" />
