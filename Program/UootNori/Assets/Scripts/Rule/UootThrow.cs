@@ -22,6 +22,10 @@ public class UootThrow : Attribute {
     public const int MO = 256;
     public const int BACK_DO = 512;
 
+    public const int OUT = 512;
+
+    private bool _isOut = false;
+
     List<int> _animalProbabilty = new List<int>();
 
 	// Use this for initialization
@@ -46,14 +50,15 @@ public class UootThrow : Attribute {
             _isDone = true;
             transform.parent.GetComponent<Attribute>().ReturnActive = "";
         }
-        return;
+
+        /*
         if (UootThrowAniCheck())
         {
-            
             _isDone = true;
             Attribute at = transform.parent.GetComponent<Attribute>();
             at.ReturnActive = "";
         }
+        */
 	}
 
 
@@ -89,6 +94,14 @@ public class UootThrow : Attribute {
                 GameData._curAnimals.Add((Animal)i);
             }
         }
+
+        int outResult = Random.Range(0, 10000);
+        if (OUT > outResult)
+        {
+            _isOut = true;
+            GameData.TurnRollBack();
+        }
+
     }
 
     void UootThrowAni()

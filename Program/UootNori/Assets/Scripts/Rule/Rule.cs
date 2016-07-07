@@ -83,6 +83,7 @@ namespace UootNori
         }
     }
 
+
     public struct PlayerData
     {   
         public PlayerData(int piecesMax = GameData.PIECESMAX)
@@ -102,6 +103,14 @@ namespace UootNori
 
         public static List<Animal> _curAnimals = new List<Animal>();
         public static PlayerData[] _players = { new PlayerData(), new PlayerData() };
+        public static void TurnSave()
+        {
+        }
+
+        public static void TurnRollBack()
+        {
+            GameData._curAnimals.Clear();
+        }  
     }
 
 

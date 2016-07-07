@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 using FlowContainer;
+using UootNori;
 
 public class TurnFix : Attribute {
 
@@ -14,4 +15,9 @@ public class TurnFix : Attribute {
 	void Update () {
 	
 	}
+
+    void OnEnable()
+    {
+        GameData.TurnSave();
+    }
 }

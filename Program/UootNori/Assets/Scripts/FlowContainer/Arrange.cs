@@ -4,23 +4,23 @@ using System.Collections;
 namespace FlowContainer
 {
     public class Arrange : Attribute {
-        int _curActive = 0;
+        protected int _curActive = 0;
 
         // Use this for initialization
         protected virtual void Awake () {
             if (transform.childCount > 0)
             {
                 transform.GetChild(_curActive).gameObject.SetActive(true);
-                
-                for (int i = 1; i < transform.childCount; ++i)
-                {
-                    transform.GetChild(i).gameObject.SetActive(false);
-                }
             }
         }
 
         // Update is called once per frame
         protected virtual void Update () 
+        {
+            ActiveCheck();
+        }
+
+        public virtual void ActiveCheck()
         {
             if (!IsDone)
             {
@@ -67,11 +67,9 @@ namespace FlowContainer
                                 transform.GetChild(_curActive).gameObject.SetActive(true);
                             }
                         }
-
                     }
                 }
             }
-
         }
 
         public override void Reset()
