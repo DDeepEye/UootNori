@@ -26,7 +26,8 @@ public class UootThrow : Attribute {
 
     private bool _isOut = false;
 
-    List<int> _animalProbabilty = new List<int>();
+    List<int> _animalProbability = new List<int>();
+    int [] _probabilityOffset = new int[(int)Animal.MAX];
 
 	// Use this for initialization
 	void Start () {
@@ -75,21 +76,21 @@ public class UootThrow : Attribute {
 
     void AnimalProbabiley()
     {
-        int prob = DO;
-        _animalProbabilty.Add(prob);
-        _animalProbabilty.Add(prob+=GE);
-        _animalProbabilty.Add(prob+=GUL);
-        _animalProbabilty.Add(prob+=UOOT);
-        _animalProbabilty.Add(prob+=MO);
-        _animalProbabilty.Add(prob+=BACK_DO);
+        int prob = DO + _probabilityOffset[0];
+        _animalProbability.Add(prob+_probabilityOffset[1]);
+        _animalProbability.Add(prob+=GE+_probabilityOffset[2]);
+        _animalProbability.Add(prob+=GUL+_probabilityOffset[3]);
+        _animalProbability.Add(prob+=UOOT+_probabilityOffset[4]);
+        _animalProbability.Add(prob+=MO+_probabilityOffset[5]);
+        _animalProbability.Add(prob+=BACK_DO+_probabilityOffset[6]);
     }
 
     void ThrowToData()
     {
-        int rr = Random.Range(1, _animalProbabilty[_animalProbabilty.Count - 1]);
-        for (int i = 0; i < _animalProbabilty.Count; ++i)
+        int rr = Random.Range(1, _animalProbability[_animalProbability.Count - 1]);
+        for (int i = 0; i < _animalProbability.Count; ++i)
         {
-            if (_animalProbabilty[i] > rr)
+            if (_animalProbability[i] > rr)
             {
                 GameData._curAnimals.Add((Animal)i);
             }
@@ -99,9 +100,10 @@ public class UootThrow : Attribute {
         if (OUT > outResult)
         {
             _isOut = true;
+            _isDone = true;
+            ReturnActive = "NextTurn";
             GameData.TurnRollBack();
         }
-
     }
 
     void UootThrowAni()
