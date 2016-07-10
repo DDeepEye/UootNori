@@ -191,7 +191,6 @@
      <Compile Include="Assets\Scripts\Rule\FieldRull.cs" />
      <Compile Include="Assets\Scripts\Rule\FieldRullProcess.cs" />
      <Compile Include="Assets\Scripts\Rule\GameOverCheck.cs" />
-     <Compile Include="Assets\Scripts\Rule\IsDone.cs" />
      <Compile Include="Assets\Scripts\Rule\ManKillCheck.cs" />
      <Compile Include="Assets\Scripts\Rule\ManMove.cs" />
      <Compile Include="Assets\Scripts\Rule\NextTurn.cs" />
@@ -225,6 +224,7 @@
      <None Include="Assets\NGUI\Resources\Shaders\Unlit - Transparent Colored 3.shader" />
      <None Include="Assets\NGUI\Examples\Atlases\Refractive\Refractive Font - Normal.txt" />
      <None Include="Assets\NGUI\Resources\Shaders\Unlit - Premultiplied Colored 2.shader" />
+     <None Include="Assets\WaterCausticsEffect\Materials\Caustics.shader" />
      <None Include="Assets\NGUI\Resources\Shaders\Unlit - Text 3.shader" />
      <None Include="Assets\NGUI\Resources\Shaders\Unlit - Transparent Packed 2.shader" />
      <None Include="Assets\NGUI\Resources\Shaders\Unlit - Transparent Packed 1.shader" />
