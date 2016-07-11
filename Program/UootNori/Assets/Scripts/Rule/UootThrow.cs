@@ -76,13 +76,13 @@ public class UootThrow : Attribute {
 
     void AnimalProbabiley()
     {
-        int prob = DO + _probabilityOffset[0];
-        _animalProbability.Add(prob+_probabilityOffset[1]);
-        _animalProbability.Add(prob+=GE+_probabilityOffset[2]);
-        _animalProbability.Add(prob+=GUL+_probabilityOffset[3]);
-        _animalProbability.Add(prob+=UOOT+_probabilityOffset[4]);
-        _animalProbability.Add(prob+=MO+_probabilityOffset[5]);
-        _animalProbability.Add(prob+=BACK_DO+_probabilityOffset[6]);
+        int prob = DO;
+        _animalProbability.Add(prob+_probabilityOffset[0]);
+        _animalProbability.Add(prob+=GE+_probabilityOffset[1]);
+        _animalProbability.Add(prob+=GUL+_probabilityOffset[2]);
+        _animalProbability.Add(prob+=UOOT+_probabilityOffset[3]);
+        _animalProbability.Add(prob+=MO+_probabilityOffset[4]);
+        _animalProbability.Add(prob+=BACK_DO+_probabilityOffset[5]);
     }
 
     void ThrowToData()

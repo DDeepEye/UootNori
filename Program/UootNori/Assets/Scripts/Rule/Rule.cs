@@ -284,7 +284,22 @@ namespace UootNori
         public static void TurnRollBack()
         {
             GameData._curAnimals.Clear();
-        }  
+        }
+
+        public static int CurAnimalCount()
+        {
+            return _curAnimals.Count;
+        }
+
+        public static Animal GetAnimal(int index)
+        {
+            return _curAnimals[index];
+        }
+
+        public static void RemoveAnimal(int index)
+        {
+            _curAnimals.RemoveAt(index);
+        }
     }
 
 
