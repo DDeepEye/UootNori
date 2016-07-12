@@ -203,9 +203,14 @@ namespace UootNori
 
         private static void WayInit()
         {
+            for (int i = 0; i < _fields.Length; ++i )
+            {
+                _fields[i].SetField(FieldAdder.GetFields(i));
+            }
+
             _roads[0] = new List<FieldData>();
             for (int i = 0; i < 4; ++i)
-            {
+            {   
                 _roads[0].Add(_fields[i]);
             }
 
@@ -263,18 +268,18 @@ namespace UootNori
             _ways[1] = new List<List<FieldData>>();
             _ways[1].Add(_roads[0]);
             _ways[1].Add(_roads[4]);
-            _ways[1].Add(_roads[6]);
+            _ways[1].Add(_roads[5]);
 
             _ways[2] = new List<List<FieldData>>();
             _ways[2].Add(_roads[0]);
             _ways[2].Add(_roads[4]);
-            _ways[2].Add(_roads[7]);
+            _ways[2].Add(_roads[6]);
             _ways[2].Add(_roads[3]);
 
             _ways[3] = new List<List<FieldData>>();
             _ways[3].Add(_roads[0]);
             _ways[3].Add(_roads[1]);
-            _ways[3].Add(_roads[8]);
+            _ways[3].Add(_roads[7]);
             _ways[3].Add(_roads[5]);
         }
         public static void TurnSave()

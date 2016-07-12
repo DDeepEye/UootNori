@@ -4,16 +4,22 @@ using System.Collections.Generic;
 
 public class FieldAdder : MonoBehaviour {
 
-    static HashSet<GameObject> s_fields = new HashSet<GameObject>();
+    static Dictionary<int, GameObject> s_fields = new Dictionary<int, GameObject>();
     public int _fieldNumber;
 	// Use this for initialization
+    void Awake()
+    {
+        if (!s_fields.ContainsKey(_fieldNumber))
+            s_fields.Add(_fieldNumber, gameObject);
+    }
 	void Start () {
-        if (!s_fields.Contains(gameObject))
-            s_fields.Add(gameObject);
+        
 	}
 
-    static HashSet<GameObject> GetFields()
+    public static GameObject GetFields(int key)
     {
-        return s_fields;
+        if(s_fields.ContainsKey(key))
+            return s_fields[key];
+        return null;
     }
 }
