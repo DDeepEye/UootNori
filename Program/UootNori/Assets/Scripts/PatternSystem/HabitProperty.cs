@@ -158,10 +158,9 @@ namespace PatternSystem
                 {
                     for (int i = 0; i < _containers.Count; ++i)
                     {
-                        Container p = _containers[i];
-                        p.Reset(false);
-                        _curProerty = 0;
+                        _containers[i].Reset(false);
                     }
+                    _curProerty = 0;
                 }
                 else
                 {
@@ -169,20 +168,19 @@ namespace PatternSystem
                     {
                         for (int i = 0; i < _containers.Count; ++i)
                         {
-                            Container p = _containers[i];
-                            p.Reset(true);
-                            _curProerty = 0;
+                            _containers[i].Reset(true);
                         }
+                        _curProerty = 0;
 						_isDone = true;
                     }
                     else
                     {
                         for (int i = 0; i < _containers.Count; ++i)
                         {
-                            Container p = _containers[i];
-                            p.Reset(false);
-                            _curProerty = 0;
+                            _containers[i].Reset(false);
+
                         }
+                        _curProerty = 0;
                         ++_curCount;
                     }
                 }
@@ -237,8 +235,8 @@ namespace PatternSystem
 
         public override void Reset(bool isPure)
         {
-            Reset(isPure);
-            if (_curTime > _time && isPure != false)
+            base.Reset(isPure);
+            if (_curTime > _time  && !isPure)
                 _curTime = _curTime - _time;
             else
                 _curTime = 0.0f;
@@ -282,29 +280,45 @@ namespace PatternSystem
 
     public class Move : Physical
     {
-        public Move(GameObject target, Vector3 translatePoint, float time, Type type)
-            : base(target, translatePoint, time, type)
+        Vector3 _resultValue;
+        public Move(GameObject target, Vector3 translatePoint, float time)
+            : base(target, translatePoint, time, Type.RELATIVE)
 		{
-			
+            
 		}
         public override void Run()
         {
 			if (_isDone)
                 return;
-			
+
+            if (_time == 0.0f)
+            {
+                _isDone = true;
+                _target.transform.position += _translatePoint;
+                return;
+            }
+
+            if (_isBegin)
+            {
+                _resultValue = _target.transform.position + _translatePoint;
+                _isBegin = false;
+            }
+
+
             _curTime += UnityEngine.Time.deltaTime;
 
             float tickTime = _curTime > _time ? _curTime - _time : UnityEngine.Time.deltaTime;
 
-            if (_time != 0.0f)
+            if (_time > 0)
                 tickTime *= 1 / _time;
 
-            tickTime = (tickTime > 1.0f) ? 1.0f : tickTime;
+
 
             _target.transform.position += _translatePoint * tickTime;
 
             if (_curTime >= _time)
             {
+                _target.transform.position = _resultValue;
                 _isDone = true;
             }
         }
@@ -312,7 +326,7 @@ namespace PatternSystem
         public override void Reset(bool isPure)
         {
             base.Reset(isPure);
-            if (_curTime > _time && isPure)
+            if (_curTime > _time && !isPure)
                 _curTime = _curTime - _time;
             else
                 _curTime = 0.0f;
@@ -354,7 +368,7 @@ namespace PatternSystem
         public override void Reset(bool isPure)
         {
             base.Reset(isPure);
-            if (_curTime > _time)
+            if (_curTime > _time && !isPure)
                 _curTime = _curTime - _time;
             else
                 _curTime = 0.0f;
@@ -396,7 +410,7 @@ namespace PatternSystem
         public override void Reset(bool isPure)
         {
             base.Reset(isPure);
-            if (_curTime > _time && isPure != false)
+            if (_curTime > _time  && !isPure)
                 _curTime = _curTime - _time;
             else
                 _curTime = 0.0f;
@@ -470,7 +484,7 @@ namespace PatternSystem
         public override void Reset(bool isPure)
         {
             base.Reset(isPure);
-            if (_curTime > _time)
+            if (_curTime > _time && !isPure)
                 _curTime = _curTime - _time;
             else
                 _curTime = 0.0f;

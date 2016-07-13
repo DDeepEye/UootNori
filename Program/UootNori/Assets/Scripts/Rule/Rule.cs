@@ -209,51 +209,51 @@ namespace UootNori
             }
 
             _roads[0] = new List<FieldData>();
-            for (int i = 0; i < 4; ++i)
+            for (int i = 0; i < 5; ++i)
             {   
                 _roads[0].Add(_fields[i]);
             }
 
             _roads[1] = new List<FieldData>();
-            for (int i = 5; i < 9; ++i)
+            for (int i = 5; i < 10; ++i)
             {
                 _roads[1].Add(_fields[i]);
             }
 
             _roads[2] = new List<FieldData>();
-            for (int i = 10; i < 14; ++i)
+            for (int i = 10; i < 15; ++i)
             {
                 _roads[2].Add(_fields[i]);
             }
 
             _roads[3] = new List<FieldData>();
-            for (int i = 15; i < 19; ++i)
+            for (int i = 15; i < 20; ++i)
             {
                 _roads[3].Add(_fields[i]);
             }
 
             _roads[4] = new List<FieldData>();
-            for (int i = 20; i < 22; ++i)
+            for (int i = 20; i < 23; ++i)
             {
                 _roads[4].Add(_fields[i]);
             }
 
             _roads[5] = new List<FieldData>();
-            for (int i = 23; i < 24; ++i)
+            for (int i = 23; i < 25; ++i)
             {
                 _roads[5].Add(_fields[i]);
             }
             _roads[5].Add(_fields[19]);
 
             _roads[6] = new List<FieldData>();
-            for (int i = 27; i < 28; ++i)
+            for (int i = 27; i < 29; ++i)
             {
                 _roads[6].Add(_fields[i]);
             }
             _roads[6].Add(_fields[14]);
 
             _roads[7] = new List<FieldData>();
-            for (int i = 25; i < 26; ++i)
+            for (int i = 25; i < 27; ++i)
             {
                 _roads[7].Add(_fields[i]);
             }
@@ -284,6 +284,24 @@ namespace UootNori
         }
         public static void TurnSave()
         {
+        }
+
+        public static FieldData GetExitField()
+        {
+            return _fields[19];
+        }
+
+        public static List<Vector3> GetWay(int index)
+        {
+            List<Vector3> way = new List<Vector3>();
+            foreach (List<FieldData> fields in _ways[index])
+            {
+                foreach (FieldData field in fields)
+                {
+                    way.Add(field.GetSelfField().transform.position);
+                }
+            }
+            return way;
         }
 
         public static void TurnRollBack()
