@@ -166,6 +166,8 @@ namespace UootNori
         public static List<FieldData>[] _roads = new List<FieldData>[ROAD_MAXNUM];
         public static List<List<FieldData>>[] _ways = new List<List<FieldData>>[WAYKIND];
 
+        static Dictionary<Animal, int> s_animalToForwardNum = new Dictionary<Animal, int>();
+
         public static void Init()
         {
             for(int i = 0; i < _fields.Length; ++i)
@@ -199,6 +201,12 @@ namespace UootNori
             _fields[26].AddAttribute(new Send1toSend2());
 
             WayInit();
+
+            s_animalToForwardNum.Add(Animal.DO, 1);
+            s_animalToForwardNum.Add(Animal.GE, 2);
+            s_animalToForwardNum.Add(Animal.KUL, 3);
+            s_animalToForwardNum.Add(Animal.UOOT, 4);
+            s_animalToForwardNum.Add(Animal.MO, 5);
         }
 
         private static void WayInit()
@@ -322,6 +330,11 @@ namespace UootNori
         public static void RemoveAnimal(int index)
         {
             _curAnimals.RemoveAt(index);
+        }
+
+        public static int GetForwardNum(Animal animal)
+        {
+            return s_animalToForwardNum[animal];
         }
     }
 
