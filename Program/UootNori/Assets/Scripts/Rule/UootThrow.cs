@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using PatternSystem;
 using FlowContainer;
 using UootNori;
 
@@ -38,18 +39,34 @@ public class UootThrow : Attribute {
 	// Update is called once per frame
 	void Update () {
 
+
         if (_isDone)
             return;
 
-        if (_curTime < 3.0f)
+        if (_curTime < 1.2f)
         {
             _curTime += Time.deltaTime;
         }
         else
         {
             _curTime = 0.0f;
-            _isDone = true;
-            transform.parent.GetComponent<Attribute>().ReturnActive = "";
+            ///_isDone = true;
+            ///transform.parent.GetComponent<Attribute>().ReturnActive = "";
+            if (UootThrowAniCheck())
+            {
+                if (GameData.GetLastAnimal() == Animal.UOOT || GameData.GetLastAnimal() == Animal.MO)
+                {
+                    AnimalProbabiley();
+                    ThrowToData();
+                    UootThrowAni();
+                }
+                else
+                {
+                    _isDone = true;
+                    Attribute at = transform.parent.GetComponent<Attribute>();
+                    at.ReturnActive = "";
+                }
+            }
         }
 
         /*
@@ -76,6 +93,7 @@ public class UootThrow : Attribute {
 
     void AnimalProbabiley()
     {
+        _animalProbability.Clear();
         int prob = DO;
         _animalProbability.Add(prob+_probabilityOffset[0]);
         _animalProbability.Add(prob+=GE+_probabilityOffset[1]);
@@ -87,12 +105,18 @@ public class UootThrow : Attribute {
 
     void ThrowToData()
     {
+        _isOut = false;
+        GameData._curAnimals.Add(Animal.UOOT);
+        GameData._curAnimals.Add(Animal.BACK_DO);
+        return;
         int rr = Random.Range(1, _animalProbability[_animalProbability.Count - 1]);
         for (int i = 0; i < _animalProbability.Count; ++i)
         {
             if (_animalProbability[i] > rr)
             {
                 GameData._curAnimals.Add((Animal)i);
+                Debug.Log(((Animal)i).ToString());
+                break;
             }
         }
 
@@ -103,6 +127,7 @@ public class UootThrow : Attribute {
             _isDone = true;
             ReturnActive = "NextTurn";
             GameData.TurnRollBack();
+            return;
         }
     }
 
@@ -114,4 +139,6 @@ public class UootThrow : Attribute {
     {
         return true;
     }
+
+
 }

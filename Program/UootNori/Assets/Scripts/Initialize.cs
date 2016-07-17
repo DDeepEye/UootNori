@@ -10,11 +10,12 @@ public class Initialize : MonoBehaviour {
 	// Use this for initialization
 	void Start () {
         GameData.Init();
+        /*
         GameObject origin_pieces = Resources.Load("Uoot_N") as GameObject;
         GameObject pieces = GameObject.Instantiate(origin_pieces);
         pieces.transform.position = GameData.GetExitField().GetSelfField().transform.position;
 
-        List<Vector3> points = GameData.GetWay(0);
+        List<Vector3> points = GameData.GetWay(2);
         List<Container> containers = new List<Container>();
         containers.Add(new Timer(pieces, 1.0f));
         Vector3 offsetPoint = pieces.transform.position;
@@ -27,10 +28,11 @@ public class Initialize : MonoBehaviour {
         }
 
         road = new Arrange(pieces, Arrange.ArrangeType.SERIES, containers, 0);
+        */
 	}
 	
 	// Update is called once per frame
 	void Update () {
-        road.Run();
+        ///road.Run();
 	}
 }
