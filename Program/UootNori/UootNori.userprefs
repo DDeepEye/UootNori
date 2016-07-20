@@ -1,46 +1,25 @@
 ﻿<Properties StartupItem="Assembly-CSharp.csproj">
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" PreferredExecutionTarget="Unity.Instance.Unity Editor" />
-<<<<<<< HEAD
-  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\WaterCausticsEffect\Materials\Caustics.shader">
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets/Scripts/Rule/Rule.cs">
     <Files>
-      <File FileName="Assets\WaterCausticsEffect\Materials\Caustics.shader" Line="60" Column="25" />
-      <File FileName="Assets\Scripts\Rule\Rule.cs" Line="1" Column="1" />
-      <File FileName="Assets\Scripts\HabitCast\HabitAgent.cs" Line="1" Column="1" />
-      <File FileName="Assets\Scripts\HabitProperty.cs" Line="1" Column="1" />
-      <File FileName="Assets\Scripts\HabitCast\ChildControlAgent.cs" Line="1" Column="1" />
-      <File FileName="Assets\Scripts\HabitCast\ArrangeAgent.cs" Line="1" Column="1" />
-      <File FileName="Assets\Scripts\HabitCast\AttributeAgent.cs" Line="1" Column="1" />
-      <File FileName="Assets\Scripts\HabitCast\TrigerAgent.cs" Line="1" Column="1" />
-      <File FileName="Assets\Scripts\Rule\FieldRull.cs" Line="1" Column="1" />
-      <File FileName="Assets\Scripts\Rule\IsDone.cs" Line="1" Column="1" />
-=======
-  <MonoDevelop.Ide.Workbench ActiveDocument="Assets/Scripts/Rule/RullProcess.cs">
-    <Files>
-      <File FileName="Assets/Scripts/Rule/UootThrow.cs" Line="102" Column="34" />
-      <File FileName="Assets/Scripts/FlowContainer/Arrange.cs" Line="7" Column="19" />
-      <File FileName="Assets/Scripts/FlowContainer/Attribute.cs" Line="15" Column="9" />
-      <File FileName="Assets/Scripts/Rule/Rule.cs" Line="112" Column="42" />
-      <File FileName="Assets/Scripts/Rule/Title.cs" Line="1" Column="1" />
-      <File FileName="Assets/Scripts/Rule/PlayerNumChoice.cs" Line="1" Column="1" />
-      <File FileName="Assets/Scripts/Rule/CharacterChoice.cs" Line="1" Column="1" />
-      <File FileName="Assets/Scripts/Rule/TurnFix.cs" Line="16" Column="2" />
-      <File FileName="Assets/Scripts/Rule/RullProcess.cs" Line="42" Column="34" />
-      <File FileName="Assets/Scripts/Rule/ManMove.cs" Line="25" Column="1" />
-      <File FileName="Assets/Scripts/FlowContainer/FlowStart.cs" Line="14" Column="18" />
-      <File FileName="Assets/Scripts/Rule/ManKillCheck.cs" Line="1" Column="1" />
-      <File FileName="Assets/Scripts/Rule/FieldRullProcess.cs" Line="1" Column="1" />
->>>>>>> b1543c7808791102138a4415b3847fcf083c9211
+      <File FileName="Assets/Scripts/Rule/Rule.cs" Line="17" Column="12" />
+      <File FileName="Assets/Scripts/Rule/ManMove.cs" Line="1" Column="1" />
+      <File FileName="Assets/Scripts/Initialize.cs" Line="1" Column="1" />
+      <File FileName="Assets/Scripts/Rule/UootThrow.cs" Line="1" Column="1" />
+      <File FileName="Assets/Scripts/PatternSystem/HabitProperty.cs" Line="154" Column="10" />
+      <File FileName="Assets/Scripts/FlowContainer/Arrange.cs" Line="1" Column="1" />
+      <File FileName="Assets/Scripts/Rule/GoalIn.cs" Line="1" Column="1" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>
     <BreakpointStore>
-      <Breakpoint file="/Users/leejihoon/Desktop/Developer/Projects/GitHub/UootPlay/Program/UootNori/Assets/Editor/Scripts/HabitEditor.cs" line="23" column="1" />
-      <Breakpoint file="/Users/leejihoon/Desktop/Developer/Projects/GitHub/UootPlay/Program/UootNori/Assets/Editor/Scripts/HabitEditor.cs" line="43" column="24" />
-<<<<<<< HEAD
-=======
-      <Breakpoint file="/Users/leejihoon/Desktop/Developer/Projects/GitHub/UootPlay/Program/UootNori/Assets/Scripts/Rule/TurnFix.cs" line="10" column="14" />
-      <Breakpoint file="/Users/leejihoon/Desktop/Developer/Projects/GitHub/UootPlay/Program/UootNori/Assets/Scripts/Rule/TurnFix.cs" line="21" column="1" />
->>>>>>> b1543c7808791102138a4415b3847fcf083c9211
+      <Breakpoint file="/Users/leejihoon/Desktop/Developer/Projects/GitHub/UootPlay/Program/UootNori/Assets/Scripts/Rule/Rule.cs" line="545" column="1" />
+      <Breakpoint file="/Users/leejihoon/Desktop/Developer/Projects/GitHub/UootPlay/Program/UootNori/Assets/Scripts/Rule/Rule.cs" line="519" column="18" />
+      <Breakpoint file="/Users/leejihoon/Desktop/Developer/Projects/GitHub/UootPlay/Program/UootNori/Assets/Scripts/Rule/Rule.cs" line="150" column="1" />
+      <Breakpoint file="/Users/leejihoon/Desktop/Developer/Projects/GitHub/UootPlay/Program/UootNori/Assets/Scripts/Rule/ManMove.cs" line="89" column="9" />
+      <Breakpoint file="/Users/leejihoon/Desktop/Developer/Projects/GitHub/UootPlay/Program/UootNori/Assets/Scripts/Rule/Rule.cs" line="118" column="32" />
+      <Breakpoint file="/Users/leejihoon/Desktop/Developer/Projects/GitHub/UootPlay/Program/UootNori/Assets/Scripts/Rule/Rule.cs" line="532" column="1" />
+      <Breakpoint file="/Users/leejihoon/Desktop/Developer/Projects/GitHub/UootPlay/Program/UootNori/Assets/Scripts/Rule/ManMove.cs" line="22" column="1" />
     </BreakpointStore>
   </MonoDevelop.Ide.DebuggingService.Breakpoints>
   <MonoDevelop.Ide.DebuggingService.PinnedWatches />
