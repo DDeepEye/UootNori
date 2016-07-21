@@ -23,16 +23,35 @@ public class ManMove : Attribute {
         {
             if (GameData.CurAnimalCount() > 0)
             {
-                List<PiecesMoveContainer> movers = GameData.GetPiecesMover(GameData.CurTurn);
-                if (movers.Count > 0)
+                if(GameData.GetCurTurnOutPiecess() > 0)
                 {
-                    _mover = GameData.MoveContainer(movers[0], GameData.GetLastAnimal());
+                    if (GameData.GetLastAnimal() != Animal.BACK_DO)
+                    {
+                        _mover = GameData.NewInField(GameData.GetLastAnimal());
+                    }   
+                    else
+                    {
+                        List<PiecesMoveContainer> movers = GameData.GetPiecesMover(GameData.CurTurn);
+                        if (movers.Count > 0)
+                        {
+                            _mover = GameData.MoveContainer(movers[0], GameData.GetLastAnimal());
+                        }
+                    }
                 }
                 else
                 {
-                    if(GameData.GetLastAnimal() != Animal.BACK_DO)
-                        _mover = GameData.NewInField(GameData.GetLastAnimal());
+                    List<PiecesMoveContainer> movers = GameData.GetPiecesMover(GameData.CurTurn);
+                    if (movers.Count > 0)
+                    {
+                        _mover = GameData.MoveContainer(movers[0], GameData.GetLastAnimal());
+                    }
+                    else
+                    {
+                        if (GameData.GetLastAnimal() != Animal.BACK_DO)
+                            _mover = GameData.NewInField(GameData.GetLastAnimal());
+                    }
                 }
+                
                 GameData.RemoveAnimal(GameData.CurAnimalCount()-1);
             }
             return;
@@ -40,17 +59,43 @@ public class ManMove : Attribute {
 
         if (_mover.IsDone)
         {
+            if (GameData.IsKill)
+            {
+                _isDone = true;
+                GameData.KillCheck();
+                transform.parent.GetComponent<Attribute>().ReturnActive = "UootThrow";                
+                return;
+            }
+            
             if (GameData.CurAnimalCount() > 0)
             {
-                List<PiecesMoveContainer> movers = GameData.GetPiecesMover(GameData.CurTurn);
-                if (movers.Count > 0)
+                if(GameData.GetCurTurnOutPiecess() > 0)
                 {
-                    _mover = GameData.MoveContainer(movers[0], GameData.GetLastAnimal());
+                    if (GameData.GetLastAnimal() != Animal.BACK_DO)
+                    {
+                        _mover = GameData.NewInField(GameData.GetLastAnimal());
+                    }
+                    else
+                    {
+                        List<PiecesMoveContainer> movers = GameData.GetPiecesMover(GameData.CurTurn);
+                        if (movers.Count > 0)
+                        {
+                            _mover = GameData.MoveContainer(movers[0], GameData.GetLastAnimal());
+                        }
+                    }
                 }
                 else
                 {
-                    if(GameData.GetLastAnimal() != Animal.BACK_DO)
-                        _mover = GameData.NewInField(GameData.GetLastAnimal());
+                    List<PiecesMoveContainer> movers = GameData.GetPiecesMover(GameData.CurTurn);
+                    if (movers.Count > 0)
+                    {
+                        _mover = GameData.MoveContainer(movers[0], GameData.GetLastAnimal());
+                    }
+                    else
+                    {
+                        if (GameData.GetLastAnimal() != Animal.BACK_DO)
+                            _mover = GameData.NewInField(GameData.GetLastAnimal());
+                    }
                 }
                 GameData.RemoveAnimal(GameData.CurAnimalCount()-1);
                 return;
@@ -59,45 +104,54 @@ public class ManMove : Attribute {
             {
                 _isDone = true;
                 _mover = null;
-                transform.parent.GetComponent<Attribute>().ReturnActive = "UootThrow";
+                GameData.TurnRollBack();
                 return;
             }
         }
-
         _mover.Run();
 	}
 
     void OnEnable()
     {
-        /*
-        GameObject origin_pieces = Resources.Load("Uoot_N") as GameObject;
-        GameObject pieces = GameObject.Instantiate(origin_pieces);
-        pieces.transform.position = GameData.GetExitField().GetSelfField().transform.position;
-
-        List<Vector3> points = GameData.GetWay(2);
-        List<Container> containers = new List<Container>();
-        containers.Add(new Timer(pieces, 1.0f));
-        Vector3 offsetPoint = pieces.transform.position;
-        foreach (Vector3 point in points)
+        List<PiecesMoveContainer> movers = GameData.GetPiecesMover(GameData.CurTurn);
+        if (movers.Count == 0 && GameData.GetLastAnimal() == Animal.BACK_DO && GameData.CurAnimalCount() == 1)
         {
-            Vector3 p = point - offsetPoint;
-            offsetPoint = point;
-            containers.Add(new Timer(pieces, 0.1f));
-            containers.Add(new Move(pieces, p, 0.15f));
+            _isDone = true;
+            transform.parent.GetComponent<Attribute>().ReturnActive = "NextTurn";
+            GameData.TurnRollBack();
+            return;
         }
 
-        road = new Arrange(pieces, Arrange.ArrangeType.SERIES, containers, 0);
-        */
-        List<PiecesMoveContainer> movers = GameData.GetPiecesMover(GameData.CurTurn);
-        if (movers.Count > 0)
+        if (GameData.GetCurTurnOutPiecess() > 0)
         {
-            _mover = GameData.MoveContainer(movers[0], GameData.GetLastAnimal());
+            if (GameData.GetLastAnimal() != Animal.BACK_DO)
+            {
+                _mover = GameData.NewInField(GameData.GetLastAnimal());
+            }
+            else
+            {
+                movers = GameData.GetPiecesMover(GameData.CurTurn);
+                if (movers.Count > 0)
+                {
+                    _mover = GameData.MoveContainer(movers[0], GameData.GetLastAnimal());
+                }
+            }
         }
         else
         {
-            if(GameData.GetLastAnimal() != Animal.BACK_DO)
-                _mover = GameData.NewInField(GameData.GetLastAnimal());
+            movers = GameData.GetPiecesMover(GameData.CurTurn);
+            if (movers.Count > 0)
+            {
+                _mover = GameData.MoveContainer(movers[0], GameData.GetLastAnimal());
+            }
+            else
+            {
+                if (GameData.GetLastAnimal() != Animal.BACK_DO)
+                    _mover = GameData.NewInField(GameData.GetLastAnimal());
+            }
         }
+
+        
         GameData.RemoveAnimal(GameData.CurAnimalCount()-1);
     }
 }
