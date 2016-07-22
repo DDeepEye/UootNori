@@ -8,10 +8,18 @@ namespace FlowContainer
 
         // Use this for initialization
         protected virtual void Awake () {
+            /*
             if (transform.childCount > 0)
             {
                 transform.GetChild(_curActive).gameObject.SetActive(true);
             }
+             * */
+        }
+
+        protected virtual void OnEnable()
+        {
+            if (transform.childCount > 0)
+                transform.GetChild(_curActive).gameObject.SetActive(true);
         }
 
         // Update is called once per frame
@@ -53,7 +61,6 @@ namespace FlowContainer
                                 }
                             }
                             _returnActive = "";
-
                         }
                         else
                         {

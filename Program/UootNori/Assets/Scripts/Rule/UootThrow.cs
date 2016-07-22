@@ -43,17 +43,24 @@ public class UootThrow : Attribute {
         if (_isDone)
             return;
 
-        if (_curTime < 1.2f)
+        if (_curTime < .2f)
         {
             _curTime += Time.deltaTime;
         }
         else
         {
             _curTime = 0.0f;
-            ///_isDone = true;
-            ///transform.parent.GetComponent<Attribute>().ReturnActive = "";
             if (UootThrowAniCheck())
             {
+                if(_isOut)
+                {
+                    _isDone = true;
+                    Attribute at = transform.parent.GetComponent<Attribute>();
+                    at.ReturnActive = "NextTurn";
+                    GameData.TurnRollBack();
+                    return;
+                }
+
                 if (GameData.GetLastAnimal() == Animal.UOOT || GameData.GetLastAnimal() == Animal.MO)
                 {
                     AnimalProbabiley();
@@ -68,15 +75,6 @@ public class UootThrow : Attribute {
                 }
             }
         }
-
-        /*
-        if (UootThrowAniCheck())
-        {
-            _isDone = true;
-            Attribute at = transform.parent.GetComponent<Attribute>();
-            at.ReturnActive = "";
-        }
-        */
 	}
 
 
@@ -106,16 +104,13 @@ public class UootThrow : Attribute {
     void ThrowToData()
     {
         _isOut = false;
-        GameData._curAnimals.Add(Animal.UOOT);
-        GameData._curAnimals.Add(Animal.BACK_DO);
-        return;
         int rr = Random.Range(1, _animalProbability[_animalProbability.Count - 1]);
         for (int i = 0; i < _animalProbability.Count; ++i)
         {
             if (_animalProbability[i] > rr)
             {
                 GameData._curAnimals.Add((Animal)i);
-                Debug.Log(((Animal)i).ToString());
+                ///Debug.Log(((Animal)i).ToString());
                 break;
             }
         }
@@ -123,10 +118,8 @@ public class UootThrow : Attribute {
         int outResult = Random.Range(0, 10000);
         if (OUT > outResult)
         {
+            Debug.Log("OUT !!!");
             _isOut = true;
-            _isDone = true;
-            ReturnActive = "NextTurn";
-            GameData.TurnRollBack();
             return;
         }
     }

@@ -2,10 +2,9 @@
 using System.Collections;
 using FlowContainer;
 
-public class RullProcess : Arrange {
-	
-	
-    public override void ActiveCheck()
+public class GamePlay : Arrange {
+
+	public override void ActiveCheck()
     {
         if (!IsDone)
         {
@@ -29,11 +28,10 @@ public class RullProcess : Arrange {
                     if (ReturnActive.Length > 0)
                     {
                         switch(ReturnActive)
-                        {
-                            case "UootThrow":
+                        {   
                             case "Result":
                                 {
-                                    _isDone = true;                                    
+                                    _isDone = true;
                                     transform.parent.GetComponent<Attribute>().ReturnActive = ReturnActive;
                                 }
                                 break;
@@ -51,9 +49,7 @@ public class RullProcess : Arrange {
                                 }
                                 break;
                         }
-
                         _returnActive = "";
-
                     }
                     else
                     {

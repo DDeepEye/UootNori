@@ -5,6 +5,7 @@ using PatternSystem;
 
 
 
+
 namespace UootNori
 {
     public enum Animal
@@ -21,12 +22,12 @@ namespace UootNori
 
     public abstract class FieldAttribute
     {
-        public abstract void Run();
+        public abstract void Run(PiecesMoveContainer mover);
     }
 
     public class Kill : FieldAttribute
     {
-        public override void Run()
+        public override void Run(PiecesMoveContainer mover)
         {
             
         }
@@ -34,7 +35,7 @@ namespace UootNori
 
     public class AllKill : FieldAttribute
     {
-        public override void Run()
+        public override void Run(PiecesMoveContainer mover)
         {
             
         }
@@ -42,7 +43,7 @@ namespace UootNori
 
     public class Send1toSend2 : FieldAttribute
     {
-        public override void Run()
+        public override void Run(PiecesMoveContainer mover)
         {
 
         }
@@ -50,42 +51,47 @@ namespace UootNori
 
     public class AddPieces : FieldAttribute
     {
-        public override void Run()
+        public override void Run(PiecesMoveContainer mover)
         {
         }
     }
 
     public class RemovePieces : FieldAttribute
     {
-        public override void Run()
+        public override void Run(PiecesMoveContainer mover)
         {
         }
     }
 
     public class OneMoreThrow : FieldAttribute
     {
-        public override void Run()
+        public override void Run(PiecesMoveContainer mover)
         {
         }
     }
 
     public class Shot: FieldAttribute
     {
-        public override void Run()
+        public override void Run(PiecesMoveContainer mover)
         {
         }
     }
 
     public class ChangeWay : FieldAttribute
     {
-        public override void Run()
+        private int _wayKind;
+        public ChangeWay(int wayKind)
         {
-            
+            _wayKind = wayKind;
+        }
+        public override void Run(PiecesMoveContainer mover)
+        {
+            mover.CurRoad = GameData.GetWayChangetoRoad(_wayKind, mover.CurRoad);
         }
     }
     public class Exit : FieldAttribute
     {
-        public override void Run()
+        public override void Run(PiecesMoveContainer mover)
         {
 
         }
@@ -93,9 +99,65 @@ namespace UootNori
 
     public class ExitSchedule : FieldAttribute
     {
-        public override void Run()
+        public override void Run(PiecesMoveContainer mover)
         {
 
+        }
+    }
+
+    public class GoalIn : Property
+    {
+        PiecesMoveContainer _destroyMover;
+        public GoalIn(PiecesMoveContainer destroyMover)
+            : base(null)
+        {
+            _destroyMover = destroyMover;
+        }
+
+        public override void Run()
+        {
+            GameObject.Destroy(_destroyMover.Pieces);
+            GameData.AdjustMover(_destroyMover, GameData.MoverAdjustKind.GOALIN);
+            if (GameData.s_players[(int)GameData.CurTurn].GetGoalInNum() >= GameData.PIECESMAX)
+                GameData.TurnRollBack();
+            
+            _isDone = true;
+        }
+    }
+
+    public class FieldSet : Property
+    {
+        FieldData _field;
+        PiecesMoveContainer _mover;
+        public FieldSet(FieldData field, PiecesMoveContainer mover)
+            : base(null)
+        {
+            _field = field;
+            _mover = mover;
+        }
+
+        public override void Run()
+        {
+            if (_isDone)
+                return;
+
+            _isDone = true;
+            if (_field.Mover != null)
+            {
+                if(_field.Mover.PlayerKind == _mover.PlayerKind)
+                {
+                    _mover.Add(_field.Mover.GetPiecesNum());
+                    GameData.AdjustMover(_field.Mover, GameData.MoverAdjustKind.ADD);
+                }
+                else
+                {
+                    GameData.AdjustMover(_field.Mover, GameData.MoverAdjustKind.DESTROY);
+                }
+                GameObject.Destroy(_field.Mover.Pieces);
+            }            
+            _field.Mover = _mover;
+            _field.FieldRun();
+            Debug.Log(GameData.CurTurn.ToString() + " FieldIn -> " + GameData.s_players[(int)GameData.CurTurn].GetInFieldNum().ToString() + " FieldOut -> " + GameData.s_players[(int)GameData.CurTurn].GetOutFieldNum().ToString());
         }
     }
 
@@ -114,119 +176,98 @@ namespace UootNori
 
     public class PiecesMoveContainer
     {  
-        static GameObject s_originPieces;
-        private FieldData _curField = null;
+        static GameObject [] s_originPiecess = new GameObject[(int)PLAYER_KIND.MAX];
+        private Road _curRoad = null;
+        public Road CurRoad { get { return _curRoad; } set { _curRoad = value; } }
         public int _wayKind = 0;
         public bool _isGoalin = false;
         public bool _goalinSchedule = false;
-        List<PiecesData> _piecess = new List<PiecesData>();
+        int _piecesNum;
         GameObject _pieces;
+        public GameObject Pieces { get { return _pieces; } }
         PLAYER_KIND _playerKind;
+        public PLAYER_KIND PlayerKind { get { return _playerKind; } }
+
+        string[] _moverName = {"Uoot_N", "Uoot_N (1)"};
         public PiecesMoveContainer(PLAYER_KIND kind)
         {
             _playerKind = kind;
-            if(s_originPieces == null)
-                s_originPieces = Resources.Load("Uoot_N") as GameObject;
-            _pieces = GameObject.Instantiate(s_originPieces);
+            if(s_originPiecess[(int)GameData.CurTurn] == null)
+                s_originPiecess[(int)GameData.CurTurn] = Resources.Load(_moverName[(int)GameData.CurTurn]) as GameObject;
+            _pieces = GameObject.Instantiate(s_originPiecess[(int)GameData.CurTurn]);
             _pieces.transform.position = GameData.GetStartRoad()._field.GetSelfField().transform.position;
+            _curRoad = GameData.GetStartRoad();
+            GameData.s_players[(int)kind].FieldIn(1);
+            _piecesNum = 1;
         }
-        public void Add(PiecesData pieces)
+        public void Add(int piecesNum)
         {
-            pieces._state = PIECES_STATE.IN_FIELD;
-            _piecess.Add(pieces);
+            _piecesNum += piecesNum;
         }
 
         public int GetPiecesNum()
         {
-            return _piecess.Count;
-        }
-
-        public PiecesData GetPieces(int index)
-        {
-            return _piecess[index];
-        }
-
-        public void Killed()
-        {
-            foreach (PiecesData pieces in _piecess)
-            {
-                pieces._state = PIECES_STATE.OUT_FIELD;
-            }
+            return _piecesNum;
         }
 
         public PatternSystem.Arrange Move(Animal animal)
         {
             List<Container> containers = new List<Container>();
             int forwardNum = GameData.GetForwardNum(animal);
-
-            /*
-            if (_goalinSchedule)
-            {
-                _isGoalin = true;
-                containers.Add(new Timer(_pieces, 0.1f));
-                containers.Add(new GoalIn(_pieces, this));
+            ///PiecesMoveContainer mover = GameData.InFieldMoverCheck(CurRoad, forwardNum);
+            if(_curRoad != null)
+                _curRoad._field.Mover = null;
+            Vector3 offsetPoint = _pieces.transform.position;
+            if (forwardNum > 0)
+            {   
+                for(int i = 0; i < forwardNum; ++i)
+                {
+                    if (GameData.NextRoad(_curRoad) == null)
+                    {
+                        _isGoalin = true;
+                        containers.Add(new Timer(null, 0.1f));
+                        containers.Add(new GoalIn(this));
+                        break;
+                    }
+                    else
+                    {
+                        _curRoad = GameData.NextRoad(_curRoad);
+                        Vector3 p = _curRoad._field.GetSelfField().transform.position - offsetPoint;
+                        offsetPoint = _curRoad._field.GetSelfField().transform.position;
+                        containers.Add(new Timer(null, 0.1f));
+                        containers.Add(new Move(_pieces, p, 0.15f));
+                    }
+                }
+                if(!_isGoalin)
+                {
+                    containers.Add(new Timer(null, 0.1f));
+                    containers.Add(new FieldSet(_curRoad._field, this));
+                }
             }
             else
             {
-                int forwardNum = GameData.GetForwardNum(animal);
-                List<Vector3> way = GameData.GetWay(_wayKind);
-
-                int startPoint = 0;
-                if (_curField == null)
+                if (GameData.PrevRoad(_curRoad) == null)
                 {
-                    _curField = GameData.GetWayToField(_wayKind, null, forwardNum - 1);
+                    _isGoalin = true;
+                    containers.Add(new Timer(_pieces, 0.1f));
+                    containers.Add(new GoalIn(this));
                 }
                 else
                 {
-                    FieldData startField;
-                    if(forwardNum > 0)
-                        startField = GameData.GetWayToField(_wayKind, _curField, 1);
-                    else
-                        startField = GameData.GetWayToField(_wayKind, _curField, -1);
-                    _curField = GameData.GetWayToField(_wayKind, _curField, forwardNum);
-                    startPoint = GameData.GetWayToIndex(_wayKind, startField);
+                    _curRoad = GameData.PrevRoad(_curRoad);
+                    Vector3 p = _curRoad._field.GetSelfField().transform.position - offsetPoint;
+                    containers.Add(new Timer(_pieces, 0.1f));
+                    containers.Add(new Move(_pieces, p, 0.15f));
                 }
 
-                Vector3 offsetPoint = _pieces.transform.position;
-                if (forwardNum > 0)
+                if (!_isGoalin)
                 {
-                    for (int i = 0; i < forwardNum; ++i)
-                    {
-                        if (startPoint + i >= way.Count)
-                        {
-                            _isGoalin = true;
-                            containers.Add(new Timer(_pieces, 0.1f));
-                            containers.Add(new GoalIn(_pieces, this));
-                            break;
-                        }
-                        Vector3 p = way[startPoint + i] - offsetPoint;
-                        offsetPoint = way[startPoint + i];
-                        containers.Add(new Timer(_pieces, 0.1f));
-                        containers.Add(new Move(_pieces, p, 0.15f));
-                    }
-                }
-                else
-                {
-                    if (startPoint > 0)
-                    {
-                        Vector3 p = way[startPoint + forwardNum] - offsetPoint;
-                        offsetPoint = way[startPoint + forwardNum];
-                        containers.Add(new Timer(_pieces, 0.1f));
-                        containers.Add(new Move(_pieces, p, 0.15f));
-                    }
-                    else
-                    {
-                        _goalinSchedule = true;
-                        Vector3 p = GameData.GetExitField().GetSelfField().transform.position;
-                        containers.Add(new Timer(_pieces, 0.1f));
-                        containers.Add(new Move(_pieces, p, 0.15f));
-                    }
+                    containers.Add(new Timer(_pieces, 0.1f));
+                    containers.Add(new FieldSet(_curRoad._field, this));
                 }
             }
-            */
             return new Arrange(_pieces, Arrange.ArrangeType.SERIES, containers, 1);
         }
-
     }
 
     public enum PLAYER_KIND
@@ -241,6 +282,10 @@ namespace UootNori
         public PlayerData(int piecesMax = GameData.PIECESMAX)
         {
             _pieces = new PiecesData[piecesMax];
+            for(int i = 0; i < piecesMax; ++i)
+            {
+                _pieces[i] = new PiecesData();
+            }
         }
 
         public PiecesData[] _pieces;
@@ -276,12 +321,69 @@ namespace UootNori
             }
             return cnt;
         }
+
+        public void FieldIn(int num)
+        {
+            if(GetOutFieldNum() > 0)
+            {
+                int cnt = 0;
+                for (int i = 0; i < _pieces.Length; ++i)
+                {
+                    if (_pieces[i]._state == PIECES_STATE.OUT_FIELD)
+                    {
+                        _pieces[i]._state = PIECES_STATE.IN_FIELD;
+                        ++cnt;
+                    }
+                    if (cnt == num)
+                        return;
+                }
+            }
+        }
+
+        public void Out(int num)
+        {
+            if (GetInFieldNum() > 0)
+            {
+                int cnt = 0;
+                for (int i = 0; i < _pieces.Length; ++i)
+                {
+                    if (_pieces[i]._state == PIECES_STATE.IN_FIELD)
+                    {
+                        _pieces[i]._state = PIECES_STATE.OUT_FIELD;
+                        ++cnt;
+                    }
+                    if(cnt == num)
+                        return;
+                }
+            }
+        }
+
+        public void GoalIn(int num)
+        {
+            if (GetInFieldNum() > 0)
+            {
+                int cnt = 0;
+                for (int i = 0; i < _pieces.Length; ++i)
+                {
+                    if (_pieces[i]._state == PIECES_STATE.IN_FIELD)
+                    {
+                        _pieces[i]._state = PIECES_STATE.GOALIN;
+                        ++cnt;
+                    }
+                    if (cnt == num)
+                        return;
+                }
+            }
+        }
     }
 
     public class FieldData
     {
         GameObject _selfField;
         List<FieldAttribute> _attributes = new List<FieldAttribute>();
+        private PiecesMoveContainer _mover;
+        public PiecesMoveContainer Mover { get { return _mover; } set { _mover = value; } }
+        
 
         public void SetField(GameObject field)
         {
@@ -302,7 +404,7 @@ namespace UootNori
         {
             foreach (FieldAttribute att in _attributes)
             {
-                att.Run();
+                att.Run(Mover);
             }
         }
     }
@@ -345,7 +447,7 @@ namespace UootNori
         public const int WAYKIND = 4;
 
         public static List<Animal> _curAnimals = new List<Animal>();
-        public static PlayerData[] _players = new PlayerData[(int)PLAYER_KIND.MAX];
+        public static PlayerData[] s_players = new PlayerData[(int)PLAYER_KIND.MAX];
         private static PLAYER_KIND _curTurn = PLAYER_KIND.PLAYER_1;
         public static PLAYER_KIND CurTurn {get {return _curTurn;}}
         public static FieldData[] _fields = new FieldData[FIELD_MAXNUM];
@@ -359,6 +461,10 @@ namespace UootNori
 
         static Dictionary<PLAYER_KIND, List<PiecesMoveContainer>> s_moveContainers = new Dictionary<PLAYER_KIND, List<PiecesMoveContainer>>();
 
+        static bool s_piecesKill = false;
+        public static bool IsKill { get { return s_piecesKill; } }
+        public static void KillCheck() { s_piecesKill = false; }
+
         public static void Init()
         {
             for(int i = 0; i < _fields.Length; ++i)
@@ -366,27 +472,25 @@ namespace UootNori
                 _fields[i] = new FieldData();
             }
             _fields[0].AddAttribute(new ExitSchedule());
-            _fields[5].AddAttribute(new ChangeWay());
+            _fields[5].AddAttribute(new ChangeWay(2));
 
             _fields[6].AddAttribute(new Kill());
             _fields[7].AddAttribute(new AddPieces());
             _fields[9].AddAttribute(new RemovePieces());
 
-            _fields[10].AddAttribute(new ChangeWay());
+            _fields[10].AddAttribute(new ChangeWay(3));
 
             _fields[11].AddAttribute(new AddPieces());
             _fields[12].AddAttribute(new OneMoreThrow());
             _fields[13].AddAttribute(new RemovePieces());
             _fields[14].AddAttribute(new Send1toSend2());
 
-            _fields[15].AddAttribute(new ChangeWay());
-
             _fields[17].AddAttribute(new Send1toSend2());
             _fields[19].AddAttribute(new AllKill());
             _fields[20].AddAttribute(new Exit());
 
             _fields[22].AddAttribute(new Kill());
-            _fields[23].AddAttribute(new ChangeWay());
+            _fields[23].AddAttribute(new ChangeWay(1));
             _fields[25].AddAttribute(new Kill());
 
             _fields[26].AddAttribute(new Shot());
@@ -400,9 +504,9 @@ namespace UootNori
             s_animalToForwardNum.Add(Animal.UOOT, 4);
             s_animalToForwardNum.Add(Animal.MO, 5);
             s_animalToForwardNum.Add(Animal.BACK_DO, -1);
-            for (int i = 0; i < _players.Length; ++i)
+            for (int i = 0; i < s_players.Length; ++i)
             {
-                _players[i] = new PlayerData();
+                s_players[i] = new PlayerData();
                 s_moveContainers.Add((PLAYER_KIND)i, new List<PiecesMoveContainer>());
             }
         }
@@ -574,7 +678,7 @@ namespace UootNori
 
         public static FieldData GetExitField()
         {
-            return _fields[19];
+            return _fields[20];
         }
 
         public static Road GetStartRoad()
@@ -582,21 +686,53 @@ namespace UootNori
             return s_roads[0];
         }
 
-        public static Road GetWayChangetoRoad(int wayKind, Road road)
+        public static Road GetWayChangetoRoad(int changeWay, Road road)
         {
+            Road r = s_roads[changeWay];
+            while(r != null)
+            {
+                if (road._field == r._field)
+                    return r;
+                r = NextRoad(r);
+            }
             return null;
         }
 
-        public static Road Next(Road cur)
+        public static Road NextRoad(Road cur)
         {
             return cur._next;
         }
 
-        public static Road Prev(Road cur)
+        public static Road PrevRoad(Road cur)
         {
             return cur._prev;
         }
 
+        public static PiecesMoveContainer InFieldMoverCheck(Road curRoad, int forward)
+        {
+            Road r = curRoad;
+            if(forward > 0)
+            {
+                for(int i = 0; i < forward; ++i)
+                {                    
+                    r = NextRoad(r);
+                    if (r == null)
+                        return null;
+                }
+            }
+            else
+            {
+                forward *= -1;
+                for(int i = 0; i < forward; ++i)
+                {
+                    r = PrevRoad(r);
+                    if (r == null)
+                        return null;
+                }
+            }
+            
+            return r._field.Mover;
+        }
 
         public static List<Vector3> GetWay(int wayKind)
         {
@@ -637,7 +773,6 @@ namespace UootNori
                     wayFields.Add(field);
                 }
             }
-
 
             if (curField == null)
             {
@@ -702,7 +837,6 @@ namespace UootNori
         public static PatternSystem.Arrange NewInField(Animal animal)
         {
             PiecesMoveContainer mover = new PiecesMoveContainer(_curTurn);
-            mover.Add(new PiecesData());
             PatternSystem.Arrange arr = mover.Move(animal);
             if(arr != null)
                 s_moveContainers[_curTurn].Add(mover);
@@ -714,38 +848,39 @@ namespace UootNori
             return s_moveContainers[kind];
         }
 
+        public static int GetCurTurnOutPiecess()
+        {
+            return s_players[(int)CurTurn].GetOutFieldNum();
+        }
+
         public static PatternSystem.Arrange MoveContainer(PiecesMoveContainer mover, Animal animal)
         {
             PatternSystem.Arrange arr = mover.Move(animal);
             return arr;
         }
 
-        public enum MoverDestroyKind
+        public enum MoverAdjustKind
         {
             DESTROY,
             GOALIN,
             ADD,
         }
 
-        public static void DestoryMover(PiecesMoveContainer destroyMover, MoverDestroyKind destroyKind)
+        public static void AdjustMover(PiecesMoveContainer mover, MoverAdjustKind destroyKind)
         {
-            switch (destroyKind)
+            switch(destroyKind)
             {
-                case MoverDestroyKind.ADD:
+                case MoverAdjustKind.GOALIN:
+                    s_players[(int)mover.PlayerKind].GoalIn(mover.GetPiecesNum());
                     break;
-                case MoverDestroyKind.DESTROY:
-                    break;
-                case MoverDestroyKind.GOALIN:
-                    for(int i = 0; i < s_moveContainers.Count; ++i)
-                    {
-                        if (s_moveContainers[(PLAYER_KIND)i].Contains(destroyMover))
-                        {
-                            s_moveContainers[(PLAYER_KIND)i].Remove(destroyMover);
-                            return;
-                        }
-                    }
+                case MoverAdjustKind.DESTROY:
+                    s_piecesKill = true;
+                    s_players[(int)mover.PlayerKind].Out(mover.GetPiecesNum());
                     break;
             }
+
+            if (s_moveContainers[mover.PlayerKind].Contains(mover))
+                s_moveContainers[mover.PlayerKind].Remove(mover);
         }
 
     }

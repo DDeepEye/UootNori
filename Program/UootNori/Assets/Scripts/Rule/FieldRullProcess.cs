@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using UootNori;
 using FlowContainer;
 
 public class FieldRullProcess : Attribute {
@@ -11,6 +12,8 @@ public class FieldRullProcess : Attribute {
 	
 	// Update is called once per frame
 	void Update () {
+
+        _isDone = true;
 	
 	}
 }
