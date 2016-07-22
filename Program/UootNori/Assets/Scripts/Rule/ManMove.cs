@@ -59,10 +59,10 @@ public class ManMove : Attribute {
 
         if (_mover.IsDone)
         {
-            if (GameData.IsKill)
+            if (GameData.IsOneMoreUootThrow)
             {
                 _isDone = true;
-                GameData.KillCheck();
+                GameData.OneMoreUootThrowCheck();
                 transform.parent.GetComponent<Attribute>().ReturnActive = "UootThrow";                
                 return;
             }

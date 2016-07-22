@@ -92,6 +92,7 @@ namespace PatternSystem
 
         private ArrangeType _type = ArrangeType.SERIES;
         private List<Container> _containers = new List<Container>();
+        public List<Container> Containers { get { return _containers; } }
         private int _curProerty = 0;
         private int _repeatCount;
         private int _curCount = 0;
