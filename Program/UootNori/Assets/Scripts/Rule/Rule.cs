@@ -820,7 +820,7 @@ namespace UootNori
         public static PiecesMoveContainer InFieldMoverCheck(Road curRoad, int forward)
         {
             Road r = curRoad;
-            if(forward > 0)
+            if(forward >= 0)
             {
                 for(int i = 0; i < forward; ++i)
                 {                    
