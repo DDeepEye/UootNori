@@ -92,6 +92,7 @@ namespace PatternSystem
 
         private ArrangeType _type = ArrangeType.SERIES;
         private List<Container> _containers = new List<Container>();
+        public List<Container> Containers { get { return _containers; } }
         private int _curProerty = 0;
         private int _repeatCount;
         private int _curCount = 0;
@@ -281,6 +282,7 @@ namespace PatternSystem
     public class Move : Physical
     {
         Vector3 _resultValue;
+        
         public Move(GameObject target, Vector3 translatePoint, float time)
             : base(target, translatePoint, time, Type.RELATIVE)
 		{
@@ -335,32 +337,33 @@ namespace PatternSystem
 
     public class Rotation : Physical
     {
+        Vector3 _resultValue;
+        Vector3 _originEulerAngles;
         public Rotation(GameObject target, Vector3 translatePoint, float time, Type type)
             : base(target, translatePoint, time, type)
 		{
-		}
+            
+
+        }
         public override void Run()
         {
             if (_isDone)
                 return;
 
+            if (_isBegin)
+            {
+                _resultValue = _target.transform.eulerAngles + _translatePoint;
+                _originEulerAngles = _target.transform.eulerAngles;
+                _isBegin = false;
+            }
+
             _curTime += UnityEngine.Time.deltaTime;
-
-            float tickTime = _curTime > _time ? _curTime - _time : UnityEngine.Time.deltaTime;
             
-            if (_time != 0.0f)
-                tickTime *= 1 / _time;
-
-            tickTime = (tickTime > 1.0f) ? 1.0f : tickTime;
-
-            Vector3 rotate = new Vector3(tickTime * _translatePoint.x
-                                    , tickTime * _translatePoint.y
-                                    , tickTime * _translatePoint.z);
-
-            _target.transform.Rotate(rotate, Space.World);
+            _target.transform.eulerAngles = _originEulerAngles + ((_curTime/_time) * _translatePoint);
 
             if (_curTime >= _time)
             {
+                _target.transform.eulerAngles = _resultValue;
                 _isDone = true;
             }
         }

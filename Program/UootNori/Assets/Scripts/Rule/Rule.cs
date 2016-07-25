@@ -26,10 +26,12 @@ namespace UootNori
     }
 
     public class Kill : FieldAttribute
-    {
+    {   
         public override void Run(PiecesMoveContainer mover)
         {
-            
+            mover.CurRoad._field.Mover = null;
+            GameData.AdjustMover(mover, GameData.MoverAdjustKind.KILL_ONESELF);
+            GameObject.Destroy(mover.Pieces);
         }
     }
 
@@ -37,15 +39,36 @@ namespace UootNori
     {
         public override void Run(PiecesMoveContainer mover)
         {
-            
+            List<PiecesMoveContainer> movers = GameData.GetPiecesMover(mover.PlayerKind);
+            foreach(PiecesMoveContainer m in movers)
+            {
+                GameData.s_players[(int)mover.PlayerKind].Out(mover.GetPiecesNum());
+                GameObject.Destroy(m.Pieces);
+                m.CurRoad._field.Mover = null;
+            }
+            movers.Clear();
         }
     }
 
     public class Send1toSend2 : FieldAttribute
     {
-        public override void Run(PiecesMoveContainer mover)
+        Road _sendRoad;
+        public Send1toSend2(Road sendRoad)
         {
-
+            _sendRoad = sendRoad;
+        }
+        public override void Run(PiecesMoveContainer mover)
+        {   
+            Vector3 offsetPoint = mover.Pieces.transform.position;
+            Vector3 p = _sendRoad._field.GetSelfField().transform.position - offsetPoint;
+            mover.Containers.Containers.Add(new Timer(null, 0.1f));
+            mover.Containers.Containers.Add(new Move(mover.Pieces, p, 0.15f));
+            mover.Containers.Containers.Add(new Timer(null, 0.1f));
+            mover.Containers.Containers.Add(new FieldSet(_sendRoad._field, mover));            
+            mover.CurRoad._field.Mover = null;
+            mover.CurRoad = _sendRoad;
+            
+            Debug.Log("field run Send1toSend2 !!");
         }
     }
 
@@ -53,6 +76,11 @@ namespace UootNori
     {
         public override void Run(PiecesMoveContainer mover)
         {
+            if (GameData.s_players[(int)mover.PlayerKind].GetOutFieldNum() > 0)
+            {
+                GameData.s_players[(int)mover.PlayerKind].FieldIn(1);
+                mover.Add(1);
+            }
         }
     }
 
@@ -60,6 +88,11 @@ namespace UootNori
     {
         public override void Run(PiecesMoveContainer mover)
         {
+            if (mover.GetPiecesNum() > 1)
+            {
+                mover.Add(-1);
+                GameData.s_players[(int)mover.PlayerKind].Out(1);
+            }
         }
     }
 
@@ -67,6 +100,7 @@ namespace UootNori
     {
         public override void Run(PiecesMoveContainer mover)
         {
+            GameData.OneMoreUootThrow();
         }
     }
 
@@ -101,7 +135,7 @@ namespace UootNori
     {
         public override void Run(PiecesMoveContainer mover)
         {
-
+            mover._goalinSchedule = true;
         }
     }
 
@@ -142,6 +176,7 @@ namespace UootNori
                 return;
 
             _isDone = true;
+            
             if (_field.Mover != null)
             {
                 if(_field.Mover.PlayerKind == _mover.PlayerKind)
@@ -154,7 +189,25 @@ namespace UootNori
                     GameData.AdjustMover(_field.Mover, GameData.MoverAdjustKind.DESTROY);
                 }
                 GameObject.Destroy(_field.Mover.Pieces);
-            }            
+            }
+            else
+            {
+                PiecesMoveContainer findMover = GameData.InFieldMoverCheck(_mover.CurRoad, 0);
+                if(findMover != null)
+                {
+                    if (findMover.CurRoad._field.Mover.PlayerKind == _mover.PlayerKind)
+                    {
+                        _mover.Add(findMover.CurRoad._field.Mover.GetPiecesNum());
+                        GameData.AdjustMover(findMover.CurRoad._field.Mover, GameData.MoverAdjustKind.ADD);
+                    }
+                    else
+                    {
+                        findMover.CurRoad._field.Mover = null;
+                        GameData.AdjustMover(findMover.CurRoad._field.Mover, GameData.MoverAdjustKind.DESTROY);
+                    }
+                    GameObject.Destroy(findMover.CurRoad._field.Mover.Pieces);
+                }
+            }
             _field.Mover = _mover;
             _field.FieldRun();
             Debug.Log(GameData.CurTurn.ToString() + " FieldIn -> " + GameData.s_players[(int)GameData.CurTurn].GetInFieldNum().ToString() + " FieldOut -> " + GameData.s_players[(int)GameData.CurTurn].GetOutFieldNum().ToString());
@@ -188,6 +241,9 @@ namespace UootNori
         PLAYER_KIND _playerKind;
         public PLAYER_KIND PlayerKind { get { return _playerKind; } }
 
+        public Arrange _arrange;
+        public Arrange Containers { get { return _arrange; } }
+
         string[] _moverName = {"Uoot_N", "Uoot_N (1)"};
         public PiecesMoveContainer(PLAYER_KIND kind)
         {
@@ -197,8 +253,16 @@ namespace UootNori
             _pieces = GameObject.Instantiate(s_originPiecess[(int)GameData.CurTurn]);
             _pieces.transform.position = GameData.GetStartRoad()._field.GetSelfField().transform.position;
             _curRoad = GameData.GetStartRoad();
-            GameData.s_players[(int)kind].FieldIn(1);
+            
             _piecesNum = 1;
+            int goalin = GameData.s_players[(int)kind].GetGoalInNum();
+            int movepieces = 1;
+            foreach(PiecesMoveContainer m in GameData.GetPiecesMover(PlayerKind))
+                movepieces += m.GetPiecesNum();
+            if(goalin + movepieces > GameData.PIECESMAX)
+                Debug.Log("pieces number error " + (GameData.PIECESMAX - (goalin + movepieces)).ToString());
+
+            GameData.s_players[(int)kind].FieldIn(1);
         }
         public void Add(int piecesNum)
         {
@@ -217,56 +281,67 @@ namespace UootNori
             ///PiecesMoveContainer mover = GameData.InFieldMoverCheck(CurRoad, forwardNum);
             if(_curRoad != null)
                 _curRoad._field.Mover = null;
-            Vector3 offsetPoint = _pieces.transform.position;
-            if (forwardNum > 0)
-            {   
-                for(int i = 0; i < forwardNum; ++i)
-                {
-                    if (GameData.NextRoad(_curRoad) == null)
-                    {
-                        _isGoalin = true;
-                        containers.Add(new Timer(null, 0.1f));
-                        containers.Add(new GoalIn(this));
-                        break;
-                    }
-                    else
-                    {
-                        _curRoad = GameData.NextRoad(_curRoad);
-                        Vector3 p = _curRoad._field.GetSelfField().transform.position - offsetPoint;
-                        offsetPoint = _curRoad._field.GetSelfField().transform.position;
-                        containers.Add(new Timer(null, 0.1f));
-                        containers.Add(new Move(_pieces, p, 0.15f));
-                    }
-                }
-                if(!_isGoalin)
-                {
-                    containers.Add(new Timer(null, 0.1f));
-                    containers.Add(new FieldSet(_curRoad._field, this));
-                }
+
+            if(_goalinSchedule)
+            {
+                _isGoalin = true;
+                containers.Add(new Timer(null, 0.1f));
+                containers.Add(new GoalIn(this));
             }
             else
             {
-                if (GameData.PrevRoad(_curRoad) == null)
+                Vector3 offsetPoint = _pieces.transform.position;
+                if (forwardNum > 0)
                 {
-                    _isGoalin = true;
-                    containers.Add(new Timer(_pieces, 0.1f));
-                    containers.Add(new GoalIn(this));
+                    for (int i = 0; i < forwardNum; ++i)
+                    {
+                        if (GameData.NextRoad(_curRoad) == null)
+                        {
+                            _isGoalin = true;
+                            containers.Add(new Timer(null, 0.1f));
+                            containers.Add(new GoalIn(this));
+                            break;
+                        }
+                        else
+                        {
+                            _curRoad = GameData.NextRoad(_curRoad);
+                            Vector3 p = _curRoad._field.GetSelfField().transform.position - offsetPoint;
+                            offsetPoint = _curRoad._field.GetSelfField().transform.position;
+                            containers.Add(new Timer(null, 0.1f));
+                            containers.Add(new Move(_pieces, p, 0.15f));
+                        }
+                    }
+                    if (!_isGoalin)
+                    {
+                        containers.Add(new Timer(null, 0.1f));
+                        containers.Add(new FieldSet(_curRoad._field, this));
+                    }
                 }
                 else
                 {
-                    _curRoad = GameData.PrevRoad(_curRoad);
-                    Vector3 p = _curRoad._field.GetSelfField().transform.position - offsetPoint;
-                    containers.Add(new Timer(_pieces, 0.1f));
-                    containers.Add(new Move(_pieces, p, 0.15f));
-                }
+                    if (GameData.PrevRoad(_curRoad) == null)
+                    {
+                        _isGoalin = true;
+                        containers.Add(new Timer(_pieces, 0.1f));
+                        containers.Add(new GoalIn(this));
+                    }
+                    else
+                    {
+                        _curRoad = GameData.PrevRoad(_curRoad);
+                        Vector3 p = _curRoad._field.GetSelfField().transform.position - offsetPoint;
+                        containers.Add(new Timer(_pieces, 0.1f));
+                        containers.Add(new Move(_pieces, p, 0.15f));
+                    }
 
-                if (!_isGoalin)
-                {
-                    containers.Add(new Timer(_pieces, 0.1f));
-                    containers.Add(new FieldSet(_curRoad._field, this));
+                    if (!_isGoalin)
+                    {
+                        containers.Add(new Timer(_pieces, 0.1f));
+                        containers.Add(new FieldSet(_curRoad._field, this));
+                    }
                 }
             }
-            return new Arrange(_pieces, Arrange.ArrangeType.SERIES, containers, 1);
+            _arrange = new Arrange(_pieces, Arrange.ArrangeType.SERIES, containers, 1);
+            return _arrange;
         }
     }
 
@@ -335,7 +410,11 @@ namespace UootNori
                         ++cnt;
                     }
                     if (cnt == num)
+                    {
+                        if (GetInFieldNum() + GetOutFieldNum() + GetGoalInNum() > GameData.PIECESMAX)
+                            Debug.Log("what the fuck !!!");
                         return;
+                    }
                 }
             }
         }
@@ -353,7 +432,12 @@ namespace UootNori
                         ++cnt;
                     }
                     if(cnt == num)
+                    {
+                        if (GetInFieldNum() + GetOutFieldNum() + GetGoalInNum() > GameData.PIECESMAX)
+                            Debug.Log("what the fuck !!!");
                         return;
+                    }
+                        
                 }
             }
         }
@@ -371,7 +455,11 @@ namespace UootNori
                         ++cnt;
                     }
                     if (cnt == num)
+                    {
+                        if (GetInFieldNum() + GetOutFieldNum() + GetGoalInNum() > GameData.PIECESMAX)
+                            Debug.Log("what the fuck !!!");
                         return;
+                    }
                 }
             }
         }
@@ -461,16 +549,20 @@ namespace UootNori
 
         static Dictionary<PLAYER_KIND, List<PiecesMoveContainer>> s_moveContainers = new Dictionary<PLAYER_KIND, List<PiecesMoveContainer>>();
 
-        static bool s_piecesKill = false;
-        public static bool IsKill { get { return s_piecesKill; } }
-        public static void KillCheck() { s_piecesKill = false; }
+        static bool s_oneMoreUootThrow = false;
+        public static bool IsOneMoreUootThrow { get { return s_oneMoreUootThrow; } }
+        public static void OneMoreUootThrowCheck() { s_oneMoreUootThrow = false; }
+        public static void OneMoreUootThrow() { s_oneMoreUootThrow = true; }
 
         public static void Init()
         {
             for(int i = 0; i < _fields.Length; ++i)
             {
                 _fields[i] = new FieldData();
-            }
+            }           
+
+            WayInit();
+
             _fields[0].AddAttribute(new ExitSchedule());
             _fields[5].AddAttribute(new ChangeWay(2));
 
@@ -483,9 +575,19 @@ namespace UootNori
             _fields[11].AddAttribute(new AddPieces());
             _fields[12].AddAttribute(new OneMoreThrow());
             _fields[13].AddAttribute(new RemovePieces());
-            _fields[14].AddAttribute(new Send1toSend2());
 
-            _fields[17].AddAttribute(new Send1toSend2());
+            Road r = GameData.GetStartRoad();
+            for (int i = 0; i < 11; ++i )
+                r = GameData.NextRoad(r);
+
+            _fields[14].AddAttribute(new Send1toSend2(r));
+
+            r = GameData.GetStartRoad();
+            r = GameData.GetWayChangetoRoad(2, r);
+            for (int i = 0; i < 9; ++i)
+                r = GameData.NextRoad(r);
+
+            _fields[17].AddAttribute(new Send1toSend2(r));
             _fields[19].AddAttribute(new AllKill());
             _fields[20].AddAttribute(new Exit());
 
@@ -494,9 +596,11 @@ namespace UootNori
             _fields[25].AddAttribute(new Kill());
 
             _fields[26].AddAttribute(new Shot());
-            _fields[27].AddAttribute(new Send1toSend2());
 
-            WayInit();
+            r = GameData.GetStartRoad();
+            for (int i = 0; i < 8; ++i)
+                r = GameData.NextRoad(r);
+            _fields[27].AddAttribute(new Send1toSend2(r));
 
             s_animalToForwardNum.Add(Animal.DO, 1);
             s_animalToForwardNum.Add(Animal.GE, 2);
@@ -672,6 +776,11 @@ namespace UootNori
             s_roads[3] = roads[0];
             roads.Clear();
         }
+
+        public static void Reset()
+        {
+            
+        }
         public static void TurnSave()
         {
         }
@@ -711,13 +820,19 @@ namespace UootNori
         public static PiecesMoveContainer InFieldMoverCheck(Road curRoad, int forward)
         {
             Road r = curRoad;
-            if(forward > 0)
+            if(forward >= 0)
             {
                 for(int i = 0; i < forward; ++i)
                 {                    
                     r = NextRoad(r);
                     if (r == null)
-                        return null;
+                        return null;                    
+                }
+
+                if (NextRoad(r) == null)
+                {
+                    if (GetStartRoad()._field.Mover != null)
+                        return GetStartRoad()._field.Mover;
                 }
             }
             else
@@ -729,8 +844,13 @@ namespace UootNori
                     if (r == null)
                         return null;
                 }
+
+                if (PrevRoad(r) == null)
+                {
+                    if (GetExitField().Mover != null)
+                        return GetExitField().Mover;
+                }
             }
-            
             return r._field.Mover;
         }
 
@@ -861,6 +981,7 @@ namespace UootNori
 
         public enum MoverAdjustKind
         {
+            KILL_ONESELF,
             DESTROY,
             GOALIN,
             ADD,
@@ -873,8 +994,11 @@ namespace UootNori
                 case MoverAdjustKind.GOALIN:
                     s_players[(int)mover.PlayerKind].GoalIn(mover.GetPiecesNum());
                     break;
+                case MoverAdjustKind.KILL_ONESELF:
+                    s_players[(int)mover.PlayerKind].Out(mover.GetPiecesNum());
+                    break;
                 case MoverAdjustKind.DESTROY:
-                    s_piecesKill = true;
+                    OneMoreUootThrow();
                     s_players[(int)mover.PlayerKind].Out(mover.GetPiecesNum());
                     break;
             }
