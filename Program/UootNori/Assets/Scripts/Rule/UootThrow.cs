@@ -30,7 +30,7 @@ public class UootThrow : Attribute {
 
     List<int> _animalProbability = new List<int>();
     int [] _probabilityOffset = new int[(int)Animal.MAX];
-    Animator _uootAni;
+    static Animator s_uootAni;
     GameObject _uootAniObj;
     int _curAniIndex;
 
@@ -45,8 +45,8 @@ public class UootThrow : Attribute {
         if(_uootAniObj == null)
         {
             _uootAniObj = GameObject.Find("Uoot_ani");
-            
-            _uootAni = _uootAniObj.GetComponent<Animator>();
+
+            s_uootAni = _uootAniObj.GetComponent<Animator>();
             Object normal = Resources.Load("Uoot/Uoot_N");
             Object back = Resources.Load("Uoot/Uoot_B");
 
@@ -66,7 +66,7 @@ public class UootThrow : Attribute {
             _uootAnimaion[(int)UootNori.Animal.UOOT] = Uoot;
             _uootAnimaion[(int)UootNori.Animal.MO] = Mo;
             _uootAnimaion[(int)UootNori.Animal.BACK_DO] = BackDo;
-        }
+        }        
         _uootAnimaion[(int)GameData.GetLastAnimal()]();
         UootThrowAni();
     }
@@ -174,7 +174,7 @@ public class UootThrow : Attribute {
         if (_isDone)
             return;
 
-        if (_curTime < 4.0f)
+        if (_curTime < 3.5f)
         {
             _curTime += Time.deltaTime;
         }
@@ -183,7 +183,8 @@ public class UootThrow : Attribute {
             _curTime = 0.0f;
             if (UootThrowAniCheck())
             {
-                if(_isOut)
+                s_uootAni.Play("n");
+                if (_isOut)
                 {
                     _isDone = true;
                     Attribute at = transform.parent.GetComponent<Attribute>();
@@ -263,9 +264,10 @@ public class UootThrow : Attribute {
             aniName = "cliff0"+ aninum.ToString();
         else
             aniName = "n0" + aninum.ToString();
-        
-        _uootAni.Play(aniName);
+
+        s_uootAni.Play(aniName);
     }
+    
 
     bool UootThrowAniCheck()
     {   
