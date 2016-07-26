@@ -30,7 +30,7 @@ public class UootThrow : Attribute {
 
     List<int> _animalProbability = new List<int>();
     int [] _probabilityOffset = new int[(int)Animal.MAX];
-    static Animator s_uootAni;
+    public static Animator s_uootAni;
     GameObject _uootAniObj;
     int _curAniIndex;
 
@@ -39,6 +39,8 @@ public class UootThrow : Attribute {
     
     delegate void UootAnimaion();
     UootAnimaion[] _uootAnimaion = new UootAnimaion[(int)UootNori.Animal.MAX];
+
+    PatternSystem.Arrange _aniArrange;
 
     void UootAniInit()
     {
@@ -66,7 +68,7 @@ public class UootThrow : Attribute {
             _uootAnimaion[(int)UootNori.Animal.UOOT] = Uoot;
             _uootAnimaion[(int)UootNori.Animal.MO] = Mo;
             _uootAnimaion[(int)UootNori.Animal.BACK_DO] = BackDo;
-        }        
+        }
         _uootAnimaion[(int)GameData.GetLastAnimal()]();
         UootThrowAni();
     }
@@ -152,12 +154,12 @@ public class UootThrow : Attribute {
         for (int i = 0; i < UOOT_NUM; ++i)
         {
             eulerAngles = _uoots[i].transform.localEulerAngles;
-            eulerAngles.y = 180.0f;
+            eulerAngles.y = 0.0f;
             _uoots[i].transform.localEulerAngles = eulerAngles;
         }
 
         eulerAngles = _uoots[3].transform.localEulerAngles;
-        eulerAngles.y = 0.0f;
+        eulerAngles.y = 180.0f;
         _uoots[3].transform.localEulerAngles = eulerAngles;
     }
 
@@ -174,16 +176,17 @@ public class UootThrow : Attribute {
         if (_isDone)
             return;
 
+        /*
         if (_curTime < 3.5f)
         {
             _curTime += Time.deltaTime;
         }
         else
+        */
         {
             _curTime = 0.0f;
             if (UootThrowAniCheck())
-            {
-                s_uootAni.Play("n");
+            {   
                 if (_isOut)
                 {
                     _isDone = true;
@@ -194,7 +197,7 @@ public class UootThrow : Attribute {
                 }
 
                 if (GameData.GetLastAnimal() == Animal.UOOT || GameData.GetLastAnimal() == Animal.MO)
-                {
+                {                    
                     AnimalProbabiley();
                     ThrowToData();
                     UootAniInit();
@@ -265,14 +268,21 @@ public class UootThrow : Attribute {
         else
             aniName = "n0" + aninum.ToString();
 
-        s_uootAni.Play(aniName);
+        s_uootAni.Play("n");
+
+        List<Container> uootThrowFlow = new List<Container>();
+        uootThrowFlow.Add(new PatternSystem.Timer(null, 0.5f));
+        uootThrowFlow.Add(new UootThrowPlayer(aniName));
+        uootThrowFlow.Add(new PatternSystem.Timer(null, 3.0f));
+        _aniArrange = new PatternSystem.Arrange(null, PatternSystem.Arrange.ArrangeType.SERIES, uootThrowFlow, 1);
     }
     
 
     bool UootThrowAniCheck()
-    {   
-        return true;
+    {
+        if(_aniArrange.IsDone)
+            return true;
+        _aniArrange.Run();
+        return false;
     }
-
-
 }

@@ -58,7 +58,7 @@ public class ManMove : Attribute {
         }
 
         if (_mover.IsDone)
-        {
+        {   
             if (GameData.IsOneMoreUootThrow)
             {
                 _isDone = true;

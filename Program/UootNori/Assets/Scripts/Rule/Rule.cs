@@ -2,9 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using PatternSystem;
-
-
-
+using System;
 
 namespace UootNori
 {
@@ -213,6 +211,25 @@ namespace UootNori
             Debug.Log(GameData.CurTurn.ToString() + " FieldIn -> " + GameData.s_players[(int)GameData.CurTurn].GetInFieldNum().ToString() + " FieldOut -> " + GameData.s_players[(int)GameData.CurTurn].GetOutFieldNum().ToString());
         }
     }
+
+
+    public class UootThrowPlayer : Container
+    {
+        string _state;
+        public UootThrowPlayer(string state)
+        {
+            _state = state;
+        }
+        public override void Run()
+        {
+            if (IsDone)
+                return;
+            _isDone = true;
+            UootThrow.s_uootAni.Play(_state);                       
+        }
+    }
+
+
 
     public enum PIECES_STATE
     {
