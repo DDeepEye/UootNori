@@ -352,18 +352,18 @@ namespace PatternSystem
 
             if (_isBegin)
             {
-                _resultValue = _target.transform.eulerAngles + _translatePoint;
-                _originEulerAngles = _target.transform.eulerAngles;
+                _resultValue = _target.transform.localEulerAngles + _translatePoint;
+                _originEulerAngles = _target.transform.localEulerAngles;
                 _isBegin = false;
             }
 
             _curTime += UnityEngine.Time.deltaTime;
             
-            _target.transform.eulerAngles = _originEulerAngles + ((_curTime/_time) * _translatePoint);
+            _target.transform.localEulerAngles = _originEulerAngles + ((_curTime/_time) * _translatePoint);
 
             if (_curTime >= _time)
             {
-                _target.transform.eulerAngles = _resultValue;
+                _target.transform.localEulerAngles = _resultValue;
                 _isDone = true;
             }
         }
