@@ -118,6 +118,8 @@ namespace UootNori
         }
         public override void Run(PiecesMoveContainer mover)
         {
+            if (mover == null)
+                return;
             mover.CurRoad = GameData.GetWayChangetoRoad(_wayKind, mover.CurRoad);
         }
     }
@@ -519,6 +521,7 @@ namespace UootNori
         public FieldData _field;
         public Road _next;
         public Road _prev;
+        public int _wayKind = 0;
     }
 
 
@@ -581,12 +584,14 @@ namespace UootNori
             WayInit();
 
             _fields[0].AddAttribute(new ExitSchedule());
+            _fields[4].AddAttribute(new ChangeWay(0));
             _fields[5].AddAttribute(new ChangeWay(2));
 
             _fields[6].AddAttribute(new Kill());
             _fields[7].AddAttribute(new AddPieces());
             _fields[9].AddAttribute(new RemovePieces());
 
+            _fields[9].AddAttribute(new ChangeWay(0));
             _fields[10].AddAttribute(new ChangeWay(3));
 
             _fields[11].AddAttribute(new AddPieces());
@@ -608,7 +613,7 @@ namespace UootNori
             _fields[19].AddAttribute(new AllKill());
             _fields[20].AddAttribute(new Exit());
 
-            _fields[22].AddAttribute(new Kill());
+            _fields[22].AddAttribute(new Kill());            
             _fields[23].AddAttribute(new ChangeWay(1));
             _fields[25].AddAttribute(new Kill());
 
@@ -616,8 +621,8 @@ namespace UootNori
 
             r = GameData.GetStartRoad();
             for (int i = 0; i < 8; ++i)
-                r = GameData.NextRoad(r);
-            _fields[27].AddAttribute(new Send1toSend2(r));
+                r = GameData.NextRoad(r);            
+            _fields[27].AddAttribute(new Send1toSend2(r));            
 
             s_animalToForwardNum.Add(Animal.DO, 1);
             s_animalToForwardNum.Add(Animal.GE, 2);
@@ -705,7 +710,9 @@ namespace UootNori
                 {
                     Road road = new Road();
                     road._field = field;
+                    road._wayKind = 0;
                     roads.Add(road);
+                    
                 }
             }
             Road prev = null;
@@ -729,6 +736,7 @@ namespace UootNori
                 {
                     Road road = new Road();
                     road._field = field;
+                    road._wayKind = 1;
                     roads.Add(road);
                 }
             }
@@ -754,6 +762,7 @@ namespace UootNori
                 {
                     Road road = new Road();
                     road._field = field;
+                    road._wayKind = 2;
                     roads.Add(road);
                 }
             }
@@ -779,6 +788,7 @@ namespace UootNori
                 {
                     Road road = new Road();
                     road._field = field;
+                    road._wayKind = 3;
                     roads.Add(road);
                 }
             }
@@ -814,6 +824,9 @@ namespace UootNori
 
         public static Road GetWayChangetoRoad(int changeWay, Road road)
         {
+            if (changeWay == 1 && road._wayKind == 3)
+                return road;
+
             Road r = s_roads[changeWay];
             while(r != null)
             {
