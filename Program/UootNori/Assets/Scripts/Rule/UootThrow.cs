@@ -268,6 +268,7 @@ public class UootThrow : Attribute {
         else
             aniName = "n0" + aninum.ToString();
 
+        s_uootAni.speed = 1.5f;
         s_uootAni.Play("n");
 
         List<Container> uootThrowFlow = new List<Container>();
