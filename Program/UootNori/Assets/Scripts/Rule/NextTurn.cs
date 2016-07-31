@@ -32,7 +32,7 @@ public class NextTurn : Attribute {
 	}
 
     void OnEnable()
-    {
+    {   
         GameObject camera = GameObject.Find("Field_Camera");
         _cameraRot = new Rotation(camera, new Vector3(0.0f, 0.0f, 180.0f), 0.45f,Physical.Type.RELATIVE);
     }

@@ -36,6 +36,10 @@ public class ManMove : Attribute {
                         {
                             _mover = GameData.MoveContainer(movers[0], GameData.GetLastAnimal());
                         }
+                        else
+                        {
+                            _mover = GameData.NewInField(GameData.GetLastAnimal());
+                        }
                     }
                 }
                 else
@@ -47,8 +51,7 @@ public class ManMove : Attribute {
                     }
                     else
                     {
-                        if (GameData.GetLastAnimal() != Animal.BACK_DO)
-                            _mover = GameData.NewInField(GameData.GetLastAnimal());
+                        _mover = GameData.NewInField(GameData.GetLastAnimal());
                     }
                 }
                 
@@ -58,7 +61,7 @@ public class ManMove : Attribute {
         }
 
         if (_mover.IsDone)
-        {
+        {   
             if (GameData.IsOneMoreUootThrow)
             {
                 _isDone = true;
@@ -82,6 +85,10 @@ public class ManMove : Attribute {
                         {
                             _mover = GameData.MoveContainer(movers[0], GameData.GetLastAnimal());
                         }
+                        else
+                        {
+                            _mover = GameData.NewInField(GameData.GetLastAnimal());
+                        }
                     }
                 }
                 else
@@ -93,8 +100,7 @@ public class ManMove : Attribute {
                     }
                     else
                     {
-                        if (GameData.GetLastAnimal() != Animal.BACK_DO)
-                            _mover = GameData.NewInField(GameData.GetLastAnimal());
+                        _mover = GameData.NewInField(GameData.GetLastAnimal());
                     }
                 }
                 GameData.RemoveAnimal(GameData.CurAnimalCount()-1);
@@ -114,6 +120,7 @@ public class ManMove : Attribute {
     void OnEnable()
     {
         List<PiecesMoveContainer> movers = GameData.GetPiecesMover(GameData.CurTurn);
+        /*
         if (movers.Count == 0 && GameData.GetLastAnimal() == Animal.BACK_DO && GameData.CurAnimalCount() == 1)
         {
             _isDone = true;
@@ -121,6 +128,7 @@ public class ManMove : Attribute {
             GameData.TurnRollBack();
             return;
         }
+        */
 
         if (GameData.GetCurTurnOutPiecess() > 0)
         {
@@ -134,6 +142,10 @@ public class ManMove : Attribute {
                 if (movers.Count > 0)
                 {
                     _mover = GameData.MoveContainer(movers[0], GameData.GetLastAnimal());
+                }
+                else
+                {
+                    _mover = GameData.NewInField(GameData.GetLastAnimal());
                 }
             }
         }
