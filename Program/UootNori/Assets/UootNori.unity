@@ -6238,13 +6238,6 @@ Material:
           m_Offset: {x: 0, y: 0}
       data:
         first:
-          name: _MetallicGlossMap
-        second:
-          m_Texture: {fileID: 0}
-          m_Scale: {x: 1, y: 1}
-          m_Offset: {x: 0, y: 0}
-      data:
-        first:
           name: _ParallaxMap
         second:
           m_Texture: {fileID: 0}
@@ -6278,6 +6271,13 @@ Material:
           m_Texture: {fileID: 0}
           m_Scale: {x: 1, y: 1}
           m_Offset: {x: 0, y: 0}
+      data:
+        first:
+          name: _MetallicGlossMap
+        second:
+          m_Texture: {fileID: 0}
+          m_Scale: {x: 1, y: 1}
+          m_Offset: {x: 0, y: 0}
     m_Floats:
       data:
         first:
@@ -6293,6 +6293,10 @@ Material:
         second: 0.5
       data:
         first:
+          name: _Parallax
+        second: 0.02
+      data:
+        first:
           name: _ZWrite
         second: 1
       data:
@@ -6301,16 +6305,8 @@ Material:
         second: 0.5
       data:
         first:
-          name: _Metallic
-        second: 0
-      data:
-        first:
           name: _BumpScale
         second: 1
-      data:
-        first:
-          name: _Parallax
-        second: 0.02
       data:
         first:
           name: _OcclusionStrength
@@ -6326,6 +6322,10 @@ Material:
       data:
         first:
           name: _Mode
+        second: 0
+      data:
+        first:
+          name: _Metallic
         second: 0
       data:
         first:
@@ -9833,6 +9833,48 @@ MeshFilter:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 916319450}
   m_Mesh: {fileID: 10210, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!1001 &918444743
+Prefab:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 460810, guid: bf71cb4bd80e92b4ea9f6431a0eee961, type: 2}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 460810, guid: bf71cb4bd80e92b4ea9f6431a0eee961, type: 2}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 460810, guid: bf71cb4bd80e92b4ea9f6431a0eee961, type: 2}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 460810, guid: bf71cb4bd80e92b4ea9f6431a0eee961, type: 2}
+      propertyPath: m_LocalRotation.x
+      value: -3.2921488e-10
+      objectReference: {fileID: 0}
+    - target: {fileID: 460810, guid: bf71cb4bd80e92b4ea9f6431a0eee961, type: 2}
+      propertyPath: m_LocalRotation.y
+      value: -0.000000029802315
+      objectReference: {fileID: 0}
+    - target: {fileID: 460810, guid: bf71cb4bd80e92b4ea9f6431a0eee961, type: 2}
+      propertyPath: m_LocalRotation.z
+      value: -9.791907e-11
+      objectReference: {fileID: 0}
+    - target: {fileID: 460810, guid: bf71cb4bd80e92b4ea9f6431a0eee961, type: 2}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 460810, guid: bf71cb4bd80e92b4ea9f6431a0eee961, type: 2}
+      propertyPath: m_RootOrder
+      value: 6
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+  m_ParentPrefab: {fileID: 100100000, guid: bf71cb4bd80e92b4ea9f6431a0eee961, type: 2}
+  m_IsPrefabParent: 0
 --- !u!1001 &922691836
 Prefab:
   m_ObjectHideFlags: 0
