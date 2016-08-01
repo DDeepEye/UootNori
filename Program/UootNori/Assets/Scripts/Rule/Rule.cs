@@ -66,10 +66,10 @@ namespace UootNori
         {   
             Vector3 offsetPoint = mover.Pieces.transform.position;
             Vector3 p = _sendRoad._field.GetSelfField().transform.position - offsetPoint;
-            mover.Containers.Containers.Add(new Timer(null, 0.1f));
-            mover.Containers.Containers.Add(new Move(mover.Pieces, p, 0.15f));
-            mover.Containers.Containers.Add(new Timer(null, 0.1f));
-            mover.Containers.Containers.Add(new FieldSet(_sendRoad._field, mover));            
+            mover.Containers.AddContainer(new Timer(null, 0.1f));
+            mover.Containers.AddContainer(new Move(mover.Pieces, p, 0.15f));
+            mover.Containers.AddContainer(new Timer(null, 0.1f));
+            mover.Containers.AddContainer(new FieldSet(_sendRoad._field, mover));            
             mover.CurRoad._field.Mover = null;
             mover.CurRoad = _sendRoad;
             
@@ -249,6 +249,41 @@ namespace UootNori
         }
     }
 
+    public class ChracterMove : Move
+    {
+        Animator _ani;
+        public ChracterMove(GameObject target, Vector3 translatePoint, float time)
+            :base(target, translatePoint, time)
+        {
+            _ani = _target.GetComponent<Animator>();
+        }
+
+        public override void Begin()
+        {
+            if (_isBegin)
+            {
+                base.Begin();
+                /*
+                Vector3 localea = _target.transform.localEulerAngles;
+                localea.y = 180.0f;
+                */
+                _ani.SetInteger("state", 2);
+            }
+
+        }
+
+        public override void Run()
+        {
+            if (IsDone)
+                return;
+            
+            base.Run();
+
+            if (IsDone)
+                _ani.SetInteger("state", 1);
+        }
+    }
+
 
 
     public enum PIECES_STATE
@@ -283,7 +318,7 @@ namespace UootNori
 
         public Animal _animal = Animal.MAX;
 
-        string[] _moverName = {"Uoot_N", "Uoot_N (1)"};
+        string[] _moverName = {"Character/CH_01", "Character/CH_02"};
         public PiecesMoveContainer(PLAYER_KIND kind)
         {
             _playerKind = kind;
@@ -293,6 +328,7 @@ namespace UootNori
 
             _curRoad = GameData.GetStartRoad();
             _pieces.transform.position = _curRoad._field.GetSelfField().transform.position;
+            _pieces.GetComponent<Animator>().SetInteger("state", 0);
             _piecesNum = 1;
             GameData.s_players[(int)kind].FieldIn(1);
 
@@ -345,7 +381,7 @@ namespace UootNori
                     Vector3 offsetPoint = _pieces.transform.position;
                     Vector3 p = _curRoad._field.GetSelfField().transform.position - offsetPoint;
                     containers.Add(new Timer(_pieces, 0.1f));
-                    containers.Add(new Move(_pieces, p, 0.15f));
+                    containers.Add(new ChracterMove(_pieces, p, 0.15f));
                     containers.Add(new Timer(_pieces, 0.1f));
                     containers.Add(new FieldSet(_curRoad._field, this));
                 }
@@ -376,7 +412,7 @@ namespace UootNori
                             Vector3 p = _curRoad._field.GetSelfField().transform.position - offsetPoint;
                             offsetPoint = _curRoad._field.GetSelfField().transform.position;
                             containers.Add(new Timer(null, 0.1f));
-                            containers.Add(new Move(_pieces, p, 0.15f));
+                            containers.Add(new ChracterMove(_pieces, p, 0.15f));
                         }
                     }
                     
@@ -399,7 +435,7 @@ namespace UootNori
                         _curRoad = GameData.PrevRoad(_curRoad);
                         Vector3 p = _curRoad._field.GetSelfField().transform.position - offsetPoint;
                         containers.Add(new Timer(_pieces, 0.1f));
-                        containers.Add(new Move(_pieces, p, 0.15f));
+                        containers.Add(new ChracterMove(_pieces, p, 0.15f));
                     }
 
                     if (!_isGoalin)

@@ -91,7 +91,7 @@ namespace PatternSystem
         }
 
         private ArrangeType _type = ArrangeType.SERIES;
-        private List<Container> _containers = new List<Container>();
+        private List<Container> _containers;
         public List<Container> Containers { get { return _containers; } }
         private int _curProerty = 0;
         private int _repeatCount;
@@ -103,6 +103,11 @@ namespace PatternSystem
             _containers = containers;
 			_repeatCount = repeatCount;
 		}
+
+        public virtual void AddContainer(Container container)
+        {
+            _containers.Add(container);
+        }
 
         public override void Run()
         {
@@ -277,6 +282,12 @@ namespace PatternSystem
             base.Reset(isPure);
             _isBegin = true;
         }
+
+        public virtual void Begin()
+        {
+            if (_isBegin)
+                _isBegin = false;
+        }
     }
 
     public class Move : Physical
@@ -293,6 +304,8 @@ namespace PatternSystem
 			if (_isDone)
                 return;
 
+            Begin();
+
             if (_time == 0.0f)
             {
                 _isDone = true;
@@ -300,21 +313,12 @@ namespace PatternSystem
                 return;
             }
 
-            if (_isBegin)
-            {
-                _resultValue = _target.transform.position + _translatePoint;
-                _isBegin = false;
-            }
-
-
             _curTime += UnityEngine.Time.deltaTime;
 
             float tickTime = _curTime > _time ? _curTime - _time : UnityEngine.Time.deltaTime;
 
             if (_time > 0)
                 tickTime *= 1 / _time;
-
-
 
             _target.transform.position += _translatePoint * tickTime;
 
@@ -332,6 +336,16 @@ namespace PatternSystem
                 _curTime = _curTime - _time;
             else
                 _curTime = 0.0f;
+        }
+
+        public override void Begin()
+        {
+            if (!_isBegin)
+                return;
+
+            base.Begin();
+
+            _resultValue = _target.transform.position + _translatePoint;
         }
     }
 
