@@ -249,42 +249,43 @@ namespace UootNori
         }
     }
 
-    public class ChracterMove : Move
+    public class ChracterMove : Container
     {
         Animator _ani;
-        public ChracterMove(GameObject target, Vector3 translatePoint, float time)
-            :base(target, translatePoint, time)
+        public ChracterMove(GameObject aniObject)
         {
-            _ani = _target.GetComponent<Animator>();
-        }
-
-        public override void Begin()
-        {
-            if (_isBegin)
-            {
-                base.Begin();
-                /*
-                Vector3 localea = _target.transform.localEulerAngles;
-                localea.y = 180.0f;
-                */
-                _ani.SetInteger("state", 2);
-            }
-
+            _ani = aniObject.GetComponent<Animator>();
         }
 
         public override void Run()
         {
             if (IsDone)
                 return;
-            
-            base.Run();
 
-            if (IsDone)
-                _ani.SetInteger("state", 1);
+            _isDone = true;
+            _ani.SetInteger("state", 2);
+            Debug.Log("ani state, 2");
         }
     }
 
+    public class ChracterIdle : Container
+    {
+        Animator _ani;
+        public ChracterIdle(GameObject aniObject)
+        {
+            _ani = aniObject.GetComponent<Animator>();
+        }
 
+        public override void Run()
+        {
+            if (IsDone)
+                return;
+
+            _isDone = true;
+            _ani.SetInteger("state", 1);
+            Debug.Log("ani state, 1");
+        }
+    }
 
     public enum PIECES_STATE
     {
@@ -361,7 +362,7 @@ namespace UootNori
 
         public PatternSystem.Arrange Move(Animal animal)
         {
-            List<Container> containers = new List<Container>();
+            List<Container> containers = new List<Container>();            
             int forwardNum = GameData.GetForwardNum(animal);
             ///PiecesMoveContainer mover = GameData.InFieldMoverCheck(CurRoad, forwardNum);
 
@@ -369,6 +370,10 @@ namespace UootNori
             {
                 if (_curRoad != null)
                     _curRoad._field.Mover = null;
+            }
+            else
+            {
+                containers.Add(new Timer(_pieces, 1.0f));
             }
 
             _animal = animal;
@@ -380,9 +385,11 @@ namespace UootNori
                     _curRoad = GameData.GetAllKillRoad();
                     Vector3 offsetPoint = _pieces.transform.position;
                     Vector3 p = _curRoad._field.GetSelfField().transform.position - offsetPoint;
+                    containers.Add(new ChracterMove(_pieces));
                     containers.Add(new Timer(_pieces, 0.1f));
-                    containers.Add(new ChracterMove(_pieces, p, 0.15f));
+                    containers.Add(new Move(_pieces, p, 0.2f));
                     containers.Add(new Timer(_pieces, 0.1f));
+                    containers.Add(new ChracterIdle(_pieces));
                     containers.Add(new FieldSet(_curRoad._field, this));
                 }
                 else
@@ -397,6 +404,8 @@ namespace UootNori
                 Vector3 offsetPoint = _pieces.transform.position;
                 if (forwardNum > 0)
                 {
+                    containers.Add(new ChracterMove(_pieces));
+                    containers.Add(new Timer(_pieces, 0.2f));
                     for (int i = 0; i < forwardNum; ++i)
                     {
                         if (GameData.NextRoad(_curRoad) == null)
@@ -410,14 +419,18 @@ namespace UootNori
                         {
                             _curRoad = GameData.NextRoad(_curRoad);
                             Vector3 p = _curRoad._field.GetSelfField().transform.position - offsetPoint;
+                            float roty = Mathf.Atan2(p.x, p.z) * Mathf.Rad2Deg;
                             offsetPoint = _curRoad._field.GetSelfField().transform.position;
                             containers.Add(new Timer(null, 0.1f));
-                            containers.Add(new ChracterMove(_pieces, p, 0.15f));
+                            containers.Add(new Rotation(_pieces, new Vector3(0.0f, roty, 0.0f), 0.0f, Physical.Type.ABSOLUTE));
+                            containers.Add(new Move(_pieces, p, 0.2f));
                         }
-                    }
-                    
+                    }                    
+
                     if (!_isGoalin)
                     {
+                        containers.Add(new ChracterIdle(_pieces));
+                        containers.Add(new Rotation(_pieces, new Vector3(_pieces.transform.localEulerAngles.x, 180.0f, _pieces.transform.localEulerAngles.z), 0.0f, Physical.Type.ABSOLUTE));
                         containers.Add(new Timer(null, 0.1f));
                         containers.Add(new FieldSet(_curRoad._field, this));
                     }
@@ -434,12 +447,18 @@ namespace UootNori
                     {
                         _curRoad = GameData.PrevRoad(_curRoad);
                         Vector3 p = _curRoad._field.GetSelfField().transform.position - offsetPoint;
-                        containers.Add(new Timer(_pieces, 0.1f));
-                        containers.Add(new ChracterMove(_pieces, p, 0.15f));
+                        float roty = Mathf.Atan2(p.x, p.z) * Mathf.Rad2Deg;
+                        offsetPoint = _curRoad._field.GetSelfField().transform.position;
+                        containers.Add(new ChracterMove(_pieces));
+                        containers.Add(new Timer(null, 0.1f));
+                        containers.Add(new Rotation(_pieces, new Vector3(0.0f, roty, 0.0f), 0.0f, Physical.Type.ABSOLUTE));
+                        containers.Add(new Move(_pieces, p, 0.2f));
                     }
 
                     if (!_isGoalin)
                     {
+                        containers.Add(new ChracterIdle(_pieces));
+                        containers.Add(new Rotation(_pieces, new Vector3(_pieces.transform.localEulerAngles.x, 180.0f, _pieces.transform.localEulerAngles.z), 0.0f, Physical.Type.ABSOLUTE));
                         containers.Add(new Timer(_pieces, 0.1f));
                         containers.Add(new FieldSet(_curRoad._field, this));
                     }
@@ -634,7 +653,7 @@ namespace UootNori
 
     public class GameData
     {
-        public const int PIECESMAX = 5;
+        public const int PIECESMAX = 1;
 
         public const int FIELD_MAXNUM = 30;
         public const int ROAD_MAXNUM = 8;

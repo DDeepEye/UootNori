@@ -366,15 +366,30 @@ namespace PatternSystem
 
             if (_isBegin)
             {
-                _resultValue = _target.transform.localEulerAngles + _translatePoint;
+                if (_type == Type.RELATIVE)
+                    _resultValue = _target.transform.localEulerAngles + _translatePoint;
+                else
+                    _resultValue = _translatePoint;
+
                 _originEulerAngles = _target.transform.localEulerAngles;
                 _isBegin = false;
             }
 
             _curTime += UnityEngine.Time.deltaTime;
             
-            _target.transform.localEulerAngles = _originEulerAngles + ((_curTime/_time) * _translatePoint);
+            if(_time > 0.0f)
+            {
+                if (_type == Type.RELATIVE)
+                    _target.transform.localEulerAngles = _originEulerAngles + ((_curTime / _time) * _translatePoint);
+                else
+                {
 
+                    Vector3 offset = (_translatePoint - _originEulerAngles);
+                    _target.transform.localEulerAngles = (_curTime / _time) * offset;
+                }
+            }
+            
+                
             if (_curTime >= _time)
             {
                 _target.transform.localEulerAngles = _resultValue;
