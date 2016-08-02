@@ -329,7 +329,7 @@ namespace UootNori
 
             _curRoad = GameData.GetStartRoad();
             _pieces.transform.position = _curRoad._field.GetSelfField().transform.position;
-            _pieces.GetComponent<Animator>().SetInteger("state", 0);
+            _pieces.GetComponent<Animator>().SetInteger("state", 1);
             _piecesNum = 1;
             GameData.s_players[(int)kind].FieldIn(1);
 
@@ -404,8 +404,8 @@ namespace UootNori
                 Vector3 offsetPoint = _pieces.transform.position;
                 if (forwardNum > 0)
                 {
-                    containers.Add(new ChracterMove(_pieces));
-                    containers.Add(new Timer(_pieces, 0.2f));
+                    
+
                     for (int i = 0; i < forwardNum; ++i)
                     {
                         if (GameData.NextRoad(_curRoad) == null)
@@ -421,15 +421,18 @@ namespace UootNori
                             Vector3 p = _curRoad._field.GetSelfField().transform.position - offsetPoint;
                             float roty = Mathf.Atan2(p.x, p.z) * Mathf.Rad2Deg;
                             offsetPoint = _curRoad._field.GetSelfField().transform.position;
+
+                            containers.Add(new ChracterMove(_pieces));
                             containers.Add(new Timer(null, 0.1f));
                             containers.Add(new Rotation(_pieces, new Vector3(0.0f, roty, 0.0f), 0.0f, Physical.Type.ABSOLUTE));
                             containers.Add(new Move(_pieces, p, 0.2f));
+                            containers.Add(new ChracterIdle(_pieces));
+
                         }
                     }                    
 
                     if (!_isGoalin)
                     {
-                        containers.Add(new ChracterIdle(_pieces));
                         containers.Add(new Rotation(_pieces, new Vector3(_pieces.transform.localEulerAngles.x, 180.0f, _pieces.transform.localEulerAngles.z), 0.0f, Physical.Type.ABSOLUTE));
                         containers.Add(new Timer(null, 0.1f));
                         containers.Add(new FieldSet(_curRoad._field, this));
