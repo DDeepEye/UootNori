@@ -29,8 +29,13 @@ namespace UootNori
         {
             mover.CurRoad._field.Mover = null;
             GameData.AdjustMover(mover, GameData.MoverAdjustKind.KILL_ONESELF);
-            GameObject.Destroy(mover.Pieces);
+            mover.Containers.AddContainer(new CharacterTrap(mover.Pieces));
+            mover.Containers.AddContainer(new Timer(null, 0.4f));
 
+            List<GameObject> deleteTarget = new List<GameObject>();
+            deleteTarget.Add(mover.Pieces);
+
+            mover.Containers.AddContainer(new CharacterDelete(deleteTarget));
             GameData.FieldInNumToMoverPiecesIsSame(mover.PlayerKind);
         }
     }
@@ -41,15 +46,21 @@ namespace UootNori
         {
             for(PLAYER_KIND i = PLAYER_KIND.PLAYER_1; i < PLAYER_KIND.MAX; ++i)
             {
+                List<GameObject> deleteTarget = new List<GameObject>();
+                deleteTarget.Add(mover.Pieces);
+
                 List<PiecesMoveContainer> movers = GameData.GetPiecesMover(i);
                 foreach (PiecesMoveContainer m in movers)
                 {
                     GameData.s_players[(int)i].Out(m.GetPiecesNum());
-                    GameObject.Destroy(m.Pieces);
+                    m.Pieces.GetComponent<Animator>().SetInteger("state", 5);
+                    deleteTarget.Add(m.Pieces);
                     m.CurRoad._field.Mover = null;
                 }
                 movers.Clear();
-
+                mover.Containers.AddContainer(new CharacterTrap(mover.Pieces));
+                mover.Containers.AddContainer(new Timer(null, 0.4f));
+                mover.Containers.AddContainer(new CharacterDelete(deleteTarget));
                 GameData.FieldInNumToMoverPiecesIsSame(i);
             }
         }
@@ -66,10 +77,10 @@ namespace UootNori
         {   
             Vector3 offsetPoint = mover.Pieces.transform.position;
             Vector3 p = _sendRoad._field.GetSelfField().transform.position - offsetPoint;
-            mover.Containers.Containers.Add(new Timer(null, 0.1f));
-            mover.Containers.Containers.Add(new Move(mover.Pieces, p, 0.15f));
-            mover.Containers.Containers.Add(new Timer(null, 0.1f));
-            mover.Containers.Containers.Add(new FieldSet(_sendRoad._field, mover));            
+            mover.Containers.AddContainer(new Timer(null, 0.1f));
+            mover.Containers.AddContainer(new Move(mover.Pieces, p, 0.15f));
+            mover.Containers.AddContainer(new Timer(null, 0.1f));
+            mover.Containers.AddContainer(new FieldSet(_sendRoad._field, mover));            
             mover.CurRoad._field.Mover = null;
             mover.CurRoad = _sendRoad;
             
@@ -249,7 +260,97 @@ namespace UootNori
         }
     }
 
+    public abstract class CharacterAni : Container
+    {
+        protected Animator _ani;
+        protected int ANI_NUMBER = 1;
+        protected CharacterAni(GameObject aniObject)
+        {
+            _ani = aniObject.GetComponent<Animator>();
+        }
+        public override void Run()
+        {
+            if (IsDone)
+                return;
 
+            _isDone = true;
+            _ani.SetInteger("state", ANI_NUMBER);
+            Debug.Log("ani state, "+ANI_NUMBER.ToString());
+        }
+    }
+
+    public class ChracterMove : CharacterAni
+    {
+        public ChracterMove(GameObject aniObject)
+            :base(aniObject)
+        {
+            ANI_NUMBER = 2;
+        }
+    }
+
+    public class ChracterIdle : CharacterAni
+    {
+        public ChracterIdle(GameObject aniObject)
+            :base(aniObject)
+        {
+            ANI_NUMBER = 1;
+        }
+    }
+
+    public class CharacterTrap : CharacterAni
+    {
+        public CharacterTrap(GameObject aniObject)
+            :base(aniObject)
+        {
+            ANI_NUMBER = 6;
+        }
+    }
+
+    public class CharacterRide : CharacterAni
+    {
+        public CharacterRide(GameObject aniObject)
+            :base(aniObject)
+        {
+            ANI_NUMBER = 4;
+        }
+    }
+
+    public class CharacterAttack : CharacterAni
+    {
+        Animator _target;
+        public CharacterAttack(GameObject aniObject, GameObject target)
+            :base(aniObject)
+        {
+            ANI_NUMBER = 3;
+            _target = target.GetComponent<Animator>();
+        }
+
+        public override void Run()
+        {
+            base.Run();
+            _target.SetInteger("state", 5);
+        }
+    }
+
+    public class CharacterDelete : Container
+    {
+        List<GameObject> _deleteTargets;
+        public CharacterDelete(List<GameObject> deleteTargets)
+        {
+            _deleteTargets = deleteTargets;
+        }
+
+        public override void Run()
+        {
+            if (IsDone)
+                return;
+            _isDone = true;
+            foreach (GameObject o in _deleteTargets)
+            {
+                GameObject.Destroy(o);
+            }
+        }
+    }
 
     public enum PIECES_STATE
     {
@@ -283,7 +384,7 @@ namespace UootNori
 
         public Animal _animal = Animal.MAX;
 
-        string[] _moverName = {"Uoot_N", "Uoot_N (1)"};
+        string[] _moverName = {"Character/CH_01", "Character/CH_02"};
         public PiecesMoveContainer(PLAYER_KIND kind)
         {
             _playerKind = kind;
@@ -293,6 +394,7 @@ namespace UootNori
 
             _curRoad = GameData.GetStartRoad();
             _pieces.transform.position = _curRoad._field.GetSelfField().transform.position;
+            _pieces.GetComponent<Animator>().SetInteger("state", 1);
             _piecesNum = 1;
             GameData.s_players[(int)kind].FieldIn(1);
 
@@ -325,7 +427,7 @@ namespace UootNori
 
         public PatternSystem.Arrange Move(Animal animal)
         {
-            List<Container> containers = new List<Container>();
+            List<Container> containers = new List<Container>();            
             int forwardNum = GameData.GetForwardNum(animal);
             ///PiecesMoveContainer mover = GameData.InFieldMoverCheck(CurRoad, forwardNum);
 
@@ -333,6 +435,10 @@ namespace UootNori
             {
                 if (_curRoad != null)
                     _curRoad._field.Mover = null;
+            }
+            else
+            {
+                containers.Add(new Timer(_pieces, 0.3f));
             }
 
             _animal = animal;
@@ -344,9 +450,10 @@ namespace UootNori
                     _curRoad = GameData.GetAllKillRoad();
                     Vector3 offsetPoint = _pieces.transform.position;
                     Vector3 p = _curRoad._field.GetSelfField().transform.position - offsetPoint;
+                    containers.Add(new ChracterMove(_pieces));
                     containers.Add(new Timer(_pieces, 0.1f));
-                    containers.Add(new Move(_pieces, p, 0.15f));
-                    containers.Add(new Timer(_pieces, 0.1f));
+                    containers.Add(new Move(_pieces, p, 0.2f));
+                    containers.Add(new ChracterIdle(_pieces));
                     containers.Add(new FieldSet(_curRoad._field, this));
                 }
                 else
@@ -374,14 +481,46 @@ namespace UootNori
                         {
                             _curRoad = GameData.NextRoad(_curRoad);
                             Vector3 p = _curRoad._field.GetSelfField().transform.position - offsetPoint;
+                            float roty = Mathf.Atan2(p.x, p.z) * Mathf.Rad2Deg;
                             offsetPoint = _curRoad._field.GetSelfField().transform.position;
-                            containers.Add(new Timer(null, 0.1f));
-                            containers.Add(new Move(_pieces, p, 0.15f));
+                            containers.Add(new Rotation(_pieces, new Vector3(0.0f, roty, 0.0f), 0.0f, Physical.Type.ABSOLUTE));
+                            if (forwardNum == i + 1)
+                            {
+                                if (_curRoad._field.Mover != null)
+                                {
+                                    
+                                    if (PlayerKind == _curRoad._field.Mover.PlayerKind)
+                                    {
+                                        containers.Add(new CharacterRide(_pieces));
+                                    }
+                                    else
+                                    {
+                                        containers.Add(new CharacterAttack(_pieces, _curRoad._field.Mover.Pieces));
+                                    }
+                                    containers.Add(new Timer(null, 0.25f));
+
+                                }
+                                else
+                                {
+                                    containers.Add(new ChracterMove(_pieces));
+                                }
+                            }
+                            else
+                            {
+                                if (_curRoad._field.Mover != null)
+                                {
+                                    ///밟아서 가는 애 처
+                                }
+                                containers.Add(new ChracterMove(_pieces));
+                            }
+                            containers.Add(new Move(_pieces, p, 0.2f));
+                            containers.Add(new ChracterIdle(_pieces));
                         }
-                    }
-                    
+                    }                    
+
                     if (!_isGoalin)
                     {
+                        containers.Add(new Rotation(_pieces, new Vector3(_pieces.transform.localEulerAngles.x, 180.0f, _pieces.transform.localEulerAngles.z), 0.0f, Physical.Type.ABSOLUTE));
                         containers.Add(new Timer(null, 0.1f));
                         containers.Add(new FieldSet(_curRoad._field, this));
                     }
@@ -398,12 +537,35 @@ namespace UootNori
                     {
                         _curRoad = GameData.PrevRoad(_curRoad);
                         Vector3 p = _curRoad._field.GetSelfField().transform.position - offsetPoint;
-                        containers.Add(new Timer(_pieces, 0.1f));
-                        containers.Add(new Move(_pieces, p, 0.15f));
+                        float roty = Mathf.Atan2(p.x, p.z) * Mathf.Rad2Deg;
+                        offsetPoint = _curRoad._field.GetSelfField().transform.position;
+                        if (_curRoad._field.Mover != null)
+                        {
+
+                            if (PlayerKind == _curRoad._field.Mover.PlayerKind)
+                            {
+                                containers.Add(new CharacterRide(_pieces));
+                            }
+                            else
+                            {
+                                containers.Add(new CharacterAttack(_pieces, _curRoad._field.Mover.Pieces));
+                            }
+                            containers.Add(new Timer(null, 0.25f));
+
+                        }
+                        else
+                        {
+                            containers.Add(new ChracterMove(_pieces));
+                        }
+                        containers.Add(new Timer(null, 0.1f));
+                        containers.Add(new Rotation(_pieces, new Vector3(0.0f, roty, 0.0f), 0.0f, Physical.Type.ABSOLUTE));
+                        containers.Add(new Move(_pieces, p, 0.2f));
+                        containers.Add(new ChracterIdle(_pieces));
                     }
 
                     if (!_isGoalin)
                     {
+                        containers.Add(new Rotation(_pieces, new Vector3(_pieces.transform.localEulerAngles.x, 180.0f, _pieces.transform.localEulerAngles.z), 0.0f, Physical.Type.ABSOLUTE));
                         containers.Add(new Timer(_pieces, 0.1f));
                         containers.Add(new FieldSet(_curRoad._field, this));
                     }
