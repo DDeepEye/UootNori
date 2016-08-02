@@ -29,8 +29,13 @@ namespace UootNori
         {
             mover.CurRoad._field.Mover = null;
             GameData.AdjustMover(mover, GameData.MoverAdjustKind.KILL_ONESELF);
-            GameObject.Destroy(mover.Pieces);
+            mover.Containers.AddContainer(new CharacterTrap(mover.Pieces));
+            mover.Containers.AddContainer(new Timer(null, 0.4f));
 
+            List<GameObject> deleteTarget = new List<GameObject>();
+            deleteTarget.Add(mover.Pieces);
+
+            mover.Containers.AddContainer(new CharacterDelete(deleteTarget));
             GameData.FieldInNumToMoverPiecesIsSame(mover.PlayerKind);
         }
     }
@@ -41,15 +46,21 @@ namespace UootNori
         {
             for(PLAYER_KIND i = PLAYER_KIND.PLAYER_1; i < PLAYER_KIND.MAX; ++i)
             {
+                List<GameObject> deleteTarget = new List<GameObject>();
+                deleteTarget.Add(mover.Pieces);
+
                 List<PiecesMoveContainer> movers = GameData.GetPiecesMover(i);
                 foreach (PiecesMoveContainer m in movers)
                 {
                     GameData.s_players[(int)i].Out(m.GetPiecesNum());
-                    GameObject.Destroy(m.Pieces);
+                    m.Pieces.GetComponent<Animator>().SetInteger("state", 5);
+                    deleteTarget.Add(m.Pieces);
                     m.CurRoad._field.Mover = null;
                 }
                 movers.Clear();
-
+                mover.Containers.AddContainer(new CharacterTrap(mover.Pieces));
+                mover.Containers.AddContainer(new Timer(null, 0.4f));
+                mover.Containers.AddContainer(new CharacterDelete(deleteTarget));
                 GameData.FieldInNumToMoverPiecesIsSame(i);
             }
         }
@@ -249,41 +260,95 @@ namespace UootNori
         }
     }
 
-    public class ChracterMove : Container
+    public abstract class CharacterAni : Container
     {
-        Animator _ani;
-        public ChracterMove(GameObject aniObject)
+        protected Animator _ani;
+        protected int ANI_NUMBER = 1;
+        protected CharacterAni(GameObject aniObject)
         {
             _ani = aniObject.GetComponent<Animator>();
         }
-
         public override void Run()
         {
             if (IsDone)
                 return;
 
             _isDone = true;
-            _ani.SetInteger("state", 2);
-            Debug.Log("ani state, 2");
+            _ani.SetInteger("state", ANI_NUMBER);
+            Debug.Log("ani state, "+ANI_NUMBER.ToString());
         }
     }
 
-    public class ChracterIdle : Container
+    public class ChracterMove : CharacterAni
     {
-        Animator _ani;
-        public ChracterIdle(GameObject aniObject)
+        public ChracterMove(GameObject aniObject)
+            :base(aniObject)
         {
-            _ani = aniObject.GetComponent<Animator>();
+            ANI_NUMBER = 2;
+        }
+    }
+
+    public class ChracterIdle : CharacterAni
+    {
+        public ChracterIdle(GameObject aniObject)
+            :base(aniObject)
+        {
+            ANI_NUMBER = 1;
+        }
+    }
+
+    public class CharacterTrap : CharacterAni
+    {
+        public CharacterTrap(GameObject aniObject)
+            :base(aniObject)
+        {
+            ANI_NUMBER = 6;
+        }
+    }
+
+    public class CharacterRide : CharacterAni
+    {
+        public CharacterRide(GameObject aniObject)
+            :base(aniObject)
+        {
+            ANI_NUMBER = 4;
+        }
+    }
+
+    public class CharacterAttack : CharacterAni
+    {
+        Animator _target;
+        public CharacterAttack(GameObject aniObject, GameObject target)
+            :base(aniObject)
+        {
+            ANI_NUMBER = 3;
+            _target = target.GetComponent<Animator>();
+        }
+
+        public override void Run()
+        {
+            base.Run();
+            _target.SetInteger("state", 5);
+        }
+    }
+
+    public class CharacterDelete : Container
+    {
+        List<GameObject> _deleteTargets;
+        public CharacterDelete(List<GameObject> deleteTargets)
+        {
+            _deleteTargets = deleteTargets;
         }
 
         public override void Run()
         {
             if (IsDone)
                 return;
-
             _isDone = true;
-            _ani.SetInteger("state", 1);
-            Debug.Log("ani state, 1");
+            foreach (GameObject o in _deleteTargets)
+            {
+                GameObject.Destroy(o);
+            }
         }
     }
 
@@ -373,7 +438,7 @@ namespace UootNori
             }
             else
             {
-                containers.Add(new Timer(_pieces, 1.0f));
+                containers.Add(new Timer(_pieces, 0.3f));
             }
 
             _animal = animal;
@@ -388,7 +453,6 @@ namespace UootNori
                     containers.Add(new ChracterMove(_pieces));
                     containers.Add(new Timer(_pieces, 0.1f));
                     containers.Add(new Move(_pieces, p, 0.2f));
-                    containers.Add(new Timer(_pieces, 0.1f));
                     containers.Add(new ChracterIdle(_pieces));
                     containers.Add(new FieldSet(_curRoad._field, this));
                 }
@@ -404,8 +468,6 @@ namespace UootNori
                 Vector3 offsetPoint = _pieces.transform.position;
                 if (forwardNum > 0)
                 {
-                    
-
                     for (int i = 0; i < forwardNum; ++i)
                     {
                         if (GameData.NextRoad(_curRoad) == null)
@@ -421,13 +483,38 @@ namespace UootNori
                             Vector3 p = _curRoad._field.GetSelfField().transform.position - offsetPoint;
                             float roty = Mathf.Atan2(p.x, p.z) * Mathf.Rad2Deg;
                             offsetPoint = _curRoad._field.GetSelfField().transform.position;
-
-                            containers.Add(new ChracterMove(_pieces));
-                            containers.Add(new Timer(null, 0.1f));
                             containers.Add(new Rotation(_pieces, new Vector3(0.0f, roty, 0.0f), 0.0f, Physical.Type.ABSOLUTE));
+                            if (forwardNum == i + 1)
+                            {
+                                if (_curRoad._field.Mover != null)
+                                {
+                                    
+                                    if (PlayerKind == _curRoad._field.Mover.PlayerKind)
+                                    {
+                                        containers.Add(new CharacterRide(_pieces));
+                                    }
+                                    else
+                                    {
+                                        containers.Add(new CharacterAttack(_pieces, _curRoad._field.Mover.Pieces));
+                                    }
+                                    containers.Add(new Timer(null, 0.25f));
+
+                                }
+                                else
+                                {
+                                    containers.Add(new ChracterMove(_pieces));
+                                }
+                            }
+                            else
+                            {
+                                if (_curRoad._field.Mover != null)
+                                {
+                                    ///밟아서 가는 애 처
+                                }
+                                containers.Add(new ChracterMove(_pieces));
+                            }
                             containers.Add(new Move(_pieces, p, 0.2f));
                             containers.Add(new ChracterIdle(_pieces));
-
                         }
                     }                    
 
@@ -452,15 +539,32 @@ namespace UootNori
                         Vector3 p = _curRoad._field.GetSelfField().transform.position - offsetPoint;
                         float roty = Mathf.Atan2(p.x, p.z) * Mathf.Rad2Deg;
                         offsetPoint = _curRoad._field.GetSelfField().transform.position;
-                        containers.Add(new ChracterMove(_pieces));
+                        if (_curRoad._field.Mover != null)
+                        {
+
+                            if (PlayerKind == _curRoad._field.Mover.PlayerKind)
+                            {
+                                containers.Add(new CharacterRide(_pieces));
+                            }
+                            else
+                            {
+                                containers.Add(new CharacterAttack(_pieces, _curRoad._field.Mover.Pieces));
+                            }
+                            containers.Add(new Timer(null, 0.25f));
+
+                        }
+                        else
+                        {
+                            containers.Add(new ChracterMove(_pieces));
+                        }
                         containers.Add(new Timer(null, 0.1f));
                         containers.Add(new Rotation(_pieces, new Vector3(0.0f, roty, 0.0f), 0.0f, Physical.Type.ABSOLUTE));
                         containers.Add(new Move(_pieces, p, 0.2f));
+                        containers.Add(new ChracterIdle(_pieces));
                     }
 
                     if (!_isGoalin)
                     {
-                        containers.Add(new ChracterIdle(_pieces));
                         containers.Add(new Rotation(_pieces, new Vector3(_pieces.transform.localEulerAngles.x, 180.0f, _pieces.transform.localEulerAngles.z), 0.0f, Physical.Type.ABSOLUTE));
                         containers.Add(new Timer(_pieces, 0.1f));
                         containers.Add(new FieldSet(_curRoad._field, this));
@@ -656,7 +760,7 @@ namespace UootNori
 
     public class GameData
     {
-        public const int PIECESMAX = 1;
+        public const int PIECESMAX = 5;
 
         public const int FIELD_MAXNUM = 30;
         public const int ROAD_MAXNUM = 8;
