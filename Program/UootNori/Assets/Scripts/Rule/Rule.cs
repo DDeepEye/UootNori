@@ -30,7 +30,7 @@ namespace UootNori
             mover.CurRoad._field.Mover = null;
             GameData.AdjustMover(mover, GameData.MoverAdjustKind.KILL_ONESELF);
             mover.Containers.AddContainer(new CharacterTrap(mover.Pieces));
-            mover.Containers.AddContainer(new Timer(null, 0.4f));
+            mover.Containers.AddContainer(new Timer(null, 1.2f));
 
             List<GameObject> deleteTarget = new List<GameObject>();
             deleteTarget.Add(mover.Pieces);
@@ -44,25 +44,29 @@ namespace UootNori
     {
         public override void Run(PiecesMoveContainer mover)
         {
-            for(PLAYER_KIND i = PLAYER_KIND.PLAYER_1; i < PLAYER_KIND.MAX; ++i)
-            {
-                List<GameObject> deleteTarget = new List<GameObject>();
+            List<GameObject> deleteTarget = new List<GameObject>();
+            for (PLAYER_KIND i = PLAYER_KIND.PLAYER_1; i < PLAYER_KIND.MAX; ++i)
+            {   
                 deleteTarget.Add(mover.Pieces);
 
                 List<PiecesMoveContainer> movers = GameData.GetPiecesMover(i);
                 foreach (PiecesMoveContainer m in movers)
-                {
-                    GameData.s_players[(int)i].Out(m.GetPiecesNum());
-                    m.Pieces.GetComponent<Animator>().SetInteger("state", 5);
-                    deleteTarget.Add(m.Pieces);
+                {   
                     m.CurRoad._field.Mover = null;
+                    GameData.s_players[(int)i].Out(m.GetPiecesNum());
+                    if (m == mover)
+                        continue;
+
+                    deleteTarget.Add(m.Pieces);
+                    m.Pieces.GetComponent<Animator>().SetInteger("state", 5);
+                    
                 }
                 movers.Clear();
-                mover.Containers.AddContainer(new CharacterTrap(mover.Pieces));
-                mover.Containers.AddContainer(new Timer(null, 0.4f));
-                mover.Containers.AddContainer(new CharacterDelete(deleteTarget));
+                mover.Containers.AddContainer(new CharacterTrap(mover.Pieces));                
                 GameData.FieldInNumToMoverPiecesIsSame(i);
             }
+            mover.Containers.AddContainer(new Timer(null, 1.2f));
+            mover.Containers.AddContainer(new CharacterDelete(deleteTarget));
         }
     }
 
@@ -274,8 +278,8 @@ namespace UootNori
                 return;
 
             _isDone = true;
+            Debug.Log("ani state, " + ANI_NUMBER.ToString());
             _ani.SetInteger("state", ANI_NUMBER);
-            Debug.Log("ani state, "+ANI_NUMBER.ToString());
         }
     }
 
