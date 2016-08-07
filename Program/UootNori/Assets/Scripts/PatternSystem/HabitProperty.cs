@@ -97,7 +97,7 @@ namespace PatternSystem
         private int _repeatCount;
         private int _curCount = 0;
 
-        public Arrange(GameObject target, ArrangeType type, List<Container> containers, int repeatCount):base(target)
+        public Arrange(GameObject target, ArrangeType type, List<Container> containers, int repeatCount = 1):base(target)
 		{
 			_type = type;
             _containers = containers;
@@ -155,6 +155,8 @@ namespace PatternSystem
                 if (inter.IsDone)
                     ++doneCnt;
             }
+
+            _curProerty = doneCnt;
         }
         private void ResetCheck()
         {
@@ -448,6 +450,28 @@ namespace PatternSystem
                 _curTime = 0.0f;
         }
 
+    }
+
+    public class FadeOut : Property
+    {
+        float _time;
+        float _alpha;
+
+        public FadeOut(GameObject target, float time, float alpha /* 0 ~ 1.0f */)
+            :base(target)
+        {
+            _time = time;
+            _alpha = alpha;
+        }
+
+        public override void Run()
+        {
+            if (_isDone)
+                return;
+            
+
+                
+        }
     }
 
     public class Scale : Physical

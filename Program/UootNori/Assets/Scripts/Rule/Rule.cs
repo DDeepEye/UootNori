@@ -30,7 +30,7 @@ namespace UootNori
             mover.CurRoad._field.Mover = null;
             GameData.AdjustMover(mover, GameData.MoverAdjustKind.KILL_ONESELF);
             mover.Containers.AddContainer(new CharacterTrap(mover.Pieces));
-            mover.Containers.AddContainer(new Timer(null, 1.2f));
+            mover.Containers.AddContainer(new CharacterFadeOut(mover.Pieces, 1.2f));
 
             List<GameObject> deleteTarget = new List<GameObject>();
             deleteTarget.Add(mover.Pieces);
@@ -44,6 +44,8 @@ namespace UootNori
     {
         public override void Run(PiecesMoveContainer mover)
         {
+            List<Container> delEffs = new List<Container>();
+            PatternSystem.Arrange delEffArrange = new PatternSystem.Arrange(null, Arrange.ArrangeType.PARALLEL, delEffs);
             List<GameObject> deleteTarget = new List<GameObject>();
             for (PLAYER_KIND i = PLAYER_KIND.PLAYER_1; i < PLAYER_KIND.MAX; ++i)
             {   
@@ -54,18 +56,22 @@ namespace UootNori
                 {   
                     m.CurRoad._field.Mover = null;
                     GameData.s_players[(int)i].Out(m.GetPiecesNum());
+
                     if (m == mover)
                         continue;
 
                     deleteTarget.Add(m.Pieces);
                     m.Pieces.GetComponent<Animator>().SetInteger("state", 5);
-                    
+                    delEffs.Add(new CharacterFadeOut(m.Pieces));
                 }
                 movers.Clear();
                 mover.Containers.AddContainer(new CharacterTrap(mover.Pieces));                
+                delEffs.Add(new CharacterFadeOut(mover.Pieces, 1.2f));
+                mover.Containers.AddContainer(delEffArrange);
+
                 GameData.FieldInNumToMoverPiecesIsSame(i);
             }
-            mover.Containers.AddContainer(new Timer(null, 1.2f));
+
             mover.Containers.AddContainer(new CharacterDelete(deleteTarget));
         }
     }
@@ -266,10 +272,12 @@ namespace UootNori
 
     public abstract class CharacterAni : Container
     {
+        protected GameObject _aniObj;
         protected Animator _ani;
         protected int ANI_NUMBER = 1;
         protected CharacterAni(GameObject aniObject)
         {
+            _aniObj = aniObject;
             _ani = aniObject.GetComponent<Animator>();
         }
         public override void Run()
@@ -333,6 +341,15 @@ namespace UootNori
         {
             base.Run();
             _target.SetInteger("state", 5);
+            /*
+            SkinnedMeshRenderer smr = _target.transform.FindChild("CH01").GetComponent<SkinnedMeshRenderer>();
+            foreach (Material m in smr.materials)
+            {
+                Color c = m.color;
+                c.a = 0.15f;
+                m.color = c;
+            }
+            */
         }
     }
 
@@ -353,6 +370,48 @@ namespace UootNori
             {
                 GameObject.Destroy(o);
             }
+        }
+    }
+
+    public class CharacterFadeOut : Container
+    {
+        GameObject _target;
+        float _timer = 0.25f;
+        float _curTime = 0.0f;
+        public CharacterFadeOut(GameObject target, float timer = 0.25f)
+        {
+            _target = target;
+            _timer = timer;
+        }
+
+        public override void Run()
+        {
+            if (IsDone)
+                return;
+
+            string[] CHILDREN = {"CH01", "CH02_B", "CH_H", "CH_HO"};
+        
+            _curTime += Time.deltaTime;
+            _curTime = _curTime > _timer ? _timer : _curTime;
+
+            float alpha = _curTime / _timer;
+            alpha = 1.0f - alpha;
+
+            for (int i = 0; i < CHILDREN.Length; ++i)
+            {
+                Renderer [] renderers = _target.transform.FindChild(CHILDREN[i]).GetComponents<Renderer>();
+                foreach (Renderer r in renderers)
+                {
+                    foreach (Material m in r.materials)
+                    {
+                        Color c = m.color;
+                        c.a = alpha;
+                        m.color = c;
+                    }
+                }
+            }
+            if (_curTime == _timer)
+                _isDone = true;
         }
     }
 
@@ -426,6 +485,7 @@ namespace UootNori
             containers.Add(new Timer(_pieces, 0.3f));
             containers.Add(new FieldSet(_curRoad._field, this));
             _arrange = new Arrange(_pieces, Arrange.ArrangeType.SERIES, containers, 1);
+            _animal = Animal.BACK_DO;
             return _arrange;
         }
 
@@ -501,8 +561,8 @@ namespace UootNori
                                     {
                                         containers.Add(new CharacterAttack(_pieces, _curRoad._field.Mover.Pieces));
                                     }
-                                    containers.Add(new Timer(null, 0.25f));
-
+                                    containers.Add(new CharacterFadeOut(_curRoad._field.Mover.Pieces));
+                                    ///containers.Add(new Timer(null, 0.25f));
                                 }
                                 else
                                 {
@@ -554,7 +614,8 @@ namespace UootNori
                             {
                                 containers.Add(new CharacterAttack(_pieces, _curRoad._field.Mover.Pieces));
                             }
-                            containers.Add(new Timer(null, 0.25f));
+                            containers.Add(new CharacterFadeOut(_curRoad._field.Mover.Pieces));
+                            ///containers.Add(new Timer(null, 0.25f));
 
                         }
                         else
