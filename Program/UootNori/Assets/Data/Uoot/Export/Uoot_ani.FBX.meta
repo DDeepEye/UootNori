@@ -111,7 +111,7 @@ ModelImporter:
       name: n01
       takeName: Take 001
       firstFrame: 1
-      lastFrame: 65
+      lastFrame: 98
       wrapMode: 0
       orientationOffsetY: 0
       level: 0
@@ -151,7 +151,7 @@ ModelImporter:
       name: n02
       takeName: Take 001
       firstFrame: 101
-      lastFrame: 172
+      lastFrame: 198
       wrapMode: 0
       orientationOffsetY: 0
       level: 0
@@ -191,7 +191,7 @@ ModelImporter:
       name: n03
       takeName: Take 001
       firstFrame: 201
-      lastFrame: 256
+      lastFrame: 298
       wrapMode: 0
       orientationOffsetY: 0
       level: 0
@@ -231,7 +231,7 @@ ModelImporter:
       name: n04
       takeName: Take 001
       firstFrame: 301
-      lastFrame: 363
+      lastFrame: 398
       wrapMode: 0
       orientationOffsetY: 0
       level: 0
@@ -271,7 +271,7 @@ ModelImporter:
       name: n05
       takeName: Take 001
       firstFrame: 501
-      lastFrame: 560
+      lastFrame: 598
       wrapMode: 0
       orientationOffsetY: 0
       level: 0
@@ -551,7 +551,7 @@ ModelImporter:
       name: n06
       takeName: Take 001
       firstFrame: 501
-      lastFrame: 560
+      lastFrame: 598
       wrapMode: 0
       orientationOffsetY: 0
       level: 0
@@ -590,7 +590,7 @@ ModelImporter:
     isReadable: 1
   meshes:
     lODScreenPercentages: []
-    globalScale: 1
+    globalScale: 2.4
     meshCompression: 0
     addColliders: 0
     importBlendShapes: 1
