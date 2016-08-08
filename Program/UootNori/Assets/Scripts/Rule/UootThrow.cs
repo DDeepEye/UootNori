@@ -236,8 +236,16 @@ public class UootThrow : Attribute {
         _animalProbability.Add(prob+=BACK_DO+_probabilityOffset[5]);
     }
 
+    static bool ismo = false;
     void ThrowToData()
     {
+        if(!ismo)
+        {
+            GameData._curAnimals.Add(Animal.MO);
+            ismo = true;
+            return;
+        }
+            
         _isOut = false;
         int rr = Random.Range(1, _animalProbability[_animalProbability.Count - 1]);
         for (int i = 0; i < _animalProbability.Count; ++i)

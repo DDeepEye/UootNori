@@ -88,7 +88,7 @@ namespace UootNori
             Vector3 offsetPoint = mover.Pieces.transform.position;
             Vector3 p = _sendRoad._field.GetSelfField().transform.position - offsetPoint;
             mover.Containers.AddContainer(new Timer(null, 0.1f));
-            mover.Containers.AddContainer(new Move(mover.Pieces, p, 0.15f));
+            mover.Containers.AddContainer(new JumpingMove(mover.Pieces, p, 0.15f));
             mover.Containers.AddContainer(new Timer(null, 0.1f));
             mover.Containers.AddContainer(new FieldSet(_sendRoad._field, mover));            
             mover.CurRoad._field.Mover = null;
@@ -327,6 +327,15 @@ namespace UootNori
         }
     }
 
+    public class CharacterStepped : CharacterAni
+    {
+        public CharacterStepped(GameObject aniObject)
+            :base(aniObject)
+        {
+            ANI_NUMBER = 13;
+        }
+    }
+
     public class CharacterAttack : CharacterAni
     {
         Animator _target;
@@ -429,7 +438,7 @@ namespace UootNori
     }
 
     public class PiecesMoveContainer
-    {  
+    {        
         static GameObject [] s_originPiecess = new GameObject[(int)PLAYER_KIND.MAX];
         private Road _curRoad = null;
         public Road CurRoad { get { return _curRoad; } set { _curRoad = value; } }
@@ -516,7 +525,7 @@ namespace UootNori
                     Vector3 p = _curRoad._field.GetSelfField().transform.position - offsetPoint;
                     containers.Add(new ChracterMove(_pieces));
                     containers.Add(new Timer(_pieces, 0.1f));
-                    containers.Add(new Move(_pieces, p, 0.2f));
+                    containers.Add(new JumpingMove(_pieces, p, 0.2f));
                     containers.Add(new ChracterIdle(_pieces));
                     containers.Add(new FieldSet(_curRoad._field, this));
                 }
@@ -529,6 +538,7 @@ namespace UootNori
             }
             else
             {
+                Vector3 lastStepPoint = new Vector3(0,0,0);
                 Vector3 offsetPoint = _pieces.transform.position;
                 if (forwardNum > 0)
                 {
@@ -548,6 +558,12 @@ namespace UootNori
                             float roty = Mathf.Atan2(p.x, p.z) * Mathf.Rad2Deg;
                             offsetPoint = _curRoad._field.GetSelfField().transform.position;
                             containers.Add(new Rotation(_pieces, new Vector3(0.0f, roty, 0.0f), 0.0f, Physical.Type.ABSOLUTE));
+                            bool isstepped = false;
+                            p -= lastStepPoint;
+                            lastStepPoint.x = 0.0f;
+                            lastStepPoint.y = 0.0f;
+                            lastStepPoint.z = 0.0f;
+
                             if (forwardNum == i + 1)
                             {
                                 if (_curRoad._field.Mover != null)
@@ -562,7 +578,6 @@ namespace UootNori
                                         containers.Add(new CharacterAttack(_pieces, _curRoad._field.Mover.Pieces));
                                     }
                                     containers.Add(new CharacterFadeOut(_curRoad._field.Mover.Pieces));
-                                    ///containers.Add(new Timer(null, 0.25f));
                                 }
                                 else
                                 {
@@ -570,15 +585,23 @@ namespace UootNori
                                 }
                             }
                             else
-                            {
+                            {                                
                                 if (_curRoad._field.Mover != null)
                                 {
+                                    isstepped = true;
+                                    lastStepPoint = _curRoad._field.Mover.Pieces.transform.FindChild("Position_Check_P").transform.localPosition;
+                                    p += lastStepPoint;
                                     ///밟아서 가는 애 처
                                 }
                                 containers.Add(new ChracterMove(_pieces));
                             }
-                            containers.Add(new Move(_pieces, p, 0.2f));
+                            containers.Add(new JumpingMove(_pieces, p, 0.2f));
                             containers.Add(new ChracterIdle(_pieces));
+                            if (isstepped)
+                            {
+                                containers.Add(new CharacterStepped(_curRoad._field.Mover.Pieces));
+                                containers.Add(new ChracterIdle(_curRoad._field.Mover.Pieces));
+                            }
                         }
                     }                    
 
@@ -624,7 +647,7 @@ namespace UootNori
                         }
                         containers.Add(new Timer(null, 0.1f));
                         containers.Add(new Rotation(_pieces, new Vector3(0.0f, roty, 0.0f), 0.0f, Physical.Type.ABSOLUTE));
-                        containers.Add(new Move(_pieces, p, 0.2f));
+                        containers.Add(new JumpingMove(_pieces, p, 0.2f));
                         containers.Add(new ChracterIdle(_pieces));
                     }
 

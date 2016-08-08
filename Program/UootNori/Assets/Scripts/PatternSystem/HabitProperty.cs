@@ -294,7 +294,7 @@ namespace PatternSystem
 
     public class Move : Physical
     {
-        Vector3 _resultValue;
+        protected Vector3 _resultValue;
         
         public Move(GameObject target, Vector3 translatePoint, float time)
             : base(target, translatePoint, time, Type.RELATIVE)
