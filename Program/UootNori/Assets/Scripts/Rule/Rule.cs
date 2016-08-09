@@ -267,6 +267,20 @@ namespace UootNori
                 return;
             _isDone = true;
             UootThrow.s_uootAni.SetInteger("state", _aniNum);
+            GameData.s_animaleEffect.SetActive(false);
+        }
+    }
+
+    public class UootThrowResultRefresh : Container
+    {
+        public override void Run()
+        {
+            if (IsDone)
+                return;
+
+            _isDone = true;
+
+            GameData.RefreshAnimalView();
         }
     }
 
@@ -853,6 +867,7 @@ namespace UootNori
         public const int FIELD_MAXNUM = 30;
         public const int ROAD_MAXNUM = 8;
         public const int WAYKIND = 4;
+        public const int ANIMAL_STATE_NUM = 4;
 
         public static List<Animal> _curAnimals = new List<Animal>();
         public static PlayerData[] s_players = new PlayerData[(int)PLAYER_KIND.MAX];
@@ -866,6 +881,8 @@ namespace UootNori
 
         public static List<FieldData>[] _roads = new List<FieldData>[ROAD_MAXNUM];
         public static List<List<FieldData>>[] _ways = new List<List<FieldData>>[WAYKIND];
+        public static GameObject[] s_animalStateList = new GameObject[ANIMAL_STATE_NUM];
+        public static GameObject s_animaleEffect;
 
         static Dictionary<Animal, int> s_animalToForwardNum = new Dictionary<Animal, int>();
 
@@ -937,6 +954,7 @@ namespace UootNori
                 s_players[i] = new PlayerData();
                 s_moveContainers.Add((PLAYER_KIND)i, new List<PiecesMoveContainer>());
             }
+            InitAnimalStateView();
         }
 
         private static void WayInit()
@@ -1106,6 +1124,34 @@ namespace UootNori
             roads.Clear();
         }
 
+        public static void InitAnimalStateView()
+        {
+            GameObject finder = GameObject.Find("UI Root");
+            GameObject effectFinder = finder;
+            string[] animalStateObjectPath = {"Size","GamePlay","S_Uoot_P" };
+            string[] animalEffectObjectPath = {"Size","GamePlay","B_Uoot_P" };
+            foreach (string p in animalStateObjectPath)
+            {
+                finder = finder.transform.FindChild(p).gameObject;
+            }
+
+            foreach (string p in animalEffectObjectPath)
+            {
+                effectFinder = effectFinder.transform.FindChild(p).gameObject;
+            }
+            s_animaleEffect = effectFinder;
+            s_animaleEffect.SetActive(false);
+
+            for (int i = 0; i < ANIMAL_STATE_NUM; ++i)
+            {
+                s_animalStateList[i] = finder.transform.FindChild("0" + (i + 1).ToString() + "_P").gameObject;
+            }
+            foreach (GameObject go in s_animalStateList)
+            {
+                go.SetActive(false);
+            }
+        }
+
         public static void Reset()
         {
             
@@ -1261,10 +1307,24 @@ namespace UootNori
             return _curAnimals.Count;
         }
 
+        public static Dictionary<Animal, int> GetAnimalState()
+        {
+            Dictionary<Animal, int> animalState = new Dictionary<Animal, int>();
+            for (Animal a = Animal.DO; a < Animal.MAX; ++a)
+            {
+                animalState.Add(a, 0);
+            }
+
+            foreach (Animal a in _curAnimals)
+            {
+                animalState[a] = animalState[a] + 1;
+            }
+            return animalState;
+        }
+
         public static void AddAnimal(Animal animal)
         {
             _curAnimals.Add(animal);
-            RefreshAnimalView();
         }
 
         public static Animal GetAnimal(int index)
@@ -1287,8 +1347,48 @@ namespace UootNori
 
         public static void RefreshAnimalView()
         {
-        }
+            string animalObj = "Uoot_Sprite_P";
+            string animalNumObj = "Uoot_Label_Count_P";
+            foreach (GameObject go in s_animalStateList)
+            {
+                go.SetActive(false);
+            }
 
+            Dictionary<Animal, string> animalImage = new Dictionary<Animal, string>();
+            for (Animal a = Animal.DO; a < Animal.BACK_DO; ++a)
+            {
+                animalImage.Add(a, "ETC_S_Uoot_" + (((int)a) + 1).ToString());
+            }
+            animalImage.Add(Animal.BACK_DO, "ETC_S_Uoot_0");
+
+            Dictionary<Animal, int> animalState = GetAnimalState();
+            int index = 0;
+
+            for (Animal a = Animal.DO; a < Animal.MAX; ++a)
+            {
+                if (animalState[a] > 0)
+                {
+                    ++index;
+                    GameObject s = s_animalStateList[index];
+                    s.SetActive(true);
+                    s.transform.FindChild(animalObj).GetComponent<UISprite>().spriteName = animalImage[a];
+                    s.transform.FindChild(animalNumObj).GetComponent<UILabel>().text = animalState[a].ToString();
+                }
+            }
+
+            animalImage.Clear();
+            for (Animal a = Animal.DO; a < Animal.BACK_DO; ++a)
+            {
+                animalImage.Add(a, "ETC_B_Uoot_" + (((int)a) + 1).ToString());
+            }
+            animalImage.Add(Animal.BACK_DO, "ETC_B_Uoot_0");
+
+            if(animalImage.ContainsKey( GetLastAnimal() ))
+            {
+                s_animaleEffect.SetActive(true);
+                s_animaleEffect.transform.FindChild("B_Uoot_Sprite_P").GetComponent<UISprite>().spriteName = animalImage[GetLastAnimal()];
+            }
+        }
         public static int GetForwardNum(Animal animal)
         {
             if(!s_animalToForwardNum.ContainsKey(animal))

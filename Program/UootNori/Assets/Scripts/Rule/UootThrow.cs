@@ -272,7 +272,9 @@ public class UootThrow : Attribute {
         List<Container> uootThrowFlow = new List<Container>();
         uootThrowFlow.Add(new PatternSystem.Timer(null, 0.5f));
         uootThrowFlow.Add(new UootThrowPlayer(aninum));
-        uootThrowFlow.Add(new PatternSystem.Timer(null, 3.0f));
+        uootThrowFlow.Add(new PatternSystem.Timer(null, 1.0f));
+        uootThrowFlow.Add(new UootThrowResultRefresh());
+        uootThrowFlow.Add(new PatternSystem.Timer(null, 2.0f));
         _aniArrange = new PatternSystem.Arrange(null, PatternSystem.Arrange.ArrangeType.SERIES, uootThrowFlow, 1);
     }
     
