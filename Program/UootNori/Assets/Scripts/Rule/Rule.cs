@@ -686,14 +686,26 @@ namespace UootNori
     }
 
     public class PlayerData
-    {   
-        public PlayerData(int piecesMax = GameData.PIECESMAX)
+    {
+        UILabel _goalInNum;
+        public PlayerData(PLAYER_KIND kind,  int piecesMax = GameData.PIECESMAX)
         {
             _pieces = new PiecesData[piecesMax];
             for(int i = 0; i < piecesMax; ++i)
             {
                 _pieces[i] = new PiecesData();
             }
+
+            Transform gp = GameObject.Find("UI Root").transform.FindChild("Size").FindChild("GamePlay");
+            if (kind == PLAYER_KIND.PLAYER_1)
+            {
+                _goalInNum = gp.FindChild("Play01").FindChild("Label (8)").GetComponent<UILabel>();
+            }
+            else
+            {
+                _goalInNum = gp.FindChild("Play02").FindChild("Label (8)").GetComponent<UILabel>();
+            }
+            _goalInNum.text = "0";
         }
 
         public PiecesData[] _pieces;
@@ -769,8 +781,7 @@ namespace UootNori
                         if (GetInFieldNum() + GetOutFieldNum() + GetGoalInNum() > GameData.PIECESMAX)
                             Debug.Log("what the fuck !!!");
                         return;
-                    }
-                        
+                    }   
                 }
             }
         }
@@ -795,6 +806,8 @@ namespace UootNori
                     }
                 }
             }
+
+            _goalInNum.text = GetGoalInNum().ToString();
         }
     }
 
@@ -884,6 +897,7 @@ namespace UootNori
         public static GameObject[] s_animalStateList = new GameObject[ANIMAL_STATE_NUM];
         public static GameObject s_animaleEffect;
 
+
         static Dictionary<Animal, int> s_animalToForwardNum = new Dictionary<Animal, int>();
 
         static Dictionary<PLAYER_KIND, List<PiecesMoveContainer>> s_moveContainers = new Dictionary<PLAYER_KIND, List<PiecesMoveContainer>>();
@@ -951,7 +965,7 @@ namespace UootNori
             s_animalToForwardNum.Add(Animal.BACK_DO, -1);
             for (int i = 0; i < s_players.Length; ++i)
             {
-                s_players[i] = new PlayerData();
+                s_players[i] = new PlayerData((PLAYER_KIND)i);
                 s_moveContainers.Add((PLAYER_KIND)i, new List<PiecesMoveContainer>());
             }
             InitAnimalStateView();
