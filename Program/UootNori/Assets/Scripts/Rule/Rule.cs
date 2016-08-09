@@ -256,17 +256,17 @@ namespace UootNori
 
     public class UootThrowPlayer : Container
     {
-        string _state;
-        public UootThrowPlayer(string state)
+        int _aniNum;
+        public UootThrowPlayer(int aniNum)
         {
-            _state = state;
+            _aniNum = aniNum;
         }
         public override void Run()
         {
             if (IsDone)
                 return;
             _isDone = true;
-            UootThrow.s_uootAni.Play(_state);                       
+            UootThrow.s_uootAni.SetInteger("state", _aniNum);
         }
     }
 
@@ -1261,6 +1261,12 @@ namespace UootNori
             return _curAnimals.Count;
         }
 
+        public static void AddAnimal(Animal animal)
+        {
+            _curAnimals.Add(animal);
+            RefreshAnimalView();
+        }
+
         public static Animal GetAnimal(int index)
         {
             return _curAnimals[index];
@@ -1269,6 +1275,7 @@ namespace UootNori
         public static void RemoveAnimal(int index)
         {
             _curAnimals.RemoveAt(index);
+            RefreshAnimalView();
         }
 
         public static Animal GetLastAnimal()
@@ -1276,6 +1283,10 @@ namespace UootNori
             if(_curAnimals.Count > 0)
                 return _curAnimals[_curAnimals.Count - 1];
             return Animal.NONE;
+        }
+
+        public static void RefreshAnimalView()
+        {
         }
 
         public static int GetForwardNum(Animal animal)

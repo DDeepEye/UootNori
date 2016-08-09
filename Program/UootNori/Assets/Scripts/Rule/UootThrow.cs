@@ -236,23 +236,16 @@ public class UootThrow : Attribute {
         _animalProbability.Add(prob+=BACK_DO+_probabilityOffset[5]);
     }
 
-    static bool ismo = false;
+
     void ThrowToData()
     {
-        if(!ismo)
-        {
-            GameData._curAnimals.Add(Animal.MO);
-            ismo = true;
-            return;
-        }
-            
         _isOut = false;
         int rr = Random.Range(1, _animalProbability[_animalProbability.Count - 1]);
         for (int i = 0; i < _animalProbability.Count; ++i)
         {
             if (_animalProbability[i] > rr)
             {
-                GameData._curAnimals.Add((Animal)i);
+                GameData.AddAnimal((Animal)i);
                 ///Debug.Log(((Animal)i).ToString());
                 break;
             }
@@ -270,18 +263,15 @@ public class UootThrow : Attribute {
     void UootThrowAni()
     {   
         int aninum = Random.Range(1, 7);
-        string aniName;
-        if (_isOut)
-            aniName = "cliff0"+ aninum.ToString();
-        else
-            aniName = "n0" + aninum.ToString();
 
-        s_uootAni.speed = 1.5f;
-        s_uootAni.Play("n");
+        if (_isOut)
+        {
+            aninum = Random.Range(11, 17);
+        }
 
         List<Container> uootThrowFlow = new List<Container>();
         uootThrowFlow.Add(new PatternSystem.Timer(null, 0.5f));
-        uootThrowFlow.Add(new UootThrowPlayer(aniName));
+        uootThrowFlow.Add(new UootThrowPlayer(aninum));
         uootThrowFlow.Add(new PatternSystem.Timer(null, 3.0f));
         _aniArrange = new PatternSystem.Arrange(null, PatternSystem.Arrange.ArrangeType.SERIES, uootThrowFlow, 1);
     }
