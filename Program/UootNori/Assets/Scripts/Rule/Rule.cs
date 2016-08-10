@@ -88,6 +88,20 @@ namespace UootNori
             Vector3 offsetPoint = mover.Pieces.transform.position;
             Vector3 p = _sendRoad._field.GetSelfField().transform.position - offsetPoint;
             mover.Containers.AddContainer(new Timer(null, 0.1f));
+
+            if (_sendRoad._field.Mover != null)
+            {
+                mover.Containers.AddContainer(new CharacterFadeOut(_sendRoad._field.Mover.Pieces));
+                if (_sendRoad._field.Mover.PlayerKind == mover.PlayerKind)
+                {
+                    mover.Containers.AddContainer(new CharacterRide(mover.Pieces));
+                }
+                else
+                {
+                    mover.Containers.AddContainer(new CharacterAttack(mover.Pieces, _sendRoad._field.Mover.Pieces));
+                }
+            }
+            
             mover.Containers.AddContainer(new JumpingMove(mover.Pieces, p, 0.15f));
             mover.Containers.AddContainer(new Timer(null, 0.1f));
             mover.Containers.AddContainer(new FieldSet(_sendRoad._field, mover));            
@@ -105,7 +119,10 @@ namespace UootNori
             if (GameData.s_players[(int)mover.PlayerKind].GetOutFieldNum() > 0)
             {
                 GameData.s_players[(int)mover.PlayerKind].FieldIn(1);
-                mover.Add(1);               
+                mover.Add(1);
+                mover.Containers.AddContainer(new CharacterAdd(mover.Pieces));
+                mover.Containers.AddContainer(new Timer(null, 1.2f));
+                mover.Containers.AddContainer(new CharacterIdle(mover.Pieces));
             }
 
             GameData.FieldInNumToMoverPiecesIsSame(mover.PlayerKind);
@@ -120,6 +137,9 @@ namespace UootNori
             {
                 mover.Add(-1);
                 GameData.s_players[(int)mover.PlayerKind].Out(1);
+                mover.Containers.AddContainer(new CharacterRemove(mover.Pieces));
+                mover.Containers.AddContainer(new Timer(null, 1.2f));
+                mover.Containers.AddContainer(new CharacterIdle(mover.Pieces));
             }
 
             GameData.FieldInNumToMoverPiecesIsSame(mover.PlayerKind);
@@ -305,18 +325,18 @@ namespace UootNori
         }
     }
 
-    public class ChracterMove : CharacterAni
+    public class CharacterMove : CharacterAni
     {
-        public ChracterMove(GameObject aniObject)
+        public CharacterMove(GameObject aniObject)
             :base(aniObject)
         {
             ANI_NUMBER = 2;
         }
     }
 
-    public class ChracterIdle : CharacterAni
+    public class CharacterIdle : CharacterAni
     {
-        public ChracterIdle(GameObject aniObject)
+        public CharacterIdle(GameObject aniObject)
             :base(aniObject)
         {
             ANI_NUMBER = 1;
@@ -347,6 +367,24 @@ namespace UootNori
             :base(aniObject)
         {
             ANI_NUMBER = 13;
+        }
+    }
+
+    public class CharacterAdd : CharacterAni
+    {
+        public CharacterAdd(GameObject aniObject)
+            :base(aniObject)
+        {
+            ANI_NUMBER = 15;
+        }
+    }
+
+    public class CharacterRemove : CharacterAni
+    {
+        public CharacterRemove(GameObject aniObject)
+            : base(aniObject)
+        {
+            ANI_NUMBER = 14;
         }
     }
 
@@ -537,10 +575,10 @@ namespace UootNori
                     _curRoad = GameData.GetAllKillRoad();
                     Vector3 offsetPoint = _pieces.transform.position;
                     Vector3 p = _curRoad._field.GetSelfField().transform.position - offsetPoint;
-                    containers.Add(new ChracterMove(_pieces));
+                    containers.Add(new CharacterMove(_pieces));
                     containers.Add(new Timer(_pieces, 0.1f));
                     containers.Add(new JumpingMove(_pieces, p, 0.2f));
-                    containers.Add(new ChracterIdle(_pieces));
+                    containers.Add(new CharacterIdle(_pieces));
                     containers.Add(new FieldSet(_curRoad._field, this));
                 }
                 else
@@ -595,7 +633,7 @@ namespace UootNori
                                 }
                                 else
                                 {
-                                    containers.Add(new ChracterMove(_pieces));
+                                    containers.Add(new CharacterMove(_pieces));
                                 }
                             }
                             else
@@ -607,14 +645,14 @@ namespace UootNori
                                     p += lastStepPoint;
                                     ///밟아서 가는 애 처
                                 }
-                                containers.Add(new ChracterMove(_pieces));
+                                containers.Add(new CharacterMove(_pieces));
                             }
                             containers.Add(new JumpingMove(_pieces, p, 0.2f));
-                            containers.Add(new ChracterIdle(_pieces));
+                            containers.Add(new CharacterIdle(_pieces));
                             if (isstepped)
                             {
                                 containers.Add(new CharacterStepped(_curRoad._field.Mover.Pieces));
-                                containers.Add(new ChracterIdle(_curRoad._field.Mover.Pieces));
+                                containers.Add(new CharacterIdle(_curRoad._field.Mover.Pieces));
                             }
                         }
                     }                    
@@ -657,12 +695,12 @@ namespace UootNori
                         }
                         else
                         {
-                            containers.Add(new ChracterMove(_pieces));
+                            containers.Add(new CharacterMove(_pieces));
                         }
                         containers.Add(new Timer(null, 0.1f));
                         containers.Add(new Rotation(_pieces, new Vector3(0.0f, roty, 0.0f), 0.0f, Physical.Type.ABSOLUTE));
                         containers.Add(new JumpingMove(_pieces, p, 0.2f));
-                        containers.Add(new ChracterIdle(_pieces));
+                        containers.Add(new CharacterIdle(_pieces));
                     }
 
                     if (!_isGoalin)
@@ -1430,6 +1468,7 @@ namespace UootNori
 
             GameData.FieldInNumToMoverPiecesIsSame(mover.PlayerKind);
             return arr;
+
         }
 
         public static List<PiecesMoveContainer> GetPiecesMover(PLAYER_KIND kind)
