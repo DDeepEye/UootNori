@@ -42,10 +42,18 @@ public class UootThrow : Attribute {
 
     PatternSystem.Arrange _aniArrange;
 
+    static UootThrow s_inst = null;
+
+    static public UootThrow GetInstance()
+    {
+        return s_inst;
+    }
+
     void UootAniInit()
     {
         if(_uootAniObj == null)
         {
+            s_inst = this;
             _uootAniObj = GameObject.Find("Uoot_ani");
 
             s_uootAni = _uootAniObj.GetComponent<Animator>();
@@ -68,8 +76,7 @@ public class UootThrow : Attribute {
             _uootAnimaion[(int)UootNori.Animal.UOOT] = Uoot;
             _uootAnimaion[(int)UootNori.Animal.MO] = Mo;
             _uootAnimaion[(int)UootNori.Animal.BACK_DO] = BackDo;
-        }
-        _uootAnimaion[(int)GameData.GetLastAnimal()]();
+        }        
         UootThrowAni();
     }
 
@@ -269,11 +276,13 @@ public class UootThrow : Attribute {
             aninum = Random.Range(11, 17);
         }
 
+        UootThrow.s_uootAni.SetInteger("state", 0);
         List<Container> uootThrowFlow = new List<Container>();
-        uootThrowFlow.Add(new PatternSystem.Timer(null, 0.5f));
+        uootThrowFlow.Add(new UootUpSideTurn());
+        uootThrowFlow.Add(new PatternSystem.Timer(null, 0.3f));
         uootThrowFlow.Add(new UootThrowPlayer(aninum));
-        uootThrowFlow.Add(new PatternSystem.Timer(null, 1.0f));
-        uootThrowFlow.Add(new UootThrowResultRefresh());
+        uootThrowFlow.Add(new PatternSystem.Timer(null, 2.9f));
+        if(!_isOut) uootThrowFlow.Add(new UootThrowResultRefresh());
         uootThrowFlow.Add(new PatternSystem.Timer(null, 2.0f));
         _aniArrange = new PatternSystem.Arrange(null, PatternSystem.Arrange.ArrangeType.SERIES, uootThrowFlow, 1);
     }
@@ -285,5 +294,11 @@ public class UootThrow : Attribute {
             return true;
         _aniArrange.Run();
         return false;
+    }
+
+    public void UootUpsideTurn()
+    {
+        s_uootAni.gameObject.SetActive(false);
+        _uootAnimaion[(int)GameData.GetLastAnimal()]();
     }
 }

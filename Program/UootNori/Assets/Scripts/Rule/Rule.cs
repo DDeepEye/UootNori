@@ -286,8 +286,20 @@ namespace UootNori
             if (IsDone)
                 return;
             _isDone = true;
+            UootThrow.s_uootAni.gameObject.SetActive(true);
             UootThrow.s_uootAni.SetInteger("state", _aniNum);
             GameData.s_animaleEffect.SetActive(false);
+        }
+    }
+
+    public class UootUpSideTurn : Container
+    {
+        public override void Run()
+        {
+            if (IsDone)
+                return;
+            _isDone = true;            
+            UootThrow.GetInstance().UootUpsideTurn();
         }
     }
 
@@ -532,6 +544,18 @@ namespace UootNori
         public void Add(int piecesNum)
         {
             _piecesNum += piecesNum;
+            GameObject number = Pieces.transform.FindChild("billboard_P").FindChild("Population_P").gameObject;
+            if (_piecesNum > 1)
+            {   
+                number.SetActive(true);
+                number.transform.FindChild("Population_Label_P").GetComponent<TextMesh>().text = _piecesNum.ToString();
+                GameObject camera = GameObject.Find("Field_Camera");
+                number.transform.LookAt(camera.transform);
+            }
+            else
+            {
+                number.SetActive(false);
+            }
         }
 
         public int GetPiecesNum()
@@ -1387,7 +1411,7 @@ namespace UootNori
         public static void RemoveAnimal(int index)
         {
             _curAnimals.RemoveAt(index);
-            RefreshAnimalView();
+            RefreshAnimalView(false);
         }
 
         public static Animal GetLastAnimal()
@@ -1397,7 +1421,7 @@ namespace UootNori
             return Animal.NONE;
         }
 
-        public static void RefreshAnimalView()
+        public static void RefreshAnimalView(bool isNewThrow = true)
         {
             string animalObj = "Uoot_Sprite_P";
             string animalNumObj = "Uoot_Label_Count_P";
@@ -1435,11 +1459,19 @@ namespace UootNori
             }
             animalImage.Add(Animal.BACK_DO, "ETC_B_Uoot_0");
 
-            if(animalImage.ContainsKey( GetLastAnimal() ))
+            if(isNewThrow)
             {
-                s_animaleEffect.SetActive(true);
-                s_animaleEffect.transform.FindChild("B_Uoot_Sprite_P").GetComponent<UISprite>().spriteName = animalImage[GetLastAnimal()];
+                if (animalImage.ContainsKey(GetLastAnimal()))
+                {
+                    s_animaleEffect.SetActive(true);
+                    s_animaleEffect.transform.FindChild("B_Uoot_Sprite_P").GetComponent<UISprite>().spriteName = animalImage[GetLastAnimal()];
+                }
             }
+            else
+            {
+                s_animaleEffect.SetActive(false);
+            }
+            
         }
         public static int GetForwardNum(Animal animal)
         {
