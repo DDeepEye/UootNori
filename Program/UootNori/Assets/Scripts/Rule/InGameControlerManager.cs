@@ -71,8 +71,11 @@ public class InGameControlerManager : Attribute {
 	// Update is called once per frame
 	void Update () {
 
-        if (_isDone)
+        if (IsDone)
             return;
+        
+        _isDone = true;
+
         
         if (_mode == ControlMode.Shoot)
         {
