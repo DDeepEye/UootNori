@@ -18,6 +18,12 @@ namespace UootNori
         MAX,
     }
 
+    public enum ControlMode
+    {
+        CharcterMove,
+        Shoot,
+    }
+
     public abstract class FieldAttribute
     {
         public abstract void Run(PiecesMoveContainer mover);
@@ -951,6 +957,7 @@ namespace UootNori
         public static FieldData[] _fields = new FieldData[FIELD_MAXNUM];
 
         public static Road[] s_roads = new Road[WAYKIND];
+        public static PlayerControl s_plyerControlNum = PlayerControl.Player1;
 
         public static Road s_allKillRoad;
 
@@ -968,6 +975,7 @@ namespace UootNori
         public static bool IsOneMoreUootThrow { get { return s_oneMoreUootThrow; } }
         public static void OneMoreUootThrowCheck() { s_oneMoreUootThrow = false; }
         public static void OneMoreUootThrow() { s_oneMoreUootThrow = true; }
+
 
         public static void Init()
         {
@@ -1031,6 +1039,7 @@ namespace UootNori
                 s_moveContainers.Add((PLAYER_KIND)i, new List<PiecesMoveContainer>());
             }
             InitAnimalStateView();
+            InputManager.Instance.SetPlayerNum(s_plyerControlNum);
         }
 
         private static void WayInit()
