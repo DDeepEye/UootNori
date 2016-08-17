@@ -276,6 +276,7 @@ public class InGameControlerManager : FlowContainer.Attribute
         List<Container> actions = new List<Container>();
         actions.Add(new ShootEffect());
         actions.Add(new Timer(null, 2.0f));
+        _shootEffect = new PatternSystem.Arrange(null, PatternSystem.Arrange.ArrangeType.SERIES, actions, 1);
     }
 
     public void Event(KeyEvent key)
