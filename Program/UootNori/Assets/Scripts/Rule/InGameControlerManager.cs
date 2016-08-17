@@ -194,6 +194,12 @@ public class InGameControlerManager : FlowContainer.Attribute
 
             if (_selecterMovers.Count > 1)
             {
+                if (_selecterMovers.Count == 2 && GameData.CurAnimalCount() == 1 && GameData.GetLastAnimal() == Animal.BACK_DO)
+                {
+                    ManMove.SetMover(_selecterMovers[1]._mover, GameData.GetLastAnimal());
+                    _isDone = true;
+                    return;
+                }
                 _choiceIndex = 0;
                 _selecterMovers[0]._select.SetActive(true);
             }

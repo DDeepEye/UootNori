@@ -876,14 +876,13 @@ namespace UootNori
                     }
                     if (cnt == num)
                     {
+                        _goalInNum.text = GetGoalInNum().ToString();
                         if (GetInFieldNum() + GetOutFieldNum() + GetGoalInNum() > GameData.PIECESMAX)
                             Debug.Log("what the fuck !!!");
                         return;
                     }
                 }
             }
-
-            _goalInNum.text = GetGoalInNum().ToString();
         }
     }
 
