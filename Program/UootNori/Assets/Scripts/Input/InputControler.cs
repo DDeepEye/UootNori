@@ -14,9 +14,10 @@ public class InputControler
     {
         foreach (KeyValuePair<KeyCode, string> key in _checkKeys)
         {
-            if (Input.GetKey(key.Key))
+            if (Input.GetKeyUp(key.Key))
                 return key.Value;
+            
         }
-        return "";
+        return null;
 	}
 }

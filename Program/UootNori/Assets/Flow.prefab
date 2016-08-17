@@ -273,6 +273,22 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 0
+--- !u!1 &185198
+GameObject:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  serializedVersion: 4
+  m_Component:
+  - 4: {fileID: 412116}
+  - 114: {fileID: 11400302}
+  m_Layer: 0
+  m_Name: InGameControlerManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 0
 --- !u!1 &196922
 GameObject:
   m_ObjectHideFlags: 1
@@ -314,9 +330,10 @@ Transform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_Children:
   - {fileID: 423046}
+  - {fileID: 412116}
   - {fileID: 472376}
-  - {fileID: 499836}
   - {fileID: 400426}
+  - {fileID: 499836}
   m_Father: {fileID: 446728}
   m_RootOrder: 1
 --- !u!4 &402248
@@ -345,6 +362,19 @@ Transform:
   m_Children: []
   m_Father: {fileID: 482426}
   m_RootOrder: 3
+--- !u!4 &412116
+Transform:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 185198}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_Children: []
+  m_Father: {fileID: 402190}
+  m_RootOrder: 1
 --- !u!4 &423046
 Transform:
   m_ObjectHideFlags: 1
@@ -480,7 +510,7 @@ Transform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_Children: []
   m_Father: {fileID: 402190}
-  m_RootOrder: 1
+  m_RootOrder: 2
 --- !u!4 &472460
 Transform:
   m_ObjectHideFlags: 1
@@ -539,7 +569,18 @@ Transform:
   - {fileID: 463602}
   - {fileID: 470874}
   m_Father: {fileID: 402190}
-  m_RootOrder: 2
+  m_RootOrder: 4
+--- !u!114 &11400302
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 185198}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3e0481b220db04f25b464781d82b7ec6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!114 &11414724
 MonoBehaviour:
   m_ObjectHideFlags: 1

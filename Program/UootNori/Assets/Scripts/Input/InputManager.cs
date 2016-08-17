@@ -46,7 +46,7 @@ namespace UootNori
         public void SetPlayerNum(PlayerControl playerNum)
         {
             Dictionary<PlayerControl, Dictionary<KeyCode, string>> playerControlKeys = new Dictionary<PlayerControl, Dictionary<KeyCode, string>>();
-
+            
             Dictionary<KeyCode, string> keys = new Dictionary<KeyCode, string>() 
             { 
                 {KeyCode.LeftArrow,"left"},
@@ -98,7 +98,7 @@ namespace UootNori
                 string keyDown = _playerControls[_curPlayer].Update();
                 if (keyDown != null)
                 {
-
+                    InGameControlerManager.Instance.Event(_keys[keyDown]);
                 }
             }
         }

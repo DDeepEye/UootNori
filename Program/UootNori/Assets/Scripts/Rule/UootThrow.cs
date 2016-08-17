@@ -214,6 +214,7 @@ public class UootThrow : Attribute {
                     _isDone = true;
                     Attribute at = transform.parent.GetComponent<Attribute>();
                     at.ReturnActive = "";
+                    InGameControlerManager.Instance.ReadyToCharacterMode();
                 }
             }
         }
@@ -245,7 +246,7 @@ public class UootThrow : Attribute {
 
 
     void ThrowToData()
-    {
+    {   
         _isOut = false;
         int rr = Random.Range(1, _animalProbability[_animalProbability.Count - 1]);
         for (int i = 0; i < _animalProbability.Count; ++i)

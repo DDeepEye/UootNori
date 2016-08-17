@@ -164,6 +164,7 @@ namespace UootNori
     {
         public override void Run(PiecesMoveContainer mover)
         {
+            InGameControlerManager.Instance.ReadyToShootMode();
         }
     }
 
@@ -535,7 +536,8 @@ namespace UootNori
             _pieces = GameObject.Instantiate(s_originPiecess[(int)GameData.CurTurn]);
 
             _curRoad = GameData.GetStartRoad();
-            _pieces.transform.position = _curRoad._field.GetSelfField().transform.position;
+            ///_pieces.transform.position = _curRoad._field.GetSelfField().transform.position;
+            _pieces.transform.position = GameData.s_startPoint[0].transform.position;
             _pieces.GetComponent<Animator>().SetInteger("state", 1);
             _piecesNum = 1;
             GameData.s_players[(int)kind].FieldIn(1);
@@ -573,7 +575,13 @@ namespace UootNori
         {
             List<Container> containers = new List<Container>();
             _curRoad = GameData.GetStartRoad();
-            containers.Add(new Timer(_pieces, 0.3f));
+
+            Vector3 offsetPoint = _pieces.transform.position;
+            Vector3 p = _curRoad._field.GetSelfField().transform.position - offsetPoint;
+            float roty = Mathf.Atan2(p.x, p.z) * Mathf.Rad2Deg;
+            containers.Add(new Rotation(_pieces, new Vector3(0.0f, roty, 0.0f), 0.0f, Physical.Type.ABSOLUTE));
+            containers.Add(new JumpingMove(_pieces, p, 0.2f));
+            containers.Add(new Rotation(_pieces, new Vector3(_pieces.transform.localEulerAngles.x, 180.0f, _pieces.transform.localEulerAngles.z), 0.0f, Physical.Type.ABSOLUTE));
             containers.Add(new FieldSet(_curRoad._field, this));
             _arrange = new Arrange(_pieces, Arrange.ArrangeType.SERIES, containers, 1);
             _animal = Animal.BACK_DO;
@@ -966,6 +974,7 @@ namespace UootNori
         public static GameObject[] s_animalStateList = new GameObject[ANIMAL_STATE_NUM];
         public static GameObject s_animaleEffect;
 
+        public static GameObject [] s_startPoint = new GameObject[(int)PLAYER_KIND.MAX];
 
         static Dictionary<Animal, int> s_animalToForwardNum = new Dictionary<Animal, int>();
 
@@ -1039,6 +1048,7 @@ namespace UootNori
                 s_moveContainers.Add((PLAYER_KIND)i, new List<PiecesMoveContainer>());
             }
             InitAnimalStateView();
+            LoadReadyFieldCharacter();
             InputManager.Instance.SetPlayerNum(s_plyerControlNum);
         }
 
@@ -1237,6 +1247,114 @@ namespace UootNori
             }
         }
 
+        public static void LoadReadyFieldCharacter()
+        {
+            GameObject rf = GameObject.Find("ReadyField").transform.FindChild("blank_N").gameObject;
+            s_startPoint[0] = rf.transform.FindChild("CH_01").gameObject;
+            s_startPoint[1] = rf.transform.FindChild("CH_02").gameObject;
+            s_startPoint[0].SetActive(true);
+
+            TextMesh tm = s_startPoint[0].transform.FindChild("billboard_P").FindChild("Population_P").FindChild("Population_Label_P").GetComponent<TextMesh>();
+            tm.text = s_players[0].GetOutFieldNum().ToString();
+        }
+
+        public static void OpenAnimalChoice()
+        {
+            foreach (GameObject go in s_animalStateList)
+            {
+                if(go.active == true)
+                {
+                    go.transform.FindChild("Select_P").gameObject.SetActive(true);
+                    return;
+                }
+            }
+        }
+
+        public static void CloseAnimalChoice()
+        {
+            foreach (GameObject go in s_animalStateList)
+            {   
+                go.transform.FindChild("Select_P").gameObject.SetActive(false);
+            }
+        }
+
+        public static void LeftAnimalChoice()
+        {   
+            GameObject go;
+            List<GameObject> activeList = new List<GameObject>();
+            for (int i = 0; i < s_animalStateList.Length; ++i)
+            {
+                go = s_animalStateList[i];
+                if (go.active)
+                    activeList.Add(go);
+            }
+
+
+            for (int i = 0; i < activeList.Count; ++i)
+            {
+                go = activeList[i].transform.FindChild("Select_P").gameObject;
+                if (go.active)
+                {
+                    go.SetActive(false);
+                    if (i == 0)
+                    {
+                        activeList[activeList.Count - 1].transform.FindChild("Select_P").gameObject.SetActive(true);
+                    }
+                    else
+                    {
+                        activeList[i - 1].transform.FindChild("Select_P").gameObject.SetActive(true);
+                    }
+                    return;
+                }
+            }
+        }
+
+        public static void RightAnimalChoice()
+        {
+            GameObject go;
+            List<GameObject> activeList = new List<GameObject>();
+            for (int i = 0; i < s_animalStateList.Length; ++i)
+            {
+                go = s_animalStateList[i];
+                if (go.active)
+                    activeList.Add(go);
+            }
+
+
+            for (int i = 0; i < activeList.Count; ++i)
+            {
+                go = activeList[i].transform.FindChild("Select_P").gameObject;
+                if (go.active)
+                {
+                    go.SetActive(false);
+                    if (i == activeList.Count - 1)
+                    {
+                        activeList[0].transform.FindChild("Select_P").gameObject.SetActive(true);
+                    }
+                    else
+                    {
+                        activeList[i + 1].transform.FindChild("Select_P").gameObject.SetActive(true);
+                    }
+                    return;
+                }
+            }
+        }
+
+        public static Animal EnterAnimalChoice()
+        {   
+            GameObject go;
+            for (int i = 0; i < s_animalStateList.Length; ++i)
+            {
+                go = s_animalStateList[i].transform.FindChild("Select_P").gameObject;
+                if (go.active)
+                {
+                    go.SetActive(false);
+                    return s_animalStateList[i].GetComponent<AnimalContainer>()._animal;
+                }
+            }
+            return Animal.NONE;
+        }
+
         public static void Reset()
         {
             
@@ -1423,6 +1541,12 @@ namespace UootNori
             RefreshAnimalView(false);
         }
 
+        public static void RemoveAnimal(Animal animal)
+        {
+            _curAnimals.Remove(animal);
+            RefreshAnimalView(false);
+        }
+
         public static Animal GetLastAnimal()
         {
             if(_curAnimals.Count > 0)
@@ -1456,6 +1580,7 @@ namespace UootNori
                     ++index;
                     GameObject s = s_animalStateList[index];
                     s.SetActive(true);
+                    s.GetComponent<AnimalContainer>()._animal = a;
                     s.transform.FindChild(animalObj).GetComponent<UISprite>().spriteName = animalImage[a];
                     s.transform.FindChild(animalNumObj).GetComponent<UILabel>().text = animalState[a].ToString();
                 }
@@ -1492,13 +1617,21 @@ namespace UootNori
 
         public static void NextTurn()
         {
-            _curTurn = _curTurn == PLAYER_KIND.PLAYER_1 ? PLAYER_KIND.PLAYER_2 : PLAYER_KIND.PLAYER_1;
+            s_startPoint[(int)_curTurn].SetActive(false);
+            _curTurn = ( _curTurn == PLAYER_KIND.PLAYER_1 ? PLAYER_KIND.PLAYER_2 : PLAYER_KIND.PLAYER_1 );
+            s_startPoint[(int)_curTurn].SetActive(true);
+            TextMesh tm = s_startPoint[(int)_curTurn].transform.FindChild("billboard_P").FindChild("Population_P").FindChild("Population_Label_P").GetComponent<TextMesh>();
+            tm.text = s_players[(int)_curTurn].GetOutFieldNum().ToString();
         }
 
         public static PatternSystem.Arrange NewInField(Animal animal)
         {
             PiecesMoveContainer mover = new PiecesMoveContainer(_curTurn);
             PatternSystem.Arrange arr = null;
+
+            GameData.s_startPoint[0].SetActive(false);
+            GameData.s_startPoint[1].SetActive(false);
+
             if (animal != Animal.BACK_DO)
                 arr = mover.Move(animal);
             else
