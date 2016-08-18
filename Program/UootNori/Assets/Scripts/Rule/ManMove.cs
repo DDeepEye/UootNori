@@ -45,6 +45,14 @@ public class ManMove : Attribute {
                 return;
             }
 
+            if (GameData.IsShoot)
+            {
+                transform.parent.GetComponent<Attribute>().ReturnActive = "InGameControlerManager";
+                
+                GameData.ShootCheck();
+                return;
+            }
+
             if (GameData.IsOneMoreUootThrow)
             {                
                 GameData.OneMoreUootThrowCheck();

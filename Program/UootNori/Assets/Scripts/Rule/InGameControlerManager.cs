@@ -247,6 +247,7 @@ public class InGameControlerManager : FlowContainer.Attribute
                     ShootEffectContainerCreate();
                 }
             }
+            _selecterMovers[0]._select.SetActive(true);
         }
     }
 
@@ -255,6 +256,8 @@ public class InGameControlerManager : FlowContainer.Attribute
         _shootEffectClone = GameObject.Instantiate(_shootEffectObjOrigin) as GameObject;
         _shootEffectClone.transform.FindChild("Shoot_P").GetComponent<TweenTransform>().to = _selecterMovers[_choiceIndex]._mover.Pieces.transform;
         _shootEffectClone.SetActive(true);
+        GameData.AdjustMover(_selecterMovers[_choiceIndex]._mover, GameData.MoverAdjustKind.DESTROY);
+        _selecterMovers[_choiceIndex]._mover.CurRoad._field.Mover = null;
     }
 
     public void ShootDestroy()
@@ -267,7 +270,19 @@ public class InGameControlerManager : FlowContainer.Attribute
     {
         public override void Run()
         {
+            if (IsDone)
+                return;
+            _isDone = true;
             InGameControlerManager.Instance.Shoot();                                          
+        }
+    }
+
+    public class DemageAni : CharacterAni
+    {
+        public DemageAni(GameObject aniObject)
+            :base(aniObject)
+        {
+            ANI_NUMBER = 5;
         }
     }
 
@@ -275,7 +290,11 @@ public class InGameControlerManager : FlowContainer.Attribute
     {
         List<Container> actions = new List<Container>();
         actions.Add(new ShootEffect());
+        actions.Add(new Timer(null, 0.3f));
+        actions.Add(new DemageAni(_selecterMovers[_choiceIndex]._mover.Pieces));
+        actions.Add(new CharacterFadeOut(_selecterMovers[_choiceIndex]._mover.Pieces));
         actions.Add(new Timer(null, 2.0f));
+        actions.Add(new CharacterDelete(new List<GameObject>(){ _selecterMovers[_choiceIndex]._mover.Pieces }));
         _shootEffect = new PatternSystem.Arrange(null, PatternSystem.Arrange.ArrangeType.SERIES, actions, 1);
     }
 

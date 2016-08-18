@@ -160,11 +160,12 @@ namespace UootNori
         }
     }
 
-    public class Shot: FieldAttribute
+    public class Shoot: FieldAttribute
     {
         public override void Run(PiecesMoveContainer mover)
         {
             InGameControlerManager.Instance.ReadyToShootMode();
+            GameData.ShootMode();
         }
     }
 
@@ -984,6 +985,11 @@ namespace UootNori
         public static void OneMoreUootThrowCheck() { s_oneMoreUootThrow = false; }
         public static void OneMoreUootThrow() { s_oneMoreUootThrow = true; }
 
+        static bool s_shoot = false;
+        public static bool IsShoot {get{ return s_shoot;}}
+        public static void ShootCheck() {s_shoot = false;}
+        public static void ShootMode(){s_shoot = true;}
+
 
         public static void Init()
         {
@@ -1028,7 +1034,7 @@ namespace UootNori
             _fields[23].AddAttribute(new ChangeWay(1));
             _fields[25].AddAttribute(new Kill());
 
-            _fields[26].AddAttribute(new Shot());
+            _fields[26].AddAttribute(new Shoot());
 
             r = GameData.GetStartRoad();
             for (int i = 0; i < 8; ++i)
@@ -1618,7 +1624,8 @@ namespace UootNori
         {
             s_startPoint[(int)_curTurn].SetActive(false);
             _curTurn = ( _curTurn == PLAYER_KIND.PLAYER_1 ? PLAYER_KIND.PLAYER_2 : PLAYER_KIND.PLAYER_1 );
-            s_startPoint[(int)_curTurn].SetActive(true);
+            if(GetCurTurnOutPiecess() > 0)
+                s_startPoint[(int)_curTurn].SetActive(true);
             TextMesh tm = s_startPoint[(int)_curTurn].transform.FindChild("billboard_P").FindChild("Population_P").FindChild("Population_Label_P").GetComponent<TextMesh>();
             tm.text = s_players[(int)_curTurn].GetOutFieldNum().ToString();
         }
@@ -1638,6 +1645,9 @@ namespace UootNori
 
             if(arr != null)
                 s_moveContainers[_curTurn].Add(mover);
+
+            TextMesh tm = s_startPoint[(int)_curTurn].transform.FindChild("billboard_P").FindChild("Population_P").FindChild("Population_Label_P").GetComponent<TextMesh>();
+            tm.text = s_players[(int)_curTurn].GetOutFieldNum().ToString();
 
             GameData.FieldInNumToMoverPiecesIsSame(mover.PlayerKind);
             return arr;
