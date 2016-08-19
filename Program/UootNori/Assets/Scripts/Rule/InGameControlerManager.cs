@@ -97,6 +97,7 @@ public class InGameControlerManager : FlowContainer.Attribute
                         {
                             _curStep = AnimalChoice;
                             GameData.OpenAnimalChoice();
+                            BackDoStateCheck();
                         }
                         else
                         {
@@ -113,6 +114,18 @@ public class InGameControlerManager : FlowContainer.Attribute
                     }
                 }
                 break;
+        }
+    }
+
+    public void BackDoStateCheck()
+    {
+        if (_selecterMovers[_choiceIndex]._mover == null && _selecterMovers.Count >= 2)
+        {
+            GameData.BackDoLock();
+        }
+        else
+        {
+            GameData.BackDoUnLock();
         }
     }
 
@@ -184,7 +197,12 @@ public class InGameControlerManager : FlowContainer.Attribute
         if (_mode == ControlMode.CharcterMove)
         {
             if (GameData.GetCurTurnOutPiecess() > 0)
-                _selecterMovers.Add(new SelecterContainer(GameData.s_startPoint[(int)GameData.CurTurn].transform.FindChild("Select_P").gameObject));
+            {
+                if (!(GameData.CurAnimalCount() == 1 && GameData.GetLastAnimal() == Animal.BACK_DO))
+                {
+                    _selecterMovers.Add(new SelecterContainer(GameData.s_startPoint[(int)GameData.CurTurn].transform.FindChild("Select_P").gameObject));
+                }
+            }
 
             _movers = GameData.GetPiecesMover(GameData.CurTurn);
             foreach(PiecesMoveContainer m in _movers)
@@ -194,10 +212,13 @@ public class InGameControlerManager : FlowContainer.Attribute
 
             if (_selecterMovers.Count > 1)
             {
-                if (_selecterMovers.Count == 2 && GameData.CurAnimalCount() == 1 && GameData.GetLastAnimal() == Animal.BACK_DO)
+                if (_selecterMovers.Count == 1 && GameData.CurAnimalCount() == 1 && GameData.GetLastAnimal() == Animal.BACK_DO)
                 {
-                    ManMove.SetMover(_selecterMovers[1]._mover, GameData.GetLastAnimal());
+                    Animal animal = GameData.GetLastAnimal();
+                    GameData.RemoveAnimal(animal);
+                    ManMove.SetMover(_selecterMovers[0]._mover, animal);
                     _isDone = true;
+                    GameData.CloseAnimalChoice();
                     return;
                 }
                 _choiceIndex = 0;
@@ -214,11 +235,12 @@ public class InGameControlerManager : FlowContainer.Attribute
                 {
                     Animal animal = GameData.GetLastAnimal();
                     GameData.RemoveAnimal(animal);
-                    if (GameData.GetCurTurnOutPiecess() > 0)
-                        ManMove.SetMover(null, animal);
-                    else
+                    if(_selecterMovers.Count > 0)
                         ManMove.SetMover(_selecterMovers[0]._mover, animal);
+                    else
+                        ManMove.SetMover(null, animal);
                     _isDone = true;
+                    GameData.CloseAnimalChoice();
                 }
             }
         }

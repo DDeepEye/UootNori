@@ -973,6 +973,7 @@ namespace UootNori
         public static List<List<FieldData>>[] _ways = new List<List<FieldData>>[WAYKIND];
         public static GameObject[] s_animalStateList = new GameObject[ANIMAL_STATE_NUM];
         public static GameObject s_animaleEffect;
+        public static bool s_backdoLock = false;
 
         public static GameObject [] s_startPoint = new GameObject[(int)PLAYER_KIND.MAX];
 
@@ -1281,6 +1282,34 @@ namespace UootNori
             {   
                 go.transform.FindChild("Select_P").gameObject.SetActive(false);
             }
+            BackDoUnLock();
+        }
+
+        public static void BackDoLock()
+        {
+            GameObject go;
+            for (int i = 0; i < s_animalStateList.Length; ++i)
+            {
+                go = s_animalStateList[i];
+                if (go.active)
+                {
+                    if (s_animalStateList[i].GetComponent<AnimalContainer>()._animal == Animal.BACK_DO)
+                        s_animalStateList[i].transform.FindChild("Uoot_Sprite_P").GetComponent<UISprite>().alpha = 0.4f;
+                }
+            }
+            s_backdoLock = true;
+        }
+
+        public static void BackDoUnLock()
+        {
+            GameObject go;
+            for (int i = 0; i < s_animalStateList.Length; ++i)
+            {
+                go = s_animalStateList[i];
+                s_animalStateList[i].transform.FindChild("Uoot_Sprite_P").GetComponent<UISprite>().alpha = 1.0f;
+
+            }
+            s_backdoLock = false;
         }
 
         public static void LeftAnimalChoice()
@@ -1303,10 +1332,26 @@ namespace UootNori
                     go.SetActive(false);
                     if (i == 0)
                     {
+                        if (s_backdoLock)
+                        {
+                            if (activeList[activeList.Count - 1].GetComponent<AnimalContainer>()._animal == Animal.BACK_DO)
+                            {
+                                go.SetActive(true);
+                                return;
+                            }
+                        }
                         activeList[activeList.Count - 1].transform.FindChild("Select_P").gameObject.SetActive(true);
                     }
                     else
                     {
+                        if (s_backdoLock)
+                        {
+                            if (activeList[i - 1].GetComponent<AnimalContainer>()._animal == Animal.BACK_DO)
+                            {
+                                go.SetActive(true);
+                                return;
+                            }
+                        }
                         activeList[i - 1].transform.FindChild("Select_P").gameObject.SetActive(true);
                     }
                     return;
@@ -1334,10 +1379,26 @@ namespace UootNori
                     go.SetActive(false);
                     if (i == activeList.Count - 1)
                     {
+                        if (s_backdoLock)
+                        {
+                            if (activeList[0].GetComponent<AnimalContainer>()._animal == Animal.BACK_DO)
+                            {
+                                go.SetActive(true);
+                                return;
+                            }
+                        }
                         activeList[0].transform.FindChild("Select_P").gameObject.SetActive(true);
                     }
                     else
                     {
+                        if (s_backdoLock)
+                        {
+                            if (activeList[i + 1].GetComponent<AnimalContainer>()._animal == Animal.BACK_DO)
+                            {
+                                go.SetActive(true);
+                                return;
+                            }
+                        }
                         activeList[i + 1].transform.FindChild("Select_P").gameObject.SetActive(true);
                     }
                     return;
