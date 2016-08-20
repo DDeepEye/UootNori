@@ -320,7 +320,7 @@ public class InGameControlerManager : FlowContainer.Attribute
         _shootEffect = new PatternSystem.Arrange(null, PatternSystem.Arrange.ArrangeType.SERIES, actions, 1);
     }
 
-    public void Event(KeyEvent key)
+    public override void Event(KeyEvent key)
     {
         if (!gameObject.active)
             return;
@@ -329,6 +329,7 @@ public class InGameControlerManager : FlowContainer.Attribute
 
     void OnEnable()
     {
+        InputManager.Instance.InputAttribute = this;
         _curTime = 0.0f;        
     }
 }

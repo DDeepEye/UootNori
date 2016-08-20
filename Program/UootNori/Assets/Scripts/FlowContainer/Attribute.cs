@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using UootNori;
 
 namespace FlowContainer
 {
@@ -13,11 +14,13 @@ namespace FlowContainer
         protected bool _isDone = false;
         public bool IsDone {get{ return _isDone; }}
 
-
-
         public virtual void Reset()
         {
             _isDone = false;
+        }
+
+        public virtual void Event(KeyEvent key)
+        {
         }
     }
 }

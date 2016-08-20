@@ -26,10 +26,14 @@ namespace UootNori
         static InputManager s_instance;
         static public InputManager Instance{get{return s_instance;}}
 
+
         Dictionary<PlayerControl, InputControler> _playerControls = new Dictionary<PlayerControl, InputControler>();
 
         PlayerControl _curPlayer = PlayerControl.Player1;
         public PlayerControl CurPlayer{set{ _curPlayer = value;}}
+
+        FlowContainer.Attribute _inputAttribute;
+        public FlowContainer.Attribute InputAttribute {get{ return _inputAttribute;}set{ _inputAttribute = value;}}
 
         Dictionary<string, KeyEvent> _keys = new Dictionary<string, KeyEvent>()
         {
@@ -98,7 +102,7 @@ namespace UootNori
                 string keyDown = _playerControls[_curPlayer].Update();
                 if (keyDown != null)
                 {
-                    InGameControlerManager.Instance.Event(_keys[keyDown]);
+                    InputAttribute.Event(_keys[keyDown]);
                 }
             }
         }
