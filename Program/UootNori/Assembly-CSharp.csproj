@@ -187,6 +187,8 @@
      <Compile Include="Assets\Scripts\FlowContainer\Attribute.cs" />
      <Compile Include="Assets\Scripts\FlowContainer\FlowStart.cs" />
      <Compile Include="Assets\Scripts\Initialize.cs" />
+     <Compile Include="Assets\Scripts\Input\InputControler.cs" />
+     <Compile Include="Assets\Scripts\Input\InputManager.cs" />
      <Compile Include="Assets\Scripts\PatternSystem\HabitProperty.cs" />
      <Compile Include="Assets\Scripts\Rule\Calculate.cs" />
      <Compile Include="Assets\Scripts\Rule\CharacterChoice.cs" />
@@ -194,6 +196,8 @@
      <Compile Include="Assets\Scripts\Rule\FieldRullProcess.cs" />
      <Compile Include="Assets\Scripts\Rule\GameOverCheck.cs" />
      <Compile Include="Assets\Scripts\Rule\GamePlay.cs" />
+     <Compile Include="Assets\Scripts\Rule\InGameControlerManager.cs" />
+     <Compile Include="Assets\Scripts\Rule\JumpingLine.cs" />
      <Compile Include="Assets\Scripts\Rule\ManKillCheck.cs" />
      <Compile Include="Assets\Scripts\Rule\ManMove.cs" />
      <Compile Include="Assets\Scripts\Rule\NextTurn.cs" />
@@ -212,6 +216,7 @@
      <None Include="Assets\NGUI\Examples\Models\Orc\Orc Skin.shader" />
      <None Include="Assets\NGUI\Examples\Atlases\Wooden\Arimo20.txt" />
      <None Include="Assets\NGUI\Examples\Atlases\Wooden\Arimo14.txt" />
+     <None Include="Assets\Data\Field\Materials\Caustics.shader" />
      <None Include="Assets\NGUI\Resources\Shaders\Unlit - Text 1.shader" />
      <None Include="Assets\NGUI\Resources\Shaders\Unlit - Premultiplied Colored (TextureClip).shader" />
      <None Include="Assets\NGUI\Resources\Shaders\Unlit - Transparent Colored (Packed) (TextureClip).shader" />

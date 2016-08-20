@@ -18,6 +18,12 @@ namespace UootNori
         MAX,
     }
 
+    public enum ControlMode
+    {
+        CharcterMove,
+        Shoot,
+    }
+
     public abstract class FieldAttribute
     {
         public abstract void Run(PiecesMoveContainer mover);
@@ -30,7 +36,7 @@ namespace UootNori
             mover.CurRoad._field.Mover = null;
             GameData.AdjustMover(mover, GameData.MoverAdjustKind.KILL_ONESELF);
             mover.Containers.AddContainer(new CharacterTrap(mover.Pieces));
-            mover.Containers.AddContainer(new Timer(null, 1.2f));
+            mover.Containers.AddContainer(new CharacterFadeOut(mover.Pieces, 1.2f));
 
             List<GameObject> deleteTarget = new List<GameObject>();
             deleteTarget.Add(mover.Pieces);
@@ -44,6 +50,8 @@ namespace UootNori
     {
         public override void Run(PiecesMoveContainer mover)
         {
+            List<Container> delEffs = new List<Container>();
+            PatternSystem.Arrange delEffArrange = new PatternSystem.Arrange(null, Arrange.ArrangeType.PARALLEL, delEffs);
             List<GameObject> deleteTarget = new List<GameObject>();
             for (PLAYER_KIND i = PLAYER_KIND.PLAYER_1; i < PLAYER_KIND.MAX; ++i)
             {   
@@ -54,18 +62,22 @@ namespace UootNori
                 {   
                     m.CurRoad._field.Mover = null;
                     GameData.s_players[(int)i].Out(m.GetPiecesNum());
+
                     if (m == mover)
                         continue;
 
                     deleteTarget.Add(m.Pieces);
                     m.Pieces.GetComponent<Animator>().SetInteger("state", 5);
-                    
+                    delEffs.Add(new CharacterFadeOut(m.Pieces));
                 }
                 movers.Clear();
                 mover.Containers.AddContainer(new CharacterTrap(mover.Pieces));                
+                delEffs.Add(new CharacterFadeOut(mover.Pieces, 1.2f));
+                mover.Containers.AddContainer(delEffArrange);
+
                 GameData.FieldInNumToMoverPiecesIsSame(i);
             }
-            mover.Containers.AddContainer(new Timer(null, 1.2f));
+
             mover.Containers.AddContainer(new CharacterDelete(deleteTarget));
         }
     }
@@ -82,7 +94,21 @@ namespace UootNori
             Vector3 offsetPoint = mover.Pieces.transform.position;
             Vector3 p = _sendRoad._field.GetSelfField().transform.position - offsetPoint;
             mover.Containers.AddContainer(new Timer(null, 0.1f));
-            mover.Containers.AddContainer(new Move(mover.Pieces, p, 0.15f));
+
+            if (_sendRoad._field.Mover != null)
+            {
+                mover.Containers.AddContainer(new CharacterFadeOut(_sendRoad._field.Mover.Pieces));
+                if (_sendRoad._field.Mover.PlayerKind == mover.PlayerKind)
+                {
+                    mover.Containers.AddContainer(new CharacterRide(mover.Pieces));
+                }
+                else
+                {
+                    mover.Containers.AddContainer(new CharacterAttack(mover.Pieces, _sendRoad._field.Mover.Pieces));
+                }
+            }
+            
+            mover.Containers.AddContainer(new JumpingMove(mover.Pieces, p, 0.15f));
             mover.Containers.AddContainer(new Timer(null, 0.1f));
             mover.Containers.AddContainer(new FieldSet(_sendRoad._field, mover));            
             mover.CurRoad._field.Mover = null;
@@ -99,7 +125,11 @@ namespace UootNori
             if (GameData.s_players[(int)mover.PlayerKind].GetOutFieldNum() > 0)
             {
                 GameData.s_players[(int)mover.PlayerKind].FieldIn(1);
-                mover.Add(1);               
+                mover.Add(1);
+                GameData.OutPiecessViewRefresh();
+                mover.Containers.AddContainer(new CharacterAdd(mover.Pieces));
+                mover.Containers.AddContainer(new Timer(null, 1.2f));
+                mover.Containers.AddContainer(new CharacterIdle(mover.Pieces));
             }
 
             GameData.FieldInNumToMoverPiecesIsSame(mover.PlayerKind);
@@ -114,6 +144,10 @@ namespace UootNori
             {
                 mover.Add(-1);
                 GameData.s_players[(int)mover.PlayerKind].Out(1);
+                GameData.OutPiecessViewRefresh();
+                mover.Containers.AddContainer(new CharacterRemove(mover.Pieces));
+                mover.Containers.AddContainer(new Timer(null, 1.2f));
+                mover.Containers.AddContainer(new CharacterIdle(mover.Pieces));
             }
 
             GameData.FieldInNumToMoverPiecesIsSame(mover.PlayerKind);
@@ -128,10 +162,12 @@ namespace UootNori
         }
     }
 
-    public class Shot: FieldAttribute
+    public class Shoot: FieldAttribute
     {
         public override void Run(PiecesMoveContainer mover)
         {
+            InGameControlerManager.Instance.ReadyToShootMode();
+            GameData.ShootMode();
         }
     }
 
@@ -250,26 +286,54 @@ namespace UootNori
 
     public class UootThrowPlayer : Container
     {
-        string _state;
-        public UootThrowPlayer(string state)
+        int _aniNum;
+        public UootThrowPlayer(int aniNum)
         {
-            _state = state;
+            _aniNum = aniNum;
         }
         public override void Run()
         {
             if (IsDone)
                 return;
             _isDone = true;
-            UootThrow.s_uootAni.Play(_state);                       
+            UootThrow.s_uootAni.gameObject.SetActive(true);
+            UootThrow.s_uootAni.SetInteger("state", _aniNum);
+            GameData.s_animaleEffect.SetActive(false);
+        }
+    }
+
+    public class UootUpSideTurn : Container
+    {
+        public override void Run()
+        {
+            if (IsDone)
+                return;
+            _isDone = true;            
+            UootThrow.GetInstance().UootUpsideTurn();
+        }
+    }
+
+    public class UootThrowResultRefresh : Container
+    {
+        public override void Run()
+        {
+            if (IsDone)
+                return;
+
+            _isDone = true;
+
+            GameData.RefreshAnimalView();
         }
     }
 
     public abstract class CharacterAni : Container
     {
+        protected GameObject _aniObj;
         protected Animator _ani;
         protected int ANI_NUMBER = 1;
         protected CharacterAni(GameObject aniObject)
         {
+            _aniObj = aniObject;
             _ani = aniObject.GetComponent<Animator>();
         }
         public override void Run()
@@ -283,18 +347,18 @@ namespace UootNori
         }
     }
 
-    public class ChracterMove : CharacterAni
+    public class CharacterMove : CharacterAni
     {
-        public ChracterMove(GameObject aniObject)
+        public CharacterMove(GameObject aniObject)
             :base(aniObject)
         {
             ANI_NUMBER = 2;
         }
     }
 
-    public class ChracterIdle : CharacterAni
+    public class CharacterIdle : CharacterAni
     {
-        public ChracterIdle(GameObject aniObject)
+        public CharacterIdle(GameObject aniObject)
             :base(aniObject)
         {
             ANI_NUMBER = 1;
@@ -319,6 +383,33 @@ namespace UootNori
         }
     }
 
+    public class CharacterStepped : CharacterAni
+    {
+        public CharacterStepped(GameObject aniObject)
+            :base(aniObject)
+        {
+            ANI_NUMBER = 13;
+        }
+    }
+
+    public class CharacterAdd : CharacterAni
+    {
+        public CharacterAdd(GameObject aniObject)
+            :base(aniObject)
+        {
+            ANI_NUMBER = 15;
+        }
+    }
+
+    public class CharacterRemove : CharacterAni
+    {
+        public CharacterRemove(GameObject aniObject)
+            : base(aniObject)
+        {
+            ANI_NUMBER = 14;
+        }
+    }
+
     public class CharacterAttack : CharacterAni
     {
         Animator _target;
@@ -333,6 +424,15 @@ namespace UootNori
         {
             base.Run();
             _target.SetInteger("state", 5);
+            /*
+            SkinnedMeshRenderer smr = _target.transform.FindChild("CH01").GetComponent<SkinnedMeshRenderer>();
+            foreach (Material m in smr.materials)
+            {
+                Color c = m.color;
+                c.a = 0.15f;
+                m.color = c;
+            }
+            */
         }
     }
 
@@ -356,6 +456,48 @@ namespace UootNori
         }
     }
 
+    public class CharacterFadeOut : Container
+    {
+        GameObject _target;
+        float _timer = 0.25f;
+        float _curTime = 0.0f;
+        public CharacterFadeOut(GameObject target, float timer = 0.25f)
+        {
+            _target = target;
+            _timer = timer;
+        }
+
+        public override void Run()
+        {
+            if (IsDone)
+                return;
+
+            string[] CHILDREN = {"CH01", "CH02_B", "CH_H", "CH_HO"};
+        
+            _curTime += Time.deltaTime;
+            _curTime = _curTime > _timer ? _timer : _curTime;
+
+            float alpha = _curTime / _timer;
+            alpha = 1.0f - alpha;
+
+            for (int i = 0; i < CHILDREN.Length; ++i)
+            {
+                Renderer [] renderers = _target.transform.FindChild(CHILDREN[i]).GetComponents<Renderer>();
+                foreach (Renderer r in renderers)
+                {
+                    foreach (Material m in r.materials)
+                    {
+                        Color c = m.color;
+                        c.a = alpha;
+                        m.color = c;
+                    }
+                }
+            }
+            if (_curTime == _timer)
+                _isDone = true;
+        }
+    }
+
     public enum PIECES_STATE
     {
         OUT_FIELD,
@@ -370,7 +512,7 @@ namespace UootNori
     }
 
     public class PiecesMoveContainer
-    {  
+    {        
         static GameObject [] s_originPiecess = new GameObject[(int)PLAYER_KIND.MAX];
         private Road _curRoad = null;
         public Road CurRoad { get { return _curRoad; } set { _curRoad = value; } }
@@ -397,7 +539,8 @@ namespace UootNori
             _pieces = GameObject.Instantiate(s_originPiecess[(int)GameData.CurTurn]);
 
             _curRoad = GameData.GetStartRoad();
-            _pieces.transform.position = _curRoad._field.GetSelfField().transform.position;
+            ///_pieces.transform.position = _curRoad._field.GetSelfField().transform.position;
+            _pieces.transform.position = GameData.s_startPoint[0].transform.position;
             _pieces.GetComponent<Animator>().SetInteger("state", 1);
             _piecesNum = 1;
             GameData.s_players[(int)kind].FieldIn(1);
@@ -412,6 +555,18 @@ namespace UootNori
         public void Add(int piecesNum)
         {
             _piecesNum += piecesNum;
+            GameObject number = Pieces.transform.FindChild("billboard_P").FindChild("Population_P").gameObject;
+            if (_piecesNum > 1)
+            {   
+                number.SetActive(true);
+                number.transform.FindChild("Population_Label_P").GetComponent<TextMesh>().text = _piecesNum.ToString();
+                GameObject camera = GameObject.Find("Field_Camera");
+                number.transform.LookAt(camera.transform);
+            }
+            else
+            {
+                number.SetActive(false);
+            }
         }
 
         public int GetPiecesNum()
@@ -423,9 +578,16 @@ namespace UootNori
         {
             List<Container> containers = new List<Container>();
             _curRoad = GameData.GetStartRoad();
-            containers.Add(new Timer(_pieces, 0.3f));
+
+            Vector3 offsetPoint = _pieces.transform.position;
+            Vector3 p = _curRoad._field.GetSelfField().transform.position - offsetPoint;
+            float roty = Mathf.Atan2(p.x, p.z) * Mathf.Rad2Deg;
+            containers.Add(new Rotation(_pieces, new Vector3(0.0f, roty, 0.0f), 0.0f, Physical.Type.ABSOLUTE));
+            containers.Add(new JumpingMove(_pieces, p, 0.2f));
+            containers.Add(new Rotation(_pieces, new Vector3(_pieces.transform.localEulerAngles.x, 180.0f, _pieces.transform.localEulerAngles.z), 0.0f, Physical.Type.ABSOLUTE));
             containers.Add(new FieldSet(_curRoad._field, this));
             _arrange = new Arrange(_pieces, Arrange.ArrangeType.SERIES, containers, 1);
+            _animal = Animal.BACK_DO;
             return _arrange;
         }
 
@@ -454,10 +616,10 @@ namespace UootNori
                     _curRoad = GameData.GetAllKillRoad();
                     Vector3 offsetPoint = _pieces.transform.position;
                     Vector3 p = _curRoad._field.GetSelfField().transform.position - offsetPoint;
-                    containers.Add(new ChracterMove(_pieces));
+                    containers.Add(new CharacterMove(_pieces));
                     containers.Add(new Timer(_pieces, 0.1f));
-                    containers.Add(new Move(_pieces, p, 0.2f));
-                    containers.Add(new ChracterIdle(_pieces));
+                    containers.Add(new JumpingMove(_pieces, p, 0.2f));
+                    containers.Add(new CharacterIdle(_pieces));
                     containers.Add(new FieldSet(_curRoad._field, this));
                 }
                 else
@@ -469,6 +631,7 @@ namespace UootNori
             }
             else
             {
+                Vector3 lastStepPoint = new Vector3(0,0,0);
                 Vector3 offsetPoint = _pieces.transform.position;
                 if (forwardNum > 0)
                 {
@@ -488,6 +651,12 @@ namespace UootNori
                             float roty = Mathf.Atan2(p.x, p.z) * Mathf.Rad2Deg;
                             offsetPoint = _curRoad._field.GetSelfField().transform.position;
                             containers.Add(new Rotation(_pieces, new Vector3(0.0f, roty, 0.0f), 0.0f, Physical.Type.ABSOLUTE));
+                            bool isstepped = false;
+                            p -= lastStepPoint;
+                            lastStepPoint.x = 0.0f;
+                            lastStepPoint.y = 0.0f;
+                            lastStepPoint.z = 0.0f;
+
                             if (forwardNum == i + 1)
                             {
                                 if (_curRoad._field.Mover != null)
@@ -501,24 +670,31 @@ namespace UootNori
                                     {
                                         containers.Add(new CharacterAttack(_pieces, _curRoad._field.Mover.Pieces));
                                     }
-                                    containers.Add(new Timer(null, 0.25f));
-
+                                    containers.Add(new CharacterFadeOut(_curRoad._field.Mover.Pieces));
                                 }
                                 else
                                 {
-                                    containers.Add(new ChracterMove(_pieces));
+                                    containers.Add(new CharacterMove(_pieces));
                                 }
                             }
                             else
-                            {
+                            {                                
                                 if (_curRoad._field.Mover != null)
                                 {
+                                    isstepped = true;
+                                    lastStepPoint = _curRoad._field.Mover.Pieces.transform.FindChild("Position_Check_P").transform.localPosition;
+                                    p += lastStepPoint;
                                     ///밟아서 가는 애 처
                                 }
-                                containers.Add(new ChracterMove(_pieces));
+                                containers.Add(new CharacterMove(_pieces));
                             }
-                            containers.Add(new Move(_pieces, p, 0.2f));
-                            containers.Add(new ChracterIdle(_pieces));
+                            containers.Add(new JumpingMove(_pieces, p, 0.2f));
+                            containers.Add(new CharacterIdle(_pieces));
+                            if (isstepped)
+                            {
+                                containers.Add(new CharacterStepped(_curRoad._field.Mover.Pieces));
+                                containers.Add(new CharacterIdle(_curRoad._field.Mover.Pieces));
+                            }
                         }
                     }                    
 
@@ -554,17 +730,18 @@ namespace UootNori
                             {
                                 containers.Add(new CharacterAttack(_pieces, _curRoad._field.Mover.Pieces));
                             }
-                            containers.Add(new Timer(null, 0.25f));
+                            containers.Add(new CharacterFadeOut(_curRoad._field.Mover.Pieces));
+                            ///containers.Add(new Timer(null, 0.25f));
 
                         }
                         else
                         {
-                            containers.Add(new ChracterMove(_pieces));
+                            containers.Add(new CharacterMove(_pieces));
                         }
                         containers.Add(new Timer(null, 0.1f));
                         containers.Add(new Rotation(_pieces, new Vector3(0.0f, roty, 0.0f), 0.0f, Physical.Type.ABSOLUTE));
-                        containers.Add(new Move(_pieces, p, 0.2f));
-                        containers.Add(new ChracterIdle(_pieces));
+                        containers.Add(new JumpingMove(_pieces, p, 0.2f));
+                        containers.Add(new CharacterIdle(_pieces));
                     }
 
                     if (!_isGoalin)
@@ -588,14 +765,26 @@ namespace UootNori
     }
 
     public class PlayerData
-    {   
-        public PlayerData(int piecesMax = GameData.PIECESMAX)
+    {
+        UILabel _goalInNum;
+        public PlayerData(PLAYER_KIND kind,  int piecesMax = GameData.PIECESMAX)
         {
             _pieces = new PiecesData[piecesMax];
             for(int i = 0; i < piecesMax; ++i)
             {
                 _pieces[i] = new PiecesData();
             }
+
+            Transform gp = GameObject.Find("UI Root").transform.FindChild("Size").FindChild("GamePlay");
+            if (kind == PLAYER_KIND.PLAYER_1)
+            {
+                _goalInNum = gp.FindChild("Play01").FindChild("Label (8)").GetComponent<UILabel>();
+            }
+            else
+            {
+                _goalInNum = gp.FindChild("Play02").FindChild("Label (8)").GetComponent<UILabel>();
+            }
+            _goalInNum.text = "0";
         }
 
         public PiecesData[] _pieces;
@@ -671,8 +860,7 @@ namespace UootNori
                         if (GetInFieldNum() + GetOutFieldNum() + GetGoalInNum() > GameData.PIECESMAX)
                             Debug.Log("what the fuck !!!");
                         return;
-                    }
-                        
+                    }   
                 }
             }
         }
@@ -691,6 +879,7 @@ namespace UootNori
                     }
                     if (cnt == num)
                     {
+                        _goalInNum.text = GetGoalInNum().ToString();
                         if (GetInFieldNum() + GetOutFieldNum() + GetGoalInNum() > GameData.PIECESMAX)
                             Debug.Log("what the fuck !!!");
                         return;
@@ -769,6 +958,7 @@ namespace UootNori
         public const int FIELD_MAXNUM = 30;
         public const int ROAD_MAXNUM = 8;
         public const int WAYKIND = 4;
+        public const int ANIMAL_STATE_NUM = 4;
 
         public static List<Animal> _curAnimals = new List<Animal>();
         public static PlayerData[] s_players = new PlayerData[(int)PLAYER_KIND.MAX];
@@ -777,11 +967,17 @@ namespace UootNori
         public static FieldData[] _fields = new FieldData[FIELD_MAXNUM];
 
         public static Road[] s_roads = new Road[WAYKIND];
+        public static PlayerControl s_plyerControlNum = PlayerControl.Player1;
 
         public static Road s_allKillRoad;
 
         public static List<FieldData>[] _roads = new List<FieldData>[ROAD_MAXNUM];
         public static List<List<FieldData>>[] _ways = new List<List<FieldData>>[WAYKIND];
+        public static GameObject[] s_animalStateList = new GameObject[ANIMAL_STATE_NUM];
+        public static GameObject s_animaleEffect;
+        public static bool s_backdoLock = false;
+
+        public static GameObject [] s_startPoint = new GameObject[(int)PLAYER_KIND.MAX];
 
         static Dictionary<Animal, int> s_animalToForwardNum = new Dictionary<Animal, int>();
 
@@ -791,6 +987,12 @@ namespace UootNori
         public static bool IsOneMoreUootThrow { get { return s_oneMoreUootThrow; } }
         public static void OneMoreUootThrowCheck() { s_oneMoreUootThrow = false; }
         public static void OneMoreUootThrow() { s_oneMoreUootThrow = true; }
+
+        static bool s_shoot = false;
+        public static bool IsShoot {get{ return s_shoot;}}
+        public static void ShootCheck() {s_shoot = false;}
+        public static void ShootMode(){s_shoot = true;}
+
 
         public static void Init()
         {
@@ -835,7 +1037,7 @@ namespace UootNori
             _fields[23].AddAttribute(new ChangeWay(1));
             _fields[25].AddAttribute(new Kill());
 
-            _fields[26].AddAttribute(new Shot());
+            _fields[26].AddAttribute(new Shoot());
 
             r = GameData.GetStartRoad();
             for (int i = 0; i < 8; ++i)
@@ -850,9 +1052,13 @@ namespace UootNori
             s_animalToForwardNum.Add(Animal.BACK_DO, -1);
             for (int i = 0; i < s_players.Length; ++i)
             {
-                s_players[i] = new PlayerData();
+                s_players[i] = new PlayerData((PLAYER_KIND)i);
                 s_moveContainers.Add((PLAYER_KIND)i, new List<PiecesMoveContainer>());
             }
+            InitAnimalStateView();
+            LoadReadyFieldCharacter();
+            InputManager.Instance.SetPlayerNum(s_plyerControlNum);
+            NextTurnCheck.Instance.GameTurnMarking(PLAYER_KIND.PLAYER_1);
         }
 
         private static void WayInit()
@@ -1022,6 +1228,202 @@ namespace UootNori
             roads.Clear();
         }
 
+        public static void InitAnimalStateView()
+        {
+            GameObject finder = GameObject.Find("UI Root");
+            GameObject effectFinder = finder;
+            string[] animalStateObjectPath = {"Size","GamePlay","S_Uoot_P" };
+            string[] animalEffectObjectPath = {"Size","GamePlay","B_Uoot_P" };
+            foreach (string p in animalStateObjectPath)
+            {
+                finder = finder.transform.FindChild(p).gameObject;
+            }
+
+            foreach (string p in animalEffectObjectPath)
+            {
+                effectFinder = effectFinder.transform.FindChild(p).gameObject;
+            }
+            s_animaleEffect = effectFinder;
+            s_animaleEffect.SetActive(false);
+
+            for (int i = 0; i < ANIMAL_STATE_NUM; ++i)
+            {
+                s_animalStateList[i] = finder.transform.FindChild("0" + (i + 1).ToString() + "_P").gameObject;
+            }
+            foreach (GameObject go in s_animalStateList)
+            {
+                go.SetActive(false);
+            }
+        }
+
+        public static void LoadReadyFieldCharacter()
+        {
+            GameObject rf = GameObject.Find("ReadyField").transform.FindChild("blank_N").gameObject;
+            s_startPoint[0] = rf.transform.FindChild("CH_01").gameObject;
+            s_startPoint[1] = rf.transform.FindChild("CH_02").gameObject;
+            s_startPoint[0].SetActive(true);
+
+            TextMesh tm = s_startPoint[0].transform.FindChild("billboard_P").FindChild("Population_P").FindChild("Population_Label_P").GetComponent<TextMesh>();
+            tm.text = s_players[0].GetOutFieldNum().ToString();
+        }
+
+        public static void OpenAnimalChoice()
+        {
+            foreach (GameObject go in s_animalStateList)
+            {
+                if(go.active == true)
+                {
+                    go.transform.FindChild("Select_P").gameObject.SetActive(true);
+                    return;
+                }
+            }
+        }
+
+        public static void CloseAnimalChoice()
+        {
+            foreach (GameObject go in s_animalStateList)
+            {   
+                go.transform.FindChild("Select_P").gameObject.SetActive(false);
+            }
+            BackDoUnLock();
+        }
+
+        public static void BackDoLock()
+        {
+            GameObject go;
+            for (int i = 0; i < s_animalStateList.Length; ++i)
+            {
+                go = s_animalStateList[i];
+                if (go.active)
+                {
+                    if (s_animalStateList[i].GetComponent<AnimalContainer>()._animal == Animal.BACK_DO)
+                        s_animalStateList[i].transform.FindChild("Uoot_Sprite_P").GetComponent<UISprite>().alpha = 0.4f;
+                }
+            }
+            s_backdoLock = true;
+        }
+
+        public static void BackDoUnLock()
+        {
+            GameObject go;
+            for (int i = 0; i < s_animalStateList.Length; ++i)
+            {
+                go = s_animalStateList[i];
+                s_animalStateList[i].transform.FindChild("Uoot_Sprite_P").GetComponent<UISprite>().alpha = 1.0f;
+
+            }
+            s_backdoLock = false;
+        }
+
+        public static void LeftAnimalChoice()
+        {   
+            GameObject go;
+            List<GameObject> activeList = new List<GameObject>();
+            for (int i = 0; i < s_animalStateList.Length; ++i)
+            {
+                go = s_animalStateList[i];
+                if (go.active)
+                    activeList.Add(go);
+            }
+
+
+            for (int i = 0; i < activeList.Count; ++i)
+            {
+                go = activeList[i].transform.FindChild("Select_P").gameObject;
+                if (go.active)
+                {
+                    go.SetActive(false);
+                    if (i == 0)
+                    {
+                        if (s_backdoLock)
+                        {
+                            if (activeList[activeList.Count - 1].GetComponent<AnimalContainer>()._animal == Animal.BACK_DO)
+                            {
+                                go.SetActive(true);
+                                return;
+                            }
+                        }
+                        activeList[activeList.Count - 1].transform.FindChild("Select_P").gameObject.SetActive(true);
+                    }
+                    else
+                    {
+                        if (s_backdoLock)
+                        {
+                            if (activeList[i - 1].GetComponent<AnimalContainer>()._animal == Animal.BACK_DO)
+                            {
+                                go.SetActive(true);
+                                return;
+                            }
+                        }
+                        activeList[i - 1].transform.FindChild("Select_P").gameObject.SetActive(true);
+                    }
+                    return;
+                }
+            }
+        }
+
+        public static void RightAnimalChoice()
+        {
+            GameObject go;
+            List<GameObject> activeList = new List<GameObject>();
+            for (int i = 0; i < s_animalStateList.Length; ++i)
+            {
+                go = s_animalStateList[i];
+                if (go.active)
+                    activeList.Add(go);
+            }
+
+
+            for (int i = 0; i < activeList.Count; ++i)
+            {
+                go = activeList[i].transform.FindChild("Select_P").gameObject;
+                if (go.active)
+                {
+                    go.SetActive(false);
+                    if (i == activeList.Count - 1)
+                    {
+                        if (s_backdoLock)
+                        {
+                            if (activeList[0].GetComponent<AnimalContainer>()._animal == Animal.BACK_DO)
+                            {
+                                go.SetActive(true);
+                                return;
+                            }
+                        }
+                        activeList[0].transform.FindChild("Select_P").gameObject.SetActive(true);
+                    }
+                    else
+                    {
+                        if (s_backdoLock)
+                        {
+                            if (activeList[i + 1].GetComponent<AnimalContainer>()._animal == Animal.BACK_DO)
+                            {
+                                go.SetActive(true);
+                                return;
+                            }
+                        }
+                        activeList[i + 1].transform.FindChild("Select_P").gameObject.SetActive(true);
+                    }
+                    return;
+                }
+            }
+        }
+
+        public static Animal EnterAnimalChoice()
+        {   
+            GameObject go;
+            for (int i = 0; i < s_animalStateList.Length; ++i)
+            {
+                go = s_animalStateList[i].transform.FindChild("Select_P").gameObject;
+                if (go.active)
+                {
+                    go.SetActive(false);
+                    return s_animalStateList[i].GetComponent<AnimalContainer>()._animal;
+                }
+            }
+            return Animal.NONE;
+        }
+
         public static void Reset()
         {
             
@@ -1177,6 +1579,26 @@ namespace UootNori
             return _curAnimals.Count;
         }
 
+        public static Dictionary<Animal, int> GetAnimalState()
+        {
+            Dictionary<Animal, int> animalState = new Dictionary<Animal, int>();
+            for (Animal a = Animal.DO; a < Animal.MAX; ++a)
+            {
+                animalState.Add(a, 0);
+            }
+
+            foreach (Animal a in _curAnimals)
+            {
+                animalState[a] = animalState[a] + 1;
+            }
+            return animalState;
+        }
+
+        public static void AddAnimal(Animal animal)
+        {
+            _curAnimals.Add(animal);
+        }
+
         public static Animal GetAnimal(int index)
         {
             return _curAnimals[index];
@@ -1185,6 +1607,13 @@ namespace UootNori
         public static void RemoveAnimal(int index)
         {
             _curAnimals.RemoveAt(index);
+            RefreshAnimalView(false);
+        }
+
+        public static void RemoveAnimal(Animal animal)
+        {
+            _curAnimals.Remove(animal);
+            RefreshAnimalView(false);
         }
 
         public static Animal GetLastAnimal()
@@ -1194,6 +1623,59 @@ namespace UootNori
             return Animal.NONE;
         }
 
+        public static void RefreshAnimalView(bool isNewThrow = true)
+        {
+            string animalObj = "Uoot_Sprite_P";
+            string animalNumObj = "Uoot_Label_Count_P";
+            foreach (GameObject go in s_animalStateList)
+            {
+                go.SetActive(false);
+            }
+
+            Dictionary<Animal, string> animalImage = new Dictionary<Animal, string>();
+            for (Animal a = Animal.DO; a < Animal.BACK_DO; ++a)
+            {
+                animalImage.Add(a, "ETC_S_Uoot_" + (((int)a) + 1).ToString());
+            }
+            animalImage.Add(Animal.BACK_DO, "ETC_S_Uoot_0");
+
+            Dictionary<Animal, int> animalState = GetAnimalState();
+            int index = 0;
+
+            for (Animal a = Animal.DO; a < Animal.MAX; ++a)
+            {
+                if (animalState[a] > 0)
+                {
+                    ++index;
+                    GameObject s = s_animalStateList[index];
+                    s.SetActive(true);
+                    s.GetComponent<AnimalContainer>()._animal = a;
+                    s.transform.FindChild(animalObj).GetComponent<UISprite>().spriteName = animalImage[a];
+                    s.transform.FindChild(animalNumObj).GetComponent<UILabel>().text = animalState[a].ToString();
+                }
+            }
+
+            animalImage.Clear();
+            for (Animal a = Animal.DO; a < Animal.BACK_DO; ++a)
+            {
+                animalImage.Add(a, "ETC_B_Uoot_" + (((int)a) + 1).ToString());
+            }
+            animalImage.Add(Animal.BACK_DO, "ETC_B_Uoot_0");
+
+            if(isNewThrow)
+            {
+                if (animalImage.ContainsKey(GetLastAnimal()))
+                {
+                    s_animaleEffect.SetActive(true);
+                    s_animaleEffect.transform.FindChild("B_Uoot_Sprite_P").GetComponent<UISprite>().spriteName = animalImage[GetLastAnimal()];
+                }
+            }
+            else
+            {
+                s_animaleEffect.SetActive(false);
+            }
+            
+        }
         public static int GetForwardNum(Animal animal)
         {
             if(!s_animalToForwardNum.ContainsKey(animal))
@@ -1204,13 +1686,27 @@ namespace UootNori
 
         public static void NextTurn()
         {
-            _curTurn = _curTurn == PLAYER_KIND.PLAYER_1 ? PLAYER_KIND.PLAYER_2 : PLAYER_KIND.PLAYER_1;
+            s_startPoint[(int)_curTurn].SetActive(false);
+            _curTurn = ( _curTurn == PLAYER_KIND.PLAYER_1 ? PLAYER_KIND.PLAYER_2 : PLAYER_KIND.PLAYER_1 );
+            OutPiecessViewRefresh();
+        }
+
+        public static void OutPiecessViewRefresh()
+        {
+            if(GetCurTurnOutPiecess() > 0)
+                s_startPoint[(int)_curTurn].SetActive(true);
+            TextMesh tm = s_startPoint[(int)_curTurn].transform.FindChild("billboard_P").FindChild("Population_P").FindChild("Population_Label_P").GetComponent<TextMesh>();
+            tm.text = s_players[(int)_curTurn].GetOutFieldNum().ToString();
         }
 
         public static PatternSystem.Arrange NewInField(Animal animal)
         {
             PiecesMoveContainer mover = new PiecesMoveContainer(_curTurn);
             PatternSystem.Arrange arr = null;
+
+            GameData.s_startPoint[0].SetActive(false);
+            GameData.s_startPoint[1].SetActive(false);
+
             if (animal != Animal.BACK_DO)
                 arr = mover.Move(animal);
             else
@@ -1219,8 +1715,12 @@ namespace UootNori
             if(arr != null)
                 s_moveContainers[_curTurn].Add(mover);
 
+            TextMesh tm = s_startPoint[(int)_curTurn].transform.FindChild("billboard_P").FindChild("Population_P").FindChild("Population_Label_P").GetComponent<TextMesh>();
+            tm.text = s_players[(int)_curTurn].GetOutFieldNum().ToString();
+
             GameData.FieldInNumToMoverPiecesIsSame(mover.PlayerKind);
             return arr;
+
         }
 
         public static List<PiecesMoveContainer> GetPiecesMover(PLAYER_KIND kind)

@@ -29,5 +29,11 @@ public class Result : Attribute {
         
         if(winner != PLAYER_KIND.MAX)
             Debug.Log("Game Over!! Winner!! " + winner.ToString());
+
+        PLAYER_KIND loser = winner == PLAYER_KIND.PLAYER_1 ? PLAYER_KIND.PLAYER_2 : PLAYER_KIND.PLAYER_1;
+        foreach(PiecesMoveContainer pmc in GameData.GetPiecesMover(loser))
+        {
+            pmc.Pieces.GetComponent<Animator>().SetInteger("state", 12);
+        }
     }
 }
