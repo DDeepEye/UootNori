@@ -27,6 +27,9 @@ public class InGameControlerManager : FlowContainer.Attribute
     delegate void Step(KeyEvent key);
     Step _curStep = null;
 
+    delegate void Check();
+    Check _curCheck = null;
+
     float _curTime;
     const float LimitTime = 10.0f;
     ControlMode _mode = ControlMode.CharcterMove;
@@ -110,6 +113,7 @@ public class InGameControlerManager : FlowContainer.Attribute
                     }
                     else
                     {
+                        _curCheck = ShootEffectRun;
                         ShootEffectContainerCreate();
                     }
                 }
@@ -154,6 +158,7 @@ public class InGameControlerManager : FlowContainer.Attribute
                     ManMove.SetMover(_selecterMovers[_choiceIndex]._mover, choice);
                     _selecterMovers[_choiceIndex]._select.SetActive(false);
                     GameData.CloseAnimalChoice();
+                    _curCheck = null;
                 }
                 break;
         }
@@ -169,7 +174,22 @@ public class InGameControlerManager : FlowContainer.Attribute
 
         if (IsDone)
             return;
-        
+
+        if (_curCheck != null)
+            _curCheck();
+	}
+
+    void TimeCheck()
+    {
+        _curTime += Time.deltaTime;
+        if (_curTime > LimitTime)
+        {
+            _curStep(KeyEvent.ENTER_EVENT);
+        }
+    }
+
+    void ShootEffectRun()
+    {
         if (_mode == ControlMode.Shoot)
         {
             if (_shootEffect != null)
@@ -185,7 +205,7 @@ public class InGameControlerManager : FlowContainer.Attribute
                 } 
             }
         }
-	}
+    }
 
     void CollectChoiceObject()
     {
@@ -329,6 +349,7 @@ public class InGameControlerManager : FlowContainer.Attribute
 
     void OnEnable()
     {
+        _curCheck = TimeCheck;
         InputManager.Instance.InputAttribute = this;
         _curTime = 0.0f;        
     }

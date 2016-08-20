@@ -126,6 +126,7 @@ namespace UootNori
             {
                 GameData.s_players[(int)mover.PlayerKind].FieldIn(1);
                 mover.Add(1);
+                GameData.OutPiecessViewRefresh();
                 mover.Containers.AddContainer(new CharacterAdd(mover.Pieces));
                 mover.Containers.AddContainer(new Timer(null, 1.2f));
                 mover.Containers.AddContainer(new CharacterIdle(mover.Pieces));
@@ -143,6 +144,7 @@ namespace UootNori
             {
                 mover.Add(-1);
                 GameData.s_players[(int)mover.PlayerKind].Out(1);
+                GameData.OutPiecessViewRefresh();
                 mover.Containers.AddContainer(new CharacterRemove(mover.Pieces));
                 mover.Containers.AddContainer(new Timer(null, 1.2f));
                 mover.Containers.AddContainer(new CharacterIdle(mover.Pieces));
@@ -1685,6 +1687,11 @@ namespace UootNori
         {
             s_startPoint[(int)_curTurn].SetActive(false);
             _curTurn = ( _curTurn == PLAYER_KIND.PLAYER_1 ? PLAYER_KIND.PLAYER_2 : PLAYER_KIND.PLAYER_1 );
+            OutPiecessViewRefresh();
+        }
+
+        public static void OutPiecessViewRefresh()
+        {
             if(GetCurTurnOutPiecess() > 0)
                 s_startPoint[(int)_curTurn].SetActive(true);
             TextMesh tm = s_startPoint[(int)_curTurn].transform.FindChild("billboard_P").FindChild("Population_P").FindChild("Population_Label_P").GetComponent<TextMesh>();
