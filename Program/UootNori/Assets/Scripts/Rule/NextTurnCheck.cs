@@ -4,7 +4,7 @@ using UootNori;
 using FlowContainer;
 using PatternSystem;
 
-public class NextTurn : Attribute {
+public class NextTurnCheck : Attribute {
 
     Rotation _cameraRot;
     Rotation _uiCameraRot;
@@ -13,22 +13,27 @@ public class NextTurn : Attribute {
 
     GameObject [] _players = new GameObject[(int)PLAYER_KIND.MAX];
 
-    void Awake()
-    {
-        GameObject uiroot = GameObject.Find("UI Root");
-        Transform gp = uiroot.transform.FindChild("Size").FindChild("GamePlay");
+    static public NextTurnCheck s_instance;
+    static public NextTurnCheck Instance {get{ return s_instance;}}
 
+    NextTurnCheck()
+    {
+        s_instance = this;
+    }
+
+    public void GameTurnMarking(PLAYER_KIND kind)
+    {
         if (_players[0] == null)
         {
+            GameObject uiroot = GameObject.Find("UI Root");
+            Transform gp = uiroot.transform.FindChild("Size").FindChild("GamePlay");
             _players[0] = gp.FindChild("Play01").gameObject;
-            _players[0].transform.FindChild("Select_P").gameObject.SetActive(true);
+            _players[1] = gp.FindChild("Play02").gameObject;
         }
 
-        if (_players[1] == null)
-        {
-            _players[1] = gp.FindChild("Play02").gameObject;
-            _players[1].transform.FindChild("Select_P").gameObject.SetActive(false);
-        }
+        PLAYER_KIND offMarking = (kind == PLAYER_KIND.PLAYER_1 ? PLAYER_KIND.PLAYER_2 : PLAYER_KIND.PLAYER_1);
+        _players[(int)offMarking].transform.FindChild("Select_P").gameObject.SetActive(false);
+        _players[(int)kind].transform.FindChild("Select_P").gameObject.SetActive(true);
 
     }
     
@@ -53,9 +58,8 @@ public class NextTurn : Attribute {
             {
                 _isDone = true;
                 transform.parent.GetComponent<Attribute>().ReturnActive = "UootThrow";
-                _players[(int)GameData.CurTurn].transform.FindChild("Select_P").gameObject.SetActive(false);
                 GameData.NextTurn();
-                _players[(int)GameData.CurTurn].transform.FindChild("Select_P").gameObject.SetActive(true);
+                GameTurnMarking(GameData.CurTurn);
             }
         }
 	}

@@ -1058,6 +1058,7 @@ namespace UootNori
             InitAnimalStateView();
             LoadReadyFieldCharacter();
             InputManager.Instance.SetPlayerNum(s_plyerControlNum);
+            NextTurnCheck.Instance.GameTurnMarking(PLAYER_KIND.PLAYER_1);
         }
 
         private static void WayInit()
