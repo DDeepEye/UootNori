@@ -33,6 +33,9 @@ public class Title : Attribute {
 
     void OnEnable()
     {
+        if (_titleScene == null)
+            _titleScene = GameObject.Find("UI Root").transform.FindChild("Size").FindChild("Title").gameObject;
+        _titleScene.SetActive(true);
     }
     public override void Reset()
     {

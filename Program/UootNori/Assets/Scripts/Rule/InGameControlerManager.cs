@@ -344,7 +344,10 @@ public class InGameControlerManager : FlowContainer.Attribute
     {
         if (!gameObject.active)
             return;
-        _curStep(key);
+        if (IsDone)
+            return;
+        if (_curStep != null)
+            _curStep(key);
     }
 
     void OnEnable()

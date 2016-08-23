@@ -57,8 +57,20 @@ namespace FlowContainer
                                 {
                                     transform.GetChild(i).gameObject.SetActive(true);
                                     _curActive = i;
-                                    break;
+                                    _returnActive = "";
+                                    return;
                                 }
+                            }
+
+                            if(transform.parent != null)
+                            {
+                                Attribute parentAtt = transform.parent.GetComponent<Attribute>();
+                                if (parentAtt != null)
+                                {
+                                    parentAtt.ReturnActive = ReturnActive;
+                                    _isDone = true;
+                                }
+                                    
                             }
                             _returnActive = "";
                         }

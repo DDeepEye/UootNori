@@ -19,5 +19,6 @@ public class TurnFix : Attribute {
     void OnEnable()
     {
         GameData.TurnSave();
+        _isDone = true;
     }
 }

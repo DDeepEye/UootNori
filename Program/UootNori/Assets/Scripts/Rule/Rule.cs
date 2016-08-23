@@ -988,7 +988,7 @@ namespace UootNori
 
     public class GameData
     {
-        public const int PIECESMAX = 5;
+        public const int PIECESMAX = 1;
 
         public const int FIELD_MAXNUM = 30;
         public const int ROAD_MAXNUM = 8;
@@ -1850,6 +1850,24 @@ namespace UootNori
             s_IsPlayer1IsCharcter1 = !isChacter1;
             ChacracterSetting();
             PiecesMoveContainer.CharacterSetting(s_IsPlayer1IsCharcter1);
+        }
+
+        public static void VictoryAni(PLAYER_KIND victory)
+        {
+            s_startPoint[(int)victory].SetActive(true);
+            s_startPoint[(int)victory].GetComponent<Animator>().SetInteger("state", 11);
+        }
+
+        public static void ReSetGame(bool isRegame)
+        {
+            if(isRegame)
+            {
+
+            }
+            else
+            {
+
+            }
         }
     }
 }
