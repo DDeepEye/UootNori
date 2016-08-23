@@ -34,6 +34,8 @@ namespace UootNori
 
         FlowContainer.Attribute _inputAttribute;
         public FlowContainer.Attribute InputAttribute {get{ return _inputAttribute;}set{ _inputAttribute = value;}}
+        FlowContainer.Attribute _backupInputAttribute;
+
 
         Dictionary<string, KeyEvent> _keys = new Dictionary<string, KeyEvent>()
         {
@@ -102,7 +104,23 @@ namespace UootNori
                 string keyDown = _playerControls[_curPlayer].Update();
                 if (keyDown != null)
                 {
-                    InputAttribute.Event(_keys[keyDown]);
+                    if (InputAttribute != null)
+                        InputAttribute.Event(_keys[keyDown]);
+                }
+            }
+
+            if(Input.GetKeyUp(KeyCode.Z))
+            {
+                if (InputAttribute != Calculate.Instance)
+                {
+                    GameObject.Find("UI Root").transform.FindChild("Size").FindChild("Calculate").gameObject.SetActive(true);
+                    _backupInputAttribute = InputAttribute;
+                    InputAttribute = Calculate.Instance;
+                }
+                else
+                {
+                    InputAttribute = _backupInputAttribute;
+                    GameObject.Find("UI Root").transform.FindChild("Size").FindChild("Calculate").gameObject.SetActive(false);
                 }
             }
         }

@@ -257,23 +257,32 @@ public class UootThrow : Attribute {
     }
 
 
-    List<Animal> _animalQueue = new List<Animal>(){Animal.BACK_DO, Animal.UOOT, Animal.BACK_DO, Animal.DO};
+    List<Animal> _animalQueue = new List<Animal>() { Animal.DO, Animal.BACK_DO, Animal.BACK_DO, Animal.DO };
+    int cnt = 0;
     void ThrowToData()
     {
+
+        _isOut = false;
         /*
         if (GameData.CurTurn == PLAYER_KIND.PLAYER_1)
         {
-            if (_animalQueue.Count > 0)
-            {
-                GameData.AddAnimal(_animalQueue[0]);
-                _animalQueue.RemoveAt(0);
-                return;
-            }
+            ++cnt;
+            if (cnt > 1)
+                _isOut = true;
+            
+            GameData.AddAnimal(Animal.BACK_DO);
+            return;
         }
-        */
 
+        if (_animalQueue.Count > 0)
+        {
+            GameData.AddAnimal(_animalQueue[0]);
+            _animalQueue.RemoveAt(0);
+            return;
+        }
+         * */
 
-        _isOut = false;
+        
         int rr = Random.Range(1, _animalProbability[_animalProbability.Count - 1]);
         for (int i = 0; i < _animalProbability.Count; ++i)
         {

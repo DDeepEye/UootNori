@@ -275,6 +275,7 @@ namespace UootNori
                         GameData.FieldInNumToMoverPiecesIsSame(findMover.CurRoad._field.Mover.PlayerKind);
                     }
                     GameObject.Destroy(findMover.CurRoad._field.Mover.Pieces);
+                    findMover.CurRoad._field.Mover = null;
                 }
             }
             _field.Mover = _mover;
@@ -530,12 +531,27 @@ namespace UootNori
 
         public Animal _animal = Animal.MAX;
 
-        string[] _moverName = {"Character/CH_01", "Character/CH_02"};
+        static string[] s_moverName = {"Character/CH_01", "Character/CH_02"};
+
+        static public void CharacterSetting(bool player1isCharacter)
+        {
+            if(player1isCharacter)
+            {
+                s_moverName[0] = "Character/CH_01";
+                s_moverName[1] = "Character/CH_02";
+            }
+            else
+            {
+                s_moverName[1] = "Character/CH_01";
+                s_moverName[0] = "Character/CH_02";
+            }
+        }
+        
         public PiecesMoveContainer(PLAYER_KIND kind)
         {
             _playerKind = kind;
             if(s_originPiecess[(int)GameData.CurTurn] == null)
-                s_originPiecess[(int)GameData.CurTurn] = Resources.Load(_moverName[(int)GameData.CurTurn]) as GameObject;
+                s_originPiecess[(int)GameData.CurTurn] = Resources.Load(s_moverName[(int)GameData.CurTurn]) as GameObject;
             _pieces = GameObject.Instantiate(s_originPiecess[(int)GameData.CurTurn]);
 
             _curRoad = GameData.GetStartRoad();
@@ -583,8 +599,25 @@ namespace UootNori
             Vector3 p = _curRoad._field.GetSelfField().transform.position - offsetPoint;
             float roty = Mathf.Atan2(p.x, p.z) * Mathf.Rad2Deg;
             containers.Add(new Rotation(_pieces, new Vector3(0.0f, roty, 0.0f), 0.0f, Physical.Type.ABSOLUTE));
+            if (_curRoad._field.Mover != null)
+            {
+                if (PlayerKind == _curRoad._field.Mover.PlayerKind)
+                {
+                    containers.Add(new CharacterRide(_pieces));
+                }
+                else
+                {
+                    containers.Add(new CharacterAttack(_pieces, _curRoad._field.Mover.Pieces));
+                }
+                containers.Add(new CharacterFadeOut(_curRoad._field.Mover.Pieces));
+            }
+            else
+            {
+                containers.Add(new CharacterMove(_pieces));
+            }
             containers.Add(new JumpingMove(_pieces, p, 0.2f));
             containers.Add(new Rotation(_pieces, new Vector3(_pieces.transform.localEulerAngles.x, 180.0f, _pieces.transform.localEulerAngles.z), 0.0f, Physical.Type.ABSOLUTE));
+            containers.Add(new CharacterIdle(_pieces));
             containers.Add(new FieldSet(_curRoad._field, this));
             _arrange = new Arrange(_pieces, Arrange.ArrangeType.SERIES, containers, 1);
             _animal = Animal.BACK_DO;
@@ -616,6 +649,8 @@ namespace UootNori
                     _curRoad = GameData.GetAllKillRoad();
                     Vector3 offsetPoint = _pieces.transform.position;
                     Vector3 p = _curRoad._field.GetSelfField().transform.position - offsetPoint;
+                    float roty = Mathf.Atan2(p.x, p.z) * Mathf.Rad2Deg;
+                    containers.Add(new Rotation(_pieces, new Vector3(0.0f, roty, 0.0f), 0.0f, Physical.Type.ABSOLUTE));
                     containers.Add(new CharacterMove(_pieces));
                     containers.Add(new Timer(_pieces, 0.1f));
                     containers.Add(new JumpingMove(_pieces, p, 0.2f));
@@ -975,7 +1010,7 @@ namespace UootNori
         public static List<List<FieldData>>[] _ways = new List<List<FieldData>>[WAYKIND];
         public static GameObject[] s_animalStateList = new GameObject[ANIMAL_STATE_NUM];
         public static GameObject s_animaleEffect;
-        public static bool s_backdoLock = false;
+        public static bool s_backdoLock = false;        
 
         public static GameObject [] s_startPoint = new GameObject[(int)PLAYER_KIND.MAX];
 
@@ -989,6 +1024,8 @@ namespace UootNori
         public static void OneMoreUootThrow() { s_oneMoreUootThrow = true; }
 
         static bool s_shoot = false;
+
+        static bool s_IsPlayer1IsCharcter1 = true;
         public static bool IsShoot {get{ return s_shoot;}}
         public static void ShootCheck() {s_shoot = false;}
         public static void ShootMode(){s_shoot = true;}
@@ -1265,6 +1302,33 @@ namespace UootNori
 
             TextMesh tm = s_startPoint[0].transform.FindChild("billboard_P").FindChild("Population_P").FindChild("Population_Label_P").GetComponent<TextMesh>();
             tm.text = s_players[0].GetOutFieldNum().ToString();
+        }
+
+        public static void ChacracterSetting()
+        {
+            GameObject rf = GameObject.Find("ReadyField").transform.FindChild("blank_N").gameObject;
+            Transform gp = GameObject.Find("UI Root").transform.FindChild("Size").FindChild("GamePlay");
+            if(s_IsPlayer1IsCharcter1)
+            {
+                s_startPoint[0] = rf.transform.FindChild("CH_01").gameObject;
+                s_startPoint[1] = rf.transform.FindChild("CH_02").gameObject;
+                gp.FindChild("Play01").FindChild("Character_Sprite_P").GetComponent<UISprite>().spriteName = "ETC_CH01";
+                gp.FindChild("Play02").FindChild("Character_Sprite_P").GetComponent<UISprite>().spriteName = "ETC_CH02";                
+            }
+            else
+            {
+                s_startPoint[1] = rf.transform.FindChild("CH_01").gameObject;
+                s_startPoint[0] = rf.transform.FindChild("CH_02").gameObject;
+
+                gp.FindChild("Play01").FindChild("Character_Sprite_P").GetComponent<UISprite>().spriteName = "ETC_CH02";
+                gp.FindChild("Play02").FindChild("Character_Sprite_P").GetComponent<UISprite>().spriteName = "ETC_CH01";
+            }
+            s_startPoint[0].SetActive(true);
+            s_startPoint[1].SetActive(false);
+
+            TextMesh tm = s_startPoint[0].transform.FindChild("billboard_P").FindChild("Population_P").FindChild("Population_Label_P").GetComponent<TextMesh>();
+            tm.text = s_players[0].GetOutFieldNum().ToString();
+            
         }
 
         public static void OpenAnimalChoice()
@@ -1781,8 +1845,12 @@ namespace UootNori
             return true;
         }
 
+        public static void Player2IsCharacter1(bool isChacter1)
+        {
+            s_IsPlayer1IsCharcter1 = !isChacter1;
+            ChacracterSetting();
+            PiecesMoveContainer.CharacterSetting(s_IsPlayer1IsCharcter1);
+        }
     }
-
-
 }
 
