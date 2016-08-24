@@ -7,9 +7,7 @@ using FlowContainer;
 using System;
 
 public class InGameControlerManager : FlowContainer.Attribute
-{
-
-    
+{   
     public struct SelecterContainer
     {
         public SelecterContainer(GameObject select, PiecesMoveContainer mover = null)
@@ -22,7 +20,18 @@ public class InGameControlerManager : FlowContainer.Attribute
     }
 
     static InGameControlerManager s_instance;
-    static public InGameControlerManager Instance{get{ return s_instance; }}
+    static public InGameControlerManager Instance
+    {
+        get
+        {
+            if(s_instance == null)
+            {
+                s_instance = GameObject.Find("Flow").transform.FindChild("GameFlow").FindChild("InGame").FindChild("InGameFlow").FindChild("GamePlay").FindChild("InGameControlerManager").GetComponent<InGameControlerManager>();
+            }
+
+            return s_instance; 
+        }
+    }
 
     delegate void Step(KeyEvent key);
     Step _curStep = null;
@@ -41,11 +50,6 @@ public class InGameControlerManager : FlowContainer.Attribute
 
     GameObject _shootEffectObjOrigin;
     GameObject _shootEffectClone;
-
-    InGameControlerManager()
-    {
-        s_instance = this;
-    }
 
     public void ReadyToCharacterMode()
     {

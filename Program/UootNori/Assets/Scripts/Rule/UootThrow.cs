@@ -257,12 +257,12 @@ public class UootThrow : Attribute {
     }
 
 
-    List<Animal> _animalQueue = new List<Animal>() { Animal.DO, Animal.BACK_DO, Animal.BACK_DO, Animal.DO };
+    List<Animal> _animalQueue = new List<Animal>() { Animal.BACK_DO, Animal.DO, Animal.DO, Animal.DO };
     int cnt = 0;
     void ThrowToData()
     {
 
-        _isOut = false;
+        _isOut = false;        
         /*
         if (GameData.CurTurn == PLAYER_KIND.PLAYER_1)
         {
@@ -281,6 +281,12 @@ public class UootThrow : Attribute {
             return;
         }
          * */
+        if (_animalQueue.Count > 0)
+        {
+            GameData.AddAnimal(_animalQueue[0]);
+            _animalQueue.RemoveAt(0);
+            return;
+        }
 
         
         int rr = Random.Range(1, _animalProbability[_animalProbability.Count - 1]);
@@ -321,7 +327,7 @@ public class UootThrow : Attribute {
         if(!_isOut) uootThrowFlow.Add(new UootThrowResultRefresh());
         uootThrowFlow.Add(new PatternSystem.Timer(null, 2.0f));
         _aniArrange = new PatternSystem.Arrange(null, PatternSystem.Arrange.ArrangeType.SERIES, uootThrowFlow, 1);
-    }
+    }    
     
 
     bool UootThrowAniCheck()

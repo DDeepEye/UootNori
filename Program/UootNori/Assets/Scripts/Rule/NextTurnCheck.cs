@@ -14,7 +14,17 @@ public class NextTurnCheck : Attribute {
     GameObject [] _players = new GameObject[(int)PLAYER_KIND.MAX];
 
     static public NextTurnCheck s_instance;
-    static public NextTurnCheck Instance {get{ return s_instance;}}
+    static public NextTurnCheck Instance 
+    {
+        get
+        {
+            if (s_instance == null)
+            {
+                s_instance = GameObject.Find("Flow").transform.FindChild("GameFlow").FindChild("InGame").FindChild("InGameFlow").FindChild("GamePlay").FindChild("NextTurn").GetComponent<NextTurnCheck>();
+            }
+            return s_instance;
+        }
+    }
 
     NextTurnCheck()
     {

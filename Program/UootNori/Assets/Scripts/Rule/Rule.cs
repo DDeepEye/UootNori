@@ -900,6 +900,14 @@ namespace UootNori
             }
         }
 
+        public void Reset()
+        {
+            for (int i = 0; i < _pieces.Length; ++i)
+            {
+                _pieces[i]._state = PIECES_STATE.OUT_FIELD;
+            }
+        }
+
         public void GoalIn(int num)
         {
             if (GetInFieldNum() > 0)
@@ -1860,14 +1868,43 @@ namespace UootNori
 
         public static void ReSetGame(bool isRegame)
         {
-            if(isRegame)
+            foreach (KeyValuePair<PLAYER_KIND, List<PiecesMoveContainer>> movers in s_moveContainers)
             {
+                foreach (PiecesMoveContainer m in movers.Value)
+                {
+                    m.CurRoad._field.Mover = null;
+                    GameObject.Destroy(m.Pieces);
+                }
+                movers.Value.Clear();
+            }
+            
+            _curAnimals.Clear();
 
+            for (int i = 0; i < s_startPoint.Length; ++i )
+            {
+                s_startPoint[i].SetActive(false);
+                s_startPoint[i].GetComponent<Animator>().SetInteger("state", 1);
+
+                TextMesh tm = GameData.s_startPoint[i].transform.FindChild("billboard_P").FindChild("Population_P").FindChild("Population_Label_P").GetComponent<TextMesh>();
+                tm.text = GameData.PIECESMAX.ToString();
+            }
+
+            for (int i = 0; i < s_players.Length; ++i )
+            {
+                s_players[i].Reset();
+            }
+
+            if (!isRegame)
+            {
+                _curTurn = PLAYER_KIND.PLAYER_1;
+                s_startPoint[0].SetActive(true);
             }
             else
             {
-
+                s_startPoint[(int)_curTurn].SetActive(true);
             }
+
+            UootThrow.s_uootAni.SetInteger("state", 0);
         }
     }
 }

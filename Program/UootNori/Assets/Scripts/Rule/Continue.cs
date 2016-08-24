@@ -41,7 +41,7 @@ public class Continue : Attribute {
             _isDone = true;
             GameData.ReSetGame(isReGame);
             if (isReGame)
-                transform.parent.GetComponent<Attribute>().ReturnActive = "UootThrow";
+                transform.parent.GetComponent<Attribute>().ReturnActive = "GamePlay";
             _continue.SetActive(false);
         }
         else
