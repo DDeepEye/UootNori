@@ -1,23 +1,35 @@
 ﻿<Properties StartupItem="Assembly-CSharp.csproj">
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" PreferredExecutionTarget="Unity.Instance.Unity Editor" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="Assets/Scripts/Rule/InGameControlerManager.cs">
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets/Scripts/Rule/Rule.cs">
     <Files>
-      <File FileName="Assets/Scripts/Rule/Rule.cs" Line="607" Column="30" />
-      <File FileName="Assets/Scripts/Rule/ManMove.cs" Line="89" Column="1" />
-      <File FileName="Assets/Scripts/Initialize.cs" Line="1" Column="1" />
-      <File FileName="Assets/Scripts/Rule/UootThrow.cs" Line="1" Column="1" />
-      <File FileName="Assets/Scripts/PatternSystem/HabitProperty.cs" Line="299" Column="9" />
+      <File FileName="Assets/Scripts/Rule/Rule.cs" Line="999" Column="39" />
+      <File FileName="Assets/Scripts/Rule/NextTurnCheck.cs" Line="80" Column="60" />
+      <File FileName="Assets/Scripts/Rule/UootThrow.cs" Line="342" Column="10" />
+      <File FileName="Assets/Scripts/Rule/ManMove.cs" Line="98" Column="30" />
+      <File FileName="Assets/Scripts/Initialize.cs" Line="12" Column="1" />
+      <File FileName="Assets/Scripts/PatternSystem/HabitProperty.cs" Line="1" Column="1" />
       <File FileName="Assets/Scripts/FlowContainer/Arrange.cs" Line="1" Column="1" />
-      <File FileName="Assets/Scripts/Rule/NextTurn.cs" Line="38" Column="3" />
-      <File FileName="Assets/Scripts/FlowContainer/Attribute.cs" Line="7" Column="5" />
-      <File FileName="Assets/Scripts/Rule/InGameControlerManager.cs" Line="202" Column="18" />
+      <File FileName="Assets/Scripts/FlowContainer/Attribute.cs" Line="1" Column="1" />
+      <File FileName="Assets/Scripts/Rule/InGameControlerManager.cs" Line="24" Column="6" />
+      <File FileName="Assets/Scripts/Input/InputControler.cs" Line="1" Column="1" />
+      <File FileName="Assets/Scripts/Input/InputManager.cs" Line="16" Column="1" />
+      <File FileName="Assets/NGUI/Scripts/Internal/UIRect.cs" Line="458" Column="1" />
+      <File FileName="Assets/NGUI/Scripts/UI/UIPanel.cs" Line="985" Column="1" />
+      <File FileName="Assets/Scripts/Rule/InGame.cs" Line="29" Column="1" />
+      <File FileName="Assets/Scripts/Rule/Result.cs" Line="25" Column="5" />
+      <File FileName="Assets/Scripts/Rule/Title.cs" Line="36" Column="33" />
+      <File FileName="Assets/Scripts/Rule/PriorityView.cs" Line="45" Column="20" />
+      <File FileName="Assets/Scripts/Rule/GameOver.cs" Line="1" Column="1" />
+      <File FileName="Assets/Scripts/Rule/Continue.cs" Line="42" Column="31" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>
     <BreakpointStore>
-      <Breakpoint file="/Users/leejihoon/Desktop/Developer/Projects/GitHub/UootPlay/Program/UootNori/Assets/Scripts/Rule/Rule.cs" line="150" column="1" />
+      <Breakpoint file="/Users/leejihoon/Desktop/Developer/Projects/GitHub/UootPlay/Program/UootNori/Assets/Scripts/Rule/Rule.cs" line="153" column="1" />
       <Breakpoint file="/Users/leejihoon/Desktop/Developer/Projects/GitHub/UootPlay/Program/UootNori/Assets/Scripts/Rule/Rule.cs" line="118" column="32" />
-      <Breakpoint file="/Users/leejihoon/Desktop/Developer/Projects/GitHub/UootPlay/Program/UootNori/Assets/Scripts/Rule/ManMove.cs" line="22" column="1" />
+      <Breakpoint file="/Users/leejihoon/Desktop/Developer/Projects/GitHub/UootPlay/Program/UootNori/Assets/Scripts/Rule/UootThrow.cs" line="253" column="25" />
+      <Breakpoint file="/Users/leejihoon/Desktop/Developer/Projects/GitHub/UootPlay/Program/UootNori/Assets/Scripts/Rule/ManMove.cs" line="98" column="31" />
+      <Breakpoint file="/Users/leejihoon/Desktop/Developer/Projects/GitHub/UootPlay/Program/UootNori/Assets/Scripts/Rule/ManMove.cs" line="81" column="1" />
     </BreakpointStore>
   </MonoDevelop.Ide.DebuggingService.Breakpoints>
   <MonoDevelop.Ide.DebuggingService.PinnedWatches />

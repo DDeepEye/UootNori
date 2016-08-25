@@ -15,10 +15,7 @@ public class ManMove : Attribute {
 
     static ManMove s_inst;
 
-    ManMove()
-    {
-        s_inst = this;
-    }
+
 
 	// Use this for initialization
 	void Start () {
@@ -93,6 +90,11 @@ public class ManMove : Attribute {
 
     static public void SetMover(PiecesMoveContainer mover, Animal movingValue)
     {
+        if (s_inst == null)
+        {
+            s_inst = GameObject.Find("Flow").transform.FindChild("GameFlow").FindChild("InGame").FindChild("InGameFlow").FindChild("GamePlay").FindChild("ManMove").GetComponent<ManMove>();
+        }
+
         s_inst._mover = mover;
         s_inst._moveAnimal = movingValue;
     }

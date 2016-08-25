@@ -996,7 +996,7 @@ namespace UootNori
 
     public class GameData
     {
-        public const int PIECESMAX = 1;
+        public const int PIECESMAX = 5;
 
         public const int FIELD_MAXNUM = 30;
         public const int ROAD_MAXNUM = 8;
@@ -1866,6 +1866,7 @@ namespace UootNori
             s_startPoint[(int)victory].GetComponent<Animator>().SetInteger("state", 11);
         }
 
+
         public static void ReSetGame(bool isRegame)
         {
             foreach (KeyValuePair<PLAYER_KIND, List<PiecesMoveContainer>> movers in s_moveContainers)
@@ -1898,12 +1899,14 @@ namespace UootNori
             {
                 _curTurn = PLAYER_KIND.PLAYER_1;
                 s_startPoint[0].SetActive(true);
+                UootThrow.GetInstance().ResetGame();
             }
             else
             {
                 s_startPoint[(int)_curTurn].SetActive(true);
             }
 
+            PriorityView.Regame(isRegame);
             UootThrow.s_uootAni.SetInteger("state", 0);
         }
     }

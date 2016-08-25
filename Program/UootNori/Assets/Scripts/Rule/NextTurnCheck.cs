@@ -26,11 +26,6 @@ public class NextTurnCheck : Attribute {
         }
     }
 
-    NextTurnCheck()
-    {
-        s_instance = this;
-    }
-
     public void GameTurnMarking(PLAYER_KIND kind)
     {
         if (_players[0] == null)
