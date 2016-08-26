@@ -38,6 +38,14 @@ public class Continue : Attribute {
         if(key == KeyEvent.ENTER_EVENT)
         {
             bool isReGame = (_choice == _yes ? true : false);
+            if(isReGame)
+            {
+                if (GameData._is4p && GameData._curCreditCount < 2)
+                    return;
+
+                if (GameData._curCreditCount == 0)
+                    return;
+            }
             _isDone = true;
             GameData.ReSetGame(isReGame);
             if (isReGame)
