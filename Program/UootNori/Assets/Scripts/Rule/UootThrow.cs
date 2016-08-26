@@ -255,10 +255,12 @@ public class UootThrow : Attribute {
                         _isDone = true;
                         Attribute at = transform.parent.GetComponent<Attribute>();
                         at.ReturnActive = "NextTurn";
+                        InputManager.Instance.CurPlayer = PlayerControl.Player1;
                     }
                     else
                     {
                         _curStep = ThrowStanbyCheck;
+                        InputManager.Instance.CurPlayer = PlayerControl.Player2;
                     }
                     _isPriorityMode = false;
                 }

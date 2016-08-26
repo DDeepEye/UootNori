@@ -802,7 +802,7 @@ namespace UootNori
     public class PlayerData
     {
         UILabel _goalInNum;
-        public PlayerData(PLAYER_KIND kind,  int piecesMax = GameData.PIECESMAX)
+        public PlayerData(PLAYER_KIND kind,  int piecesMax = 5)
         {
             _pieces = new PiecesData[piecesMax];
             for(int i = 0; i < piecesMax; ++i)
@@ -996,7 +996,11 @@ namespace UootNori
 
     public class GameData
     {
-        public const int PIECESMAX = 5;
+        public static int PIECESMAX = 5;
+        public static int _1creditToCount = 1;
+
+        public static int _cur1creditToCount = 0;
+        public static int _curCreditCount = 0;
 
         public const int FIELD_MAXNUM = 30;
         public const int ROAD_MAXNUM = 8;
@@ -1097,7 +1101,7 @@ namespace UootNori
             s_animalToForwardNum.Add(Animal.BACK_DO, -1);
             for (int i = 0; i < s_players.Length; ++i)
             {
-                s_players[i] = new PlayerData((PLAYER_KIND)i);
+                s_players[i] = new PlayerData((PLAYER_KIND)i, PIECESMAX);
                 s_moveContainers.Add((PLAYER_KIND)i, new List<PiecesMoveContainer>());
             }
             InitAnimalStateView();
@@ -1761,6 +1765,7 @@ namespace UootNori
             s_startPoint[(int)_curTurn].SetActive(false);
             _curTurn = ( _curTurn == PLAYER_KIND.PLAYER_1 ? PLAYER_KIND.PLAYER_2 : PLAYER_KIND.PLAYER_1 );
             OutPiecessViewRefresh();
+            InputManager.Instance.Next();
         }
 
         public static void OutPiecessViewRefresh()
@@ -1907,7 +1912,50 @@ namespace UootNori
             }
 
             PriorityView.Regame(isRegame);
-            UootThrow.s_uootAni.SetInteger("state", 0);
+            if (UootThrow.s_uootAni != null)
+                UootThrow.s_uootAni.SetInteger("state", 0);
+
+            for (int i = 0; i < s_players.Length; ++i)
+            {
+                s_players[i] = new PlayerData((PLAYER_KIND)i, PIECESMAX);
+            }
+        }
+
+        public static void AddCredit()
+        {
+            ++_cur1creditToCount;
+            if(_1creditToCount == _cur1creditToCount)
+            {
+                _cur1creditToCount = 0;
+                ++_curCreditCount;
+                GameObject credit = GameObject.Find("UI Root").transform.FindChild("Size").FindChild("Credit_Group_P").gameObject;
+                credit.SetActive(true);
+                credit.transform.FindChild("Credit_P").GetComponent<UILabel>().text = _curCreditCount.ToString();
+            }
+        }
+
+        public static bool _is4p = false;
+        public static void ConsumeCredit(bool is4p = false)
+        {
+            if(is4p)
+                _curCreditCount -= 2;
+            else
+                --_curCreditCount;
+
+            _is4p = is4p;
+            if(_is4p)
+            {
+                s_plyerControlNum = PlayerControl.Player4;
+            }
+            else
+            {
+                s_plyerControlNum = PlayerControl.Player2;
+            }
+            InputManager.Instance.SetPlayerNum(s_plyerControlNum);
+
+            GameObject credit = GameObject.Find("UI Root").transform.FindChild("Size").FindChild("Credit_Group_P").gameObject;
+            credit.SetActive(true);
+            credit.transform.FindChild("Credit_P").GetComponent<UILabel>().text = _curCreditCount.ToString();
         }
     }
 }

@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 using FlowContainer;
+using UootNori;
 
 public class PriorityView : Attribute {
 
@@ -11,11 +12,6 @@ public class PriorityView : Attribute {
 
     // Use this for initialization
     void Start () {
-
-        if(_priorityScene == null)
-            _priorityScene = GameObject.Find("UI Root").transform.FindChild("Size").FindChild("OrderOfPriority").gameObject;
-
-        _priorityScene.SetActive(true);
     }
 
     // Update is called once per frame
@@ -47,6 +43,7 @@ public class PriorityView : Attribute {
         if (_priorityScene == null)
             _priorityScene = GameObject.Find("UI Root").transform.FindChild("Size").FindChild("OrderOfPriority").gameObject;
         _priorityScene.SetActive(true);
+        InputManager.Instance.InputAttribute = this;
     }
     public override void Reset()
     {

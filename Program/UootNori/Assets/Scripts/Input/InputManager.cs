@@ -24,7 +24,15 @@ namespace UootNori
     public class InputManager : MonoBehaviour 
     {
         static InputManager s_instance;
-        static public InputManager Instance{get{return s_instance;}}
+        static public InputManager Instance
+        {
+            get
+            {
+                if (s_instance == null)
+                    s_instance = GameObject.Find("InputManager").GetComponent<InputManager>();
+                return s_instance;
+            }
+        }
 
 
         Dictionary<PlayerControl, InputControler> _playerControls = new Dictionary<PlayerControl, InputControler>();
@@ -42,11 +50,13 @@ namespace UootNori
             { "left", KeyEvent.LEFT_EVENT },
             { "right", KeyEvent.RIGHT_EVENT },
             { "enter", KeyEvent.ENTER_EVENT },
-        };
+        };        
 
-        InputManager()
+        public void Next()
         {
-            s_instance = this;
+            ++_curPlayer;
+            if (_curPlayer == PlayerControl.MAX)
+                _curPlayer = PlayerControl.Player1;
         }
 
         public void SetPlayerNum(PlayerControl playerNum)
@@ -55,35 +65,37 @@ namespace UootNori
             
             Dictionary<KeyCode, string> keys = new Dictionary<KeyCode, string>() 
             { 
-                {KeyCode.LeftArrow,"left"},
-                {KeyCode.RightArrow,"right"},
-                {KeyCode.Return,"enter"} 
+                {KeyCode.Q,"left"},
+                {KeyCode.W,"right"},
+                {KeyCode.E,"enter"} 
             };
             playerControlKeys.Add(PlayerControl.Player1, keys);
 
             keys = new Dictionary<KeyCode, string>() 
             { 
-                {KeyCode.Q,"left"},
-                {KeyCode.W,"right"},
-                {KeyCode.E,"enter"} 
+                {KeyCode.A,"left"},
+                {KeyCode.S,"right"},
+                {KeyCode.D,"enter"} 
             };
             playerControlKeys.Add(PlayerControl.Player2, keys);
 
             keys = new Dictionary<KeyCode, string>() 
             { 
-                {KeyCode.R,"left"},
-                {KeyCode.T,"right"},
-                {KeyCode.Y,"enter"} 
+                {KeyCode.I,"left"},
+                {KeyCode.O,"right"},
+                {KeyCode.P,"enter"} 
             };
             playerControlKeys.Add(PlayerControl.Player3, keys);
 
             keys = new Dictionary<KeyCode, string>() 
             { 
-                {KeyCode.U,"left"},
-                {KeyCode.I,"right"},
-                {KeyCode.O,"enter"} 
+                {KeyCode.J,"left"},
+                {KeyCode.K,"right"},
+                {KeyCode.L,"enter"} 
             };
             playerControlKeys.Add(PlayerControl.Player4, keys);
+
+            _playerControls.Clear();
 
             for (PlayerControl pc = PlayerControl.Player1; pc <= playerNum; ++pc)
             {
@@ -122,6 +134,11 @@ namespace UootNori
                     InputAttribute = _backupInputAttribute;
                     GameObject.Find("UI Root").transform.FindChild("Size").FindChild("Calculate").gameObject.SetActive(false);
                 }
+            }
+
+            if(Input.GetKeyUp(KeyCode.B))
+            {
+                GameData.AddCredit();
             }
         }
     }

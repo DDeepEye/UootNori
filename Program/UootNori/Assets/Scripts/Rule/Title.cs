@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 using FlowContainer;
+using UootNori;
 
 
 public class Title : Attribute {
@@ -26,8 +27,11 @@ public class Title : Attribute {
         _curTime += Time.deltaTime;
         if(_curTime > 4.0f)
         {
-            _isDone = true;
-            _titleScene.SetActive(false);
+            if(GameData._curCreditCount > 0)
+            {
+                _isDone = true;
+                _titleScene.SetActive(false);
+            }
         }
 	}
 

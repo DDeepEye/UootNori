@@ -16,8 +16,8 @@ public class VsSelect : Attribute
         if (_vsSelect == null)
         {
             _vsSelect = GameObject.Find("UI Root").transform.FindChild("Size").FindChild("VsSelect").gameObject;
-            _1_1_ = _vsSelect.transform.FindChild("2:2_P").FindChild("Select_P").gameObject;
-            _2_2_ = _vsSelect.transform.FindChild("1:1_P").FindChild("Select_P").gameObject;
+            _1_1_ = _vsSelect.transform.FindChild("1:1_P").FindChild("Select_P").gameObject;
+            _2_2_ = _vsSelect.transform.FindChild("2:2_P").FindChild("Select_P").gameObject;
 
             _1_1_.SetActive(true);
             _2_2_.SetActive(false);
@@ -39,8 +39,8 @@ public class VsSelect : Attribute
         if (_vsSelect == null)
         {
             _vsSelect = GameObject.Find("UI Root").transform.FindChild("Size").FindChild("VsSelect").gameObject;
-            _1_1_ = _vsSelect.transform.FindChild("2:2_P").FindChild("Select_P").gameObject;
-            _2_2_ = _vsSelect.transform.FindChild("1:1_P").FindChild("Select_P").gameObject;
+            _1_1_ = _vsSelect.transform.FindChild("1:1_P").FindChild("Select_P").gameObject;
+            _2_2_ = _vsSelect.transform.FindChild("2:2_P").FindChild("Select_P").gameObject;
         }
         _1_1_.SetActive(true);
         _2_2_.SetActive(false);
@@ -54,13 +54,17 @@ public class VsSelect : Attribute
         {
             case KeyEvent.LEFT_EVENT:
             case KeyEvent.RIGHT_EVENT:
-                _curChoice.SetActive(false);
-                _curChoice = (_curChoice == _1_1_ ? _2_2_ : _1_1_);
-                _curChoice.SetActive(true);
+                if(GameData._curCreditCount > 1)
+                {
+                    _curChoice.SetActive(false);
+                    _curChoice = (_curChoice == _1_1_ ? _2_2_ : _1_1_);
+                    _curChoice.SetActive(true);
+                }
                 break;
             case KeyEvent.ENTER_EVENT:
-                _isDone = true;
+                _isDone = true;                
                 _vsSelect.SetActive(false);
+                GameData.ConsumeCredit(_curChoice == _2_2_);
                 break;
         }
     }
