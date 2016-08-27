@@ -1,6 +1,6 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 2015
+# Visual Studio 2013
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UootNori.CSharp", "UootNori.CSharp.csproj", "{81DDEE13-331F-7019-2DA2-A8DC393FBEA1}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UootNori.CSharp.Editor", "UootNori.CSharp.Editor.csproj", "{4898681E-FFEF-BC3C-6980-694CC94AC565}"
