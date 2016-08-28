@@ -24,7 +24,11 @@ public class Continue : Attribute {
 
         _curTime += Time.deltaTime;
         if(_curTime > 20.0f)
+        {
             _isDone = true;
+            _continue.SetActive(false);
+            GameData.ReSetGame(false);
+        }
 
         if (_curCount != ((int)(20 - _curTime)))
         {

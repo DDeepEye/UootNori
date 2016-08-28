@@ -38,6 +38,7 @@ namespace UootNori
         Dictionary<PlayerControl, InputControler> _playerControls = new Dictionary<PlayerControl, InputControler>();
 
         PlayerControl _curPlayer = PlayerControl.Player1;
+        PlayerControl _maxControlNum = PlayerControl.MAX;
         public PlayerControl CurPlayer{set{ _curPlayer = value;}}
 
         FlowContainer.Attribute _inputAttribute;
@@ -55,7 +56,7 @@ namespace UootNori
         public void Next()
         {
             ++_curPlayer;
-            if (_curPlayer == PlayerControl.MAX)
+            if (_curPlayer == _maxControlNum)
                 _curPlayer = PlayerControl.Player1;
         }
 
@@ -102,6 +103,9 @@ namespace UootNori
                 InputControler ic = new InputControler(playerControlKeys[pc]);
                 _playerControls.Add(pc, ic);
             }
+            _maxControlNum = playerNum;
+            ++_maxControlNum;
+
         }
         // Use this for initialization
         void Start () {

@@ -814,10 +814,12 @@ namespace UootNori
             if (kind == PLAYER_KIND.PLAYER_1)
             {
                 _goalInNum = gp.FindChild("Play01").FindChild("Label (8)").GetComponent<UILabel>();
+                gp.FindChild("Play01").FindChild("Substitute_Label_Count_P").GetComponent<UILabel>().text = piecesMax.ToString();
             }
             else
             {
                 _goalInNum = gp.FindChild("Play02").FindChild("Label (8)").GetComponent<UILabel>();
+                gp.FindChild("Play02").FindChild("Substitute_Label_Count_P").GetComponent<UILabel>().text = piecesMax.ToString();
             }
             _goalInNum.text = "0";
         }
@@ -1108,6 +1110,7 @@ namespace UootNori
             LoadReadyFieldCharacter();
             InputManager.Instance.SetPlayerNum(s_plyerControlNum);
             NextTurnCheck.Instance.GameTurnMarking(PLAYER_KIND.PLAYER_1);
+            Calculate.Instance.EidtEnable();
         }
 
         private static void WayInit()
@@ -1305,6 +1308,9 @@ namespace UootNori
             }
         }
 
+        static GameObject[] s_readyField = new GameObject[5];
+        static int s_indexReadyField = 4;
+
         public static void LoadReadyFieldCharacter()
         {
             GameObject rf = GameObject.Find("ReadyField").transform.FindChild("blank_N").gameObject;
@@ -1314,6 +1320,11 @@ namespace UootNori
 
             TextMesh tm = s_startPoint[0].transform.FindChild("billboard_P").FindChild("Population_P").FindChild("Population_Label_P").GetComponent<TextMesh>();
             tm.text = s_players[0].GetOutFieldNum().ToString();
+
+            for(int i = 0; i < s_readyField.Length; ++i)
+            {
+                s_readyField[i] = rf.transform.FindChild("0" + (i+1).ToString()).gameObject;
+            }
         }
 
         public static void ChacracterSetting()
@@ -1727,7 +1738,16 @@ namespace UootNori
                     s.SetActive(true);
                     s.GetComponent<AnimalContainer>()._animal = a;
                     s.transform.FindChild(animalObj).GetComponent<UISprite>().spriteName = animalImage[a];
-                    s.transform.FindChild(animalNumObj).GetComponent<UILabel>().text = animalState[a].ToString();
+                    if (animalState[a] > 1)
+                    {
+                        s.transform.FindChild(animalNumObj).GetComponent<UILabel>().text = animalState[a].ToString();
+                        s.transform.FindChild(animalNumObj).gameObject.SetActive(true);
+                    }
+                    else 
+                    {
+                        s.transform.FindChild(animalNumObj).GetComponent<UILabel>().text = animalState[a].ToString();
+                        s.transform.FindChild(animalNumObj).gameObject.SetActive(false);
+                    }
                 }
             }
 
@@ -1760,12 +1780,22 @@ namespace UootNori
             return s_animalToForwardNum[animal];
         }
 
+        static public bool s_IsNotControlChange = false;
+
         public static void NextTurn()
         {
             s_startPoint[(int)_curTurn].SetActive(false);
             _curTurn = ( _curTurn == PLAYER_KIND.PLAYER_1 ? PLAYER_KIND.PLAYER_2 : PLAYER_KIND.PLAYER_1 );
             OutPiecessViewRefresh();
-            InputManager.Instance.Next();
+            if (!s_IsNotControlChange)
+            {
+                InputManager.Instance.Next();
+            }
+            s_IsNotControlChange = false;
+
+            s_readyField[s_indexReadyField].SetActive(false);
+            s_indexReadyField = UnityEngine.Random.RandomRange(0, 5);
+            s_readyField[s_indexReadyField].SetActive(true);
         }
 
         public static void OutPiecessViewRefresh()
@@ -1909,6 +1939,14 @@ namespace UootNori
             else
             {
                 s_startPoint[(int)_curTurn].SetActive(true);
+
+                Transform gp = GameObject.Find("UI Root").transform.FindChild("Size").FindChild("GamePlay");
+
+                gp.FindChild("Play01").FindChild("Win_Label_Count_P").GetComponent<UILabel>().text = "0";
+                gp.FindChild("Play01").FindChild("Lose_Label_Count_P").GetComponent<UILabel>().text = "0";
+
+                gp.FindChild("Play02").FindChild("Win_Label_Count_P").GetComponent<UILabel>().text = "0";
+                gp.FindChild("Play02").FindChild("Lose_Label_Count_P").GetComponent<UILabel>().text = "0";
             }
 
             PriorityView.Regame(isRegame);
@@ -1929,9 +1967,10 @@ namespace UootNori
                 _cur1creditToCount = 0;
                 ++_curCreditCount;
                 GameObject credit = GameObject.Find("UI Root").transform.FindChild("Size").FindChild("Credit_Group_P").gameObject;
-                credit.SetActive(true);
-                credit.transform.FindChild("Credit_P").GetComponent<UILabel>().text = _curCreditCount.ToString();
+                credit.transform.FindChild("Credit_P").GetComponent<UILabel>().text = "CREDIT " + _curCreditCount.ToString();
             }
+
+            Calculate.Instance.AddCash();
         }
 
         public static bool _is4p = false;
@@ -1954,8 +1993,7 @@ namespace UootNori
             InputManager.Instance.SetPlayerNum(s_plyerControlNum);
 
             GameObject credit = GameObject.Find("UI Root").transform.FindChild("Size").FindChild("Credit_Group_P").gameObject;
-            credit.SetActive(true);
-            credit.transform.FindChild("Credit_P").GetComponent<UILabel>().text = _curCreditCount.ToString();
+            credit.transform.FindChild("Credit_P").GetComponent<UILabel>().text = "CREDIT "+_curCreditCount.ToString();
         }
     }
 }

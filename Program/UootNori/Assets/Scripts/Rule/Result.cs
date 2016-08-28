@@ -45,5 +45,21 @@ public class Result : Attribute {
             pmc.Pieces.GetComponent<Animator>().SetInteger("state", 12);
         }
         GameData.VictoryAni(winner);
+
+        Transform gp = GameObject.Find("UI Root").transform.FindChild("Size").FindChild("GamePlay");
+        if (winner == PLAYER_KIND.PLAYER_1)
+        {
+            gp.FindChild("Play01").FindChild("Win_Label_Count_P").GetComponent<UILabel>().text = ((int.Parse(gp.FindChild("Play01").FindChild("Win_Label_Count_P").GetComponent<UILabel>().text)) + 1).ToString();
+            gp.FindChild("Play02").FindChild("Lose_Label_Count_P").GetComponent<UILabel>().text = ((int.Parse(gp.FindChild("Play02").FindChild("Lose_Label_Count_P").GetComponent<UILabel>().text)) + 1).ToString();
+            
+        }
+        else
+        {
+            gp.FindChild("Play02").FindChild("Win_Label_Count_P").GetComponent<UILabel>().text = ((int.Parse(gp.FindChild("Play02").FindChild("Win_Label_Count_P").GetComponent<UILabel>().text)) + 1).ToString();
+            gp.FindChild("Play01").FindChild("Lose_Label_Count_P").GetComponent<UILabel>().text = ((int.Parse(gp.FindChild("Play01").FindChild("Lose_Label_Count_P").GetComponent<UILabel>().text)) + 1).ToString();
+        }
+
+
+
     }
 }

@@ -203,8 +203,7 @@ public class UootThrow : Attribute {
 
     void PrioritySettring()
     {
-        ///_isPlaye1Priority = Random.Range(0, 2) == 0 ? true : false;
-        _isPlaye1Priority = true;
+        _isPlaye1Priority = Random.Range(0, 2) == 0 ? true : false;
         int animal = Random.Range((int)Animal.GE, (int)Animal.MO);
         if (_isPlaye1Priority)
         {
@@ -256,6 +255,7 @@ public class UootThrow : Attribute {
                         Attribute at = transform.parent.GetComponent<Attribute>();
                         at.ReturnActive = "NextTurn";
                         InputManager.Instance.CurPlayer = PlayerControl.Player1;
+                        GameData.s_IsNotControlChange = true;
                     }
                     else
                     {
@@ -346,7 +346,7 @@ public class UootThrow : Attribute {
             _tempanimalQueue.RemoveAt(0);
             return;
         }
-        */
+         * */
 
         int rr = Random.Range(1, _animalProbability[_animalProbability.Count - 1]);
         for (int i = 0; i < _animalProbability.Count; ++i)
