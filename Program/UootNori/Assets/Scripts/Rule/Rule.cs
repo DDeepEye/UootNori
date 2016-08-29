@@ -345,6 +345,7 @@ namespace UootNori
             _isDone = true;
             Debug.Log("ani state, " + ANI_NUMBER.ToString());
             _ani.SetInteger("state", ANI_NUMBER);
+            _ani.speed = 2.0f;
         }
     }
 
@@ -653,7 +654,7 @@ namespace UootNori
                     containers.Add(new Rotation(_pieces, new Vector3(0.0f, roty, 0.0f), 0.0f, Physical.Type.ABSOLUTE));
                     containers.Add(new CharacterMove(_pieces));
                     containers.Add(new Timer(_pieces, 0.1f));
-                    containers.Add(new JumpingMove(_pieces, p, 0.2f));
+                    containers.Add(new JumpingMove(_pieces, p, 0.4f));
                     containers.Add(new CharacterIdle(_pieces));
                     containers.Add(new FieldSet(_curRoad._field, this));
                 }
@@ -723,7 +724,7 @@ namespace UootNori
                                 }
                                 containers.Add(new CharacterMove(_pieces));
                             }
-                            containers.Add(new JumpingMove(_pieces, p, 0.2f));
+                            containers.Add(new JumpingMove(_pieces, p, 0.4f));
                             containers.Add(new CharacterIdle(_pieces));
                             if (isstepped)
                             {
@@ -775,7 +776,7 @@ namespace UootNori
                         }
                         containers.Add(new Timer(null, 0.1f));
                         containers.Add(new Rotation(_pieces, new Vector3(0.0f, roty, 0.0f), 0.0f, Physical.Type.ABSOLUTE));
-                        containers.Add(new JumpingMove(_pieces, p, 0.2f));
+                        containers.Add(new JumpingMove(_pieces, p, 0.4f));
                         containers.Add(new CharacterIdle(_pieces));
                     }
 

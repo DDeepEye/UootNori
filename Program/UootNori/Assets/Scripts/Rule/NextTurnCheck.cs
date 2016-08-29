@@ -72,12 +72,12 @@ public class NextTurnCheck : Attribute {
     void OnEnable()
     {   
         GameObject camera = GameObject.Find("Field_Camera");
-        _cameraRot = new Rotation(camera, new Vector3(0.0f, 0.0f, 180.0f), 1.2f,Physical.Type.RELATIVE);
+        _cameraRot = new Rotation(camera, new Vector3(0.0f, 0.0f, 180.0f), 1.8f,Physical.Type.RELATIVE);
         camera = GameObject.Find("UI Root").transform.FindChild("Camera").gameObject;
-        _uiCameraRot = new Rotation(camera, new Vector3(0.0f, 0.0f, 180.0f), 1.2f,Physical.Type.RELATIVE);
+        _uiCameraRot = new Rotation(camera, new Vector3(0.0f, 0.0f, 180.0f), 1.8f,Physical.Type.RELATIVE);
 
         Vector3 moveOffset = _players[1].transform.position - _players[0].transform.position;
-        _player1Mover = new Move(_players[0], moveOffset, 1.2f);
-        _player2Mover = new Move(_players[1], -moveOffset, 1.2f);
+        _player1Mover = new Move(_players[0], moveOffset, 1.8f);
+        _player2Mover = new Move(_players[1], -moveOffset, 1.8f);
     }
 }
