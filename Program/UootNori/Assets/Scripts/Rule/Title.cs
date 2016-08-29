@@ -6,7 +6,7 @@ using UootNori;
 
 public class Title : Attribute {
 
-    float _curTime = 0.0f;
+    ////float _curTime = 0.0f;
 
     GameObject _titleScene;
 
@@ -23,7 +23,8 @@ public class Title : Attribute {
 	void Update () {
         if(IsDone)
             return;
-        
+
+        /*
         _curTime += Time.deltaTime;
         if(_curTime > 4.0f)
         {
@@ -33,10 +34,12 @@ public class Title : Attribute {
                 _titleScene.SetActive(false);
             }
         }
+        */
 	}
 
     void OnEnable()
     {
+        InputManager.Instance.InputAttribute = this;
         if (_titleScene == null)
             _titleScene = GameObject.Find("UI Root").transform.FindChild("Size").FindChild("Title").gameObject;
         _titleScene.SetActive(true);
@@ -44,6 +47,15 @@ public class Title : Attribute {
     public override void Reset()
     {
         base.Reset();
-        _curTime = 0.0f;
+        ///_curTime = 0.0f;
+    }
+
+    public override void Event(KeyEvent key)
+    {
+        if (GameData.GetCreditNum() > 0)
+        {
+            _titleScene.SetActive(false);
+            _isDone = true;
+        }
     }
 }

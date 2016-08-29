@@ -218,7 +218,7 @@ public class UootThrow : Attribute {
     }
     void ThrowStanbyCheck()
     {
-        if (_curThrowStanbyTime < THROW_STANBY_TIME)
+        if (_curThrowStanbyTime < THROW_STANBY_TIME && !_isPriorityMode)
         {
             _curThrowStanbyTime += Time.deltaTime;
         }
@@ -272,6 +272,7 @@ public class UootThrow : Attribute {
                 Attribute at = transform.parent.GetComponent<Attribute>();
                 at.ReturnActive = "NextTurn";
                 GameData.TurnRollBack();
+                GameData.RefreshAnimalView(false);
                 return;
             }
 
@@ -339,14 +340,16 @@ public class UootThrow : Attribute {
             GameData.AddAnimal(Animal.BACK_DO);
             return;
         }*/
+
         /*
         if (_tempanimalQueue.Count > 0)
         {
             GameData.AddAnimal(_tempanimalQueue[0]);
             _tempanimalQueue.RemoveAt(0);
+
             return;
         }
-         * */
+        */
 
         int rr = Random.Range(1, _animalProbability[_animalProbability.Count - 1]);
         for (int i = 0; i < _animalProbability.Count; ++i)

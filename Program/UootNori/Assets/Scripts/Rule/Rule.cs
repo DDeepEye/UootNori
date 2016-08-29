@@ -1935,10 +1935,6 @@ namespace UootNori
                 _curTurn = PLAYER_KIND.PLAYER_1;
                 s_startPoint[0].SetActive(true);
                 UootThrow.GetInstance().ResetGame();
-            }
-            else
-            {
-                s_startPoint[(int)_curTurn].SetActive(true);
 
                 Transform gp = GameObject.Find("UI Root").transform.FindChild("Size").FindChild("GamePlay");
 
@@ -1947,6 +1943,10 @@ namespace UootNori
 
                 gp.FindChild("Play02").FindChild("Win_Label_Count_P").GetComponent<UILabel>().text = "0";
                 gp.FindChild("Play02").FindChild("Lose_Label_Count_P").GetComponent<UILabel>().text = "0";
+            }
+            else
+            {
+                s_startPoint[(int)_curTurn].SetActive(true);
             }
 
             PriorityView.Regame(isRegame);
@@ -1994,6 +1994,11 @@ namespace UootNori
 
             GameObject credit = GameObject.Find("UI Root").transform.FindChild("Size").FindChild("Credit_Group_P").gameObject;
             credit.transform.FindChild("Credit_P").GetComponent<UILabel>().text = "CREDIT "+_curCreditCount.ToString();
+        }
+
+        public static int GetCreditNum()
+        {
+            return _curCreditCount;
         }
     }
 }
