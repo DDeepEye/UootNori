@@ -40,6 +40,9 @@ public class Title : Attribute {
     void OnEnable()
     {
         InputManager.Instance.InputAttribute = this;
+        InputManager.Instance.SetPlayerNum(PlayerControl.Player4);
+
+        InputManager.Instance._controlChoiceMode = true;
         if (_titleScene == null)
             _titleScene = GameObject.Find("UI Root").transform.FindChild("Size").FindChild("Title").gameObject;
         _titleScene.SetActive(true);

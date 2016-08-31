@@ -14,7 +14,9 @@ public class InGame : Arrange
             gamePlay = GameObject.Find("UI Root").transform.FindChild("Size").FindChild("GamePlay").gameObject;
         }
             
-        gamePlay.SetActive(true);        
+        gamePlay.SetActive(true);
+
+        ///InputManager.Instance.CurPlayer = PlayerControl.Player1;
         
         base.OnEnable();
     }

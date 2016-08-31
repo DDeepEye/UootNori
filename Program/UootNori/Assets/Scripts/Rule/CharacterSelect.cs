@@ -10,6 +10,8 @@ public class CharacterSelect : Arrange
     GameObject _character1;
     GameObject _character2;
     GameObject _curChoice;
+
+    float _curSelectWaitTime;
     
 	// Use this for initialization
 	void Start () {
@@ -30,6 +32,14 @@ public class CharacterSelect : Arrange
 	void Update () {
         if (IsDone)
             return;
+
+        _curSelectWaitTime += Time.deltaTime;
+        if (_curSelectWaitTime > 5.0f)
+        {
+            GameData.Player2IsCharacter1(_curChoice == _character2 ? true : false);
+            _isDone = true;
+            _characterSelect.SetActive(false);
+        }
 	}
 
     void OnEnable()
@@ -45,6 +55,7 @@ public class CharacterSelect : Arrange
         _character2.SetActive(false);
         _characterSelect.SetActive(true);
         _curChoice = _character1;
+        _curSelectWaitTime = 0.0f;
     }
 
     public override void Event(KeyEvent key)

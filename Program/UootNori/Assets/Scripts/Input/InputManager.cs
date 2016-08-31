@@ -38,13 +38,15 @@ namespace UootNori
         Dictionary<PlayerControl, InputControler> _playerControls = new Dictionary<PlayerControl, InputControler>();
 
         PlayerControl _curPlayer = PlayerControl.Player1;
-        PlayerControl _maxControlNum = PlayerControl.MAX;
-        public PlayerControl CurPlayer{set{ _curPlayer = value;}}
+        public PlayerControl _maxControlNum = PlayerControl.MAX;
+        public PlayerControl CurPlayer{get{ return _curPlayer;}set{ _curPlayer = value;}}
 
         FlowContainer.Attribute _inputAttribute;
         public FlowContainer.Attribute InputAttribute {get{ return _inputAttribute;}set{ _inputAttribute = value;}}
         FlowContainer.Attribute _backupInputAttribute;
 
+        public bool _controlChoiceMode = false;
+        public PlayerControl _resetPlayer = PlayerControl.Player1;
 
         Dictionary<string, KeyEvent> _keys = new Dictionary<string, KeyEvent>()
         {
@@ -57,7 +59,7 @@ namespace UootNori
         {
             ++_curPlayer;
             if (_curPlayer == _maxControlNum)
-                _curPlayer = PlayerControl.Player1;
+                _curPlayer = _resetPlayer;
         }
 
         public void SetPlayerNum(PlayerControl playerNum)
@@ -115,15 +117,43 @@ namespace UootNori
         // Update is called once per frame
         void Update ()
         {
-            if (_playerControls.ContainsKey(_curPlayer))
+            if (_controlChoiceMode)
             {
-                string keyDown = _playerControls[_curPlayer].Update();
-                if (keyDown != null)
+                for (PlayerControl i = 0; i < PlayerControl.MAX; ++i)
                 {
-                    if (InputAttribute != null)
-                        InputAttribute.Event(_keys[keyDown]);
+                    string keyDown = _playerControls[i].Update();
+                    if (keyDown != null)
+                    {
+                        CurPlayer = (PlayerControl)i;
+                        if (i >= PlayerControl.Player3)
+                        {
+                            _resetPlayer = PlayerControl.Player3;
+                            _maxControlNum = PlayerControl.MAX;
+                        }
+                        else
+                        {
+                            _resetPlayer = PlayerControl.Player1;
+                            _maxControlNum = PlayerControl.Player3;
+                        }
+                        _controlChoiceMode = false;
+                        if (InputAttribute != null)
+                            InputAttribute.Event(_keys[keyDown]);
+                    }
                 }
             }
+            else
+            {
+                if (_playerControls.ContainsKey(_curPlayer))
+                {
+                    string keyDown = _playerControls[_curPlayer].Update();
+                    if (keyDown != null)
+                    {
+                        if (InputAttribute != null)
+                            InputAttribute.Event(_keys[keyDown]);
+                    }
+                }
+            }
+
 
             if(Input.GetKeyUp(KeyCode.Z))
             {

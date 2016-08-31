@@ -327,6 +327,20 @@ namespace UootNori
         }
     }
 
+    public class UootCollect : Container
+    {
+        public override void Run()
+        {
+            if (IsDone)
+                return;
+
+            _isDone = true;
+
+            UootThrow.s_uootAni.SetInteger("state", 0);
+        }
+    }
+
+
     public abstract class CharacterAni : Container
     {
         protected GameObject _aniObj;
@@ -1017,7 +1031,7 @@ namespace UootNori
         public static FieldData[] _fields = new FieldData[FIELD_MAXNUM];
 
         public static Road[] s_roads = new Road[WAYKIND];
-        public static PlayerControl s_plyerControlNum = PlayerControl.Player1;
+        ///public static PlayerControl s_plyerControlNum = PlayerControl.Player1;
 
         public static Road s_allKillRoad;
 
@@ -1041,6 +1055,7 @@ namespace UootNori
         static bool s_shoot = false;
 
         static bool s_IsPlayer1IsCharcter1 = true;
+        static public bool IsPlayer1IsCharacter1 {get{ return s_IsPlayer1IsCharcter1;}}
         public static bool IsShoot {get{ return s_shoot;}}
         public static void ShootCheck() {s_shoot = false;}
         public static void ShootMode(){s_shoot = true;}
@@ -1109,7 +1124,7 @@ namespace UootNori
             }
             InitAnimalStateView();
             LoadReadyFieldCharacter();
-            InputManager.Instance.SetPlayerNum(s_plyerControlNum);
+            ///InputManager.Instance.SetPlayerNum(s_plyerControlNum);
             NextTurnCheck.Instance.GameTurnMarking(PLAYER_KIND.PLAYER_1);
             Calculate.Instance.EidtEnable();
         }
@@ -1336,23 +1351,22 @@ namespace UootNori
             {
                 s_startPoint[0] = rf.transform.FindChild("CH_01").gameObject;
                 s_startPoint[1] = rf.transform.FindChild("CH_02").gameObject;
-                gp.FindChild("Play01").FindChild("Character_Sprite_P").GetComponent<UISprite>().spriteName = "ETC_CH01";
-                gp.FindChild("Play02").FindChild("Character_Sprite_P").GetComponent<UISprite>().spriteName = "ETC_CH02";                
+                ///gp.FindChild("Play01").FindChild("Character_Sprite_P").GetComponent<UISprite>().spriteName = "ETC_CH01";
+                ///gp.FindChild("Play02").FindChild("Character_Sprite_P").GetComponent<UISprite>().spriteName = "ETC_CH02";                
             }
             else
             {
                 s_startPoint[1] = rf.transform.FindChild("CH_01").gameObject;
                 s_startPoint[0] = rf.transform.FindChild("CH_02").gameObject;
 
-                gp.FindChild("Play01").FindChild("Character_Sprite_P").GetComponent<UISprite>().spriteName = "ETC_CH02";
-                gp.FindChild("Play02").FindChild("Character_Sprite_P").GetComponent<UISprite>().spriteName = "ETC_CH01";
+                ///gp.FindChild("Play01").FindChild("Character_Sprite_P").GetComponent<UISprite>().spriteName = "ETC_CH02";
+                ///gp.FindChild("Play02").FindChild("Character_Sprite_P").GetComponent<UISprite>().spriteName = "ETC_CH01";
             }
             s_startPoint[0].SetActive(true);
             s_startPoint[1].SetActive(false);
 
             TextMesh tm = s_startPoint[0].transform.FindChild("billboard_P").FindChild("Population_P").FindChild("Population_Label_P").GetComponent<TextMesh>();
             tm.text = s_players[0].GetOutFieldNum().ToString();
-            
         }
 
         public static void OpenAnimalChoice()
@@ -1861,6 +1875,7 @@ namespace UootNori
             {
                 case MoverAdjustKind.GOALIN:
                     s_players[(int)mover.PlayerKind].GoalIn(mover.GetPiecesNum());
+                    NextTurnCheck.Instance.GoalIn(mover.PlayerKind, s_players[(int)mover.PlayerKind].GetGoalInNum());
                     break;
                 case MoverAdjustKind.KILL_ONESELF:
                     s_players[(int)mover.PlayerKind].Out(mover.GetPiecesNum());
@@ -1958,6 +1973,10 @@ namespace UootNori
             {
                 s_players[i] = new PlayerData((PLAYER_KIND)i, PIECESMAX);
             }
+
+            NextTurnCheck.Instance.Reset();
+
+
         }
 
         public static void AddCredit()
@@ -1983,6 +2002,7 @@ namespace UootNori
                 --_curCreditCount;
 
             _is4p = is4p;
+            /*
             if(_is4p)
             {
                 s_plyerControlNum = PlayerControl.Player4;
@@ -1992,6 +2012,7 @@ namespace UootNori
                 s_plyerControlNum = PlayerControl.Player2;
             }
             InputManager.Instance.SetPlayerNum(s_plyerControlNum);
+            */
 
             GameObject credit = GameObject.Find("UI Root").transform.FindChild("Size").FindChild("Credit_Group_P").gameObject;
             credit.transform.FindChild("Credit_P").GetComponent<UILabel>().text = "CREDIT "+_curCreditCount.ToString();

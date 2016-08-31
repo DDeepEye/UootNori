@@ -246,21 +246,23 @@ public class UootThrow : Attribute {
                     _isDone = true;
                     Attribute at = transform.parent.GetComponent<Attribute>();
                     at.ReturnActive = "NextTurn";
+
                 }
                 else
                 {
                     if (_isPlaye1Priority)
-                    {
+                    {   
                         _isDone = true;
                         Attribute at = transform.parent.GetComponent<Attribute>();
                         at.ReturnActive = "NextTurn";
-                        InputManager.Instance.CurPlayer = PlayerControl.Player1;
+                        InputManager.Instance.CurPlayer = InputManager.Instance._resetPlayer;
                         GameData.s_IsNotControlChange = true;
+
                     }
                     else
                     {
                         _curStep = ThrowStanbyCheck;
-                        InputManager.Instance.CurPlayer = PlayerControl.Player2;
+                        InputManager.Instance.CurPlayer = InputManager.Instance._resetPlayer + 1;
                     }
                     _isPriorityMode = false;
                 }
@@ -273,6 +275,7 @@ public class UootThrow : Attribute {
                 at.ReturnActive = "NextTurn";
                 GameData.TurnRollBack();
                 GameData.RefreshAnimalView(false);
+
                 return;
             }
 
@@ -288,6 +291,7 @@ public class UootThrow : Attribute {
                 Attribute at = transform.parent.GetComponent<Attribute>();
                 at.ReturnActive = "";
                 InGameControlerManager.Instance.ReadyToCharacterMode();
+
             }
         }
    
@@ -341,7 +345,7 @@ public class UootThrow : Attribute {
             return;
         }*/
 
-        /*
+
         if (_tempanimalQueue.Count > 0)
         {
             GameData.AddAnimal(_tempanimalQueue[0]);
@@ -349,7 +353,7 @@ public class UootThrow : Attribute {
 
             return;
         }
-        */
+
 
         int rr = Random.Range(1, _animalProbability[_animalProbability.Count - 1]);
         for (int i = 0; i < _animalProbability.Count; ++i)
@@ -390,7 +394,9 @@ public class UootThrow : Attribute {
         uootThrowFlow.Add(new UootThrowPlayer(aninum));
         uootThrowFlow.Add(new PatternSystem.Timer(null, 2.9f));
         if(!_isOut) uootThrowFlow.Add(new UootThrowResultRefresh());
-        uootThrowFlow.Add(new PatternSystem.Timer(null, 2.0f));
+        uootThrowFlow.Add(new PatternSystem.Timer(null, 1.0f));
+        uootThrowFlow.Add(new UootCollect());
+        uootThrowFlow.Add(new PatternSystem.Timer(null, 3.0f));
         _aniArrange = new PatternSystem.Arrange(null, PatternSystem.Arrange.ArrangeType.SERIES, uootThrowFlow, 1);
     }    
     
