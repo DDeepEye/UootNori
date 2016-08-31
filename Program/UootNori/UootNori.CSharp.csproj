@@ -12,7 +12,7 @@
     <ProjectTypeGuids>{E097FAD1-6243-4DAD-9C02-E9B9EFC3FFC1};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
     <TargetFrameworkIdentifier>.NETFramework</TargetFrameworkIdentifier>
     <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
-    <TargetFrameworkProfile>Unity Subset v3.5</TargetFrameworkProfile>
+    <TargetFrameworkProfile>Unity Full v3.5</TargetFrameworkProfile>
     <CompilerResponseFile></CompilerResponseFile>
     <UnityProjectType>Game:1</UnityProjectType>
     <UnityBuildTarget>StandaloneWindows64:19</UnityBuildTarget>
@@ -220,22 +220,28 @@
     <Compile Include="Assets\Scripts\Rule\AnimalContainer.cs" />
     <Compile Include="Assets\Scripts\Rule\Calculate.cs" />
     <Compile Include="Assets\Scripts\Rule\CharacterChoice.cs" />
+    <Compile Include="Assets\Scripts\Rule\CharacterSelect.cs" />
+    <Compile Include="Assets\Scripts\Rule\Continue.cs" />
     <Compile Include="Assets\Scripts\Rule\FieldAdder.cs" />
     <Compile Include="Assets\Scripts\Rule\FieldRullProcess.cs" />
+    <Compile Include="Assets\Scripts\Rule\GameOver.cs" />
     <Compile Include="Assets\Scripts\Rule\GameOverCheck.cs" />
     <Compile Include="Assets\Scripts\Rule\GamePlay.cs" />
+    <Compile Include="Assets\Scripts\Rule\InGame.cs" />
     <Compile Include="Assets\Scripts\Rule\InGameControlerManager.cs" />
     <Compile Include="Assets\Scripts\Rule\JumpingLine.cs" />
     <Compile Include="Assets\Scripts\Rule\ManKillCheck.cs" />
     <Compile Include="Assets\Scripts\Rule\ManMove.cs" />
-    <Compile Include="Assets\Scripts\Rule\NextTurn.cs" />
+    <Compile Include="Assets\Scripts\Rule\NextTurnCheck.cs" />
     <Compile Include="Assets\Scripts\Rule\PlayerNumChoice.cs" />
+    <Compile Include="Assets\Scripts\Rule\PriorityView.cs" />
     <Compile Include="Assets\Scripts\Rule\Result.cs" />
     <Compile Include="Assets\Scripts\Rule\Rule.cs" />
     <Compile Include="Assets\Scripts\Rule\RullProcess.cs" />
     <Compile Include="Assets\Scripts\Rule\Title.cs" />
     <Compile Include="Assets\Scripts\Rule\TurnFix.cs" />
     <Compile Include="Assets\Scripts\Rule\UootThrow.cs" />
+    <Compile Include="Assets\Scripts\Rule\VsSelect.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Assets\Data\Field\Materials\Caustics.shader" />
@@ -282,5 +288,5 @@
     <None Include="Assets\NGUI\Resources\Shaders\Unlit - Transparent Packed.shader" />
     <None Include="Assets\WaterCausticsEffect\Materials\Caustics.shader" />
   </ItemGroup>
-  <Import Project="$(MSBuildExtensionsPath)\SyntaxTree\UnityVS\2015\UnityVS.CSharp.targets" />
+  <Import Project="$(MSBuildExtensionsPath)\SyntaxTree\UnityVS\2013\UnityVS.CSharp.targets" />
 </Project>

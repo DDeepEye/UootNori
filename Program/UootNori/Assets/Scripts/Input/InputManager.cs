@@ -24,27 +24,42 @@ namespace UootNori
     public class InputManager : MonoBehaviour 
     {
         static InputManager s_instance;
-        static public InputManager Instance{get{return s_instance;}}
+        static public InputManager Instance
+        {
+            get
+            {
+                if (s_instance == null)
+                    s_instance = GameObject.Find("InputManager").GetComponent<InputManager>();
+                return s_instance;
+            }
+        }
 
 
         Dictionary<PlayerControl, InputControler> _playerControls = new Dictionary<PlayerControl, InputControler>();
 
         PlayerControl _curPlayer = PlayerControl.Player1;
-        public PlayerControl CurPlayer{set{ _curPlayer = value;}}
+        public PlayerControl _maxControlNum = PlayerControl.MAX;
+        public PlayerControl CurPlayer{get{ return _curPlayer;}set{ _curPlayer = value;}}
 
         FlowContainer.Attribute _inputAttribute;
         public FlowContainer.Attribute InputAttribute {get{ return _inputAttribute;}set{ _inputAttribute = value;}}
+        FlowContainer.Attribute _backupInputAttribute;
+
+        public bool _controlChoiceMode = false;
+        public PlayerControl _resetPlayer = PlayerControl.Player1;
 
         Dictionary<string, KeyEvent> _keys = new Dictionary<string, KeyEvent>()
         {
             { "left", KeyEvent.LEFT_EVENT },
             { "right", KeyEvent.RIGHT_EVENT },
             { "enter", KeyEvent.ENTER_EVENT },
-        };
+        };        
 
-        InputManager()
+        public void Next()
         {
-            s_instance = this;
+            ++_curPlayer;
+            if (_curPlayer == _maxControlNum)
+                _curPlayer = _resetPlayer;
         }
 
         public void SetPlayerNum(PlayerControl playerNum)
@@ -53,41 +68,46 @@ namespace UootNori
             
             Dictionary<KeyCode, string> keys = new Dictionary<KeyCode, string>() 
             { 
-                {KeyCode.LeftArrow,"left"},
-                {KeyCode.RightArrow,"right"},
-                {KeyCode.Return,"enter"} 
+                {KeyCode.Q,"left"},
+                {KeyCode.W,"right"},
+                {KeyCode.E,"enter"} 
             };
             playerControlKeys.Add(PlayerControl.Player1, keys);
 
             keys = new Dictionary<KeyCode, string>() 
             { 
-                {KeyCode.Q,"left"},
-                {KeyCode.W,"right"},
-                {KeyCode.E,"enter"} 
+                {KeyCode.A,"left"},
+                {KeyCode.S,"right"},
+                {KeyCode.D,"enter"} 
             };
             playerControlKeys.Add(PlayerControl.Player2, keys);
 
             keys = new Dictionary<KeyCode, string>() 
             { 
-                {KeyCode.R,"left"},
-                {KeyCode.T,"right"},
-                {KeyCode.Y,"enter"} 
+                {KeyCode.I,"left"},
+                {KeyCode.O,"right"},
+                {KeyCode.P,"enter"} 
             };
             playerControlKeys.Add(PlayerControl.Player3, keys);
 
             keys = new Dictionary<KeyCode, string>() 
             { 
-                {KeyCode.U,"left"},
-                {KeyCode.I,"right"},
-                {KeyCode.O,"enter"} 
+                {KeyCode.J,"left"},
+                {KeyCode.K,"right"},
+                {KeyCode.L,"enter"} 
             };
             playerControlKeys.Add(PlayerControl.Player4, keys);
+
+            _playerControls.Clear();
 
             for (PlayerControl pc = PlayerControl.Player1; pc <= playerNum; ++pc)
             {
                 InputControler ic = new InputControler(playerControlKeys[pc]);
                 _playerControls.Add(pc, ic);
             }
+            _maxControlNum = playerNum;
+            ++_maxControlNum;
+
         }
         // Use this for initialization
         void Start () {
@@ -97,13 +117,62 @@ namespace UootNori
         // Update is called once per frame
         void Update ()
         {
-            if (_playerControls.ContainsKey(_curPlayer))
+            if (_controlChoiceMode)
             {
-                string keyDown = _playerControls[_curPlayer].Update();
-                if (keyDown != null)
+                for (PlayerControl i = 0; i < PlayerControl.MAX; ++i)
                 {
-                    InputAttribute.Event(_keys[keyDown]);
+                    string keyDown = _playerControls[i].Update();
+                    if (keyDown != null)
+                    {
+                        CurPlayer = (PlayerControl)i;
+                        if (i >= PlayerControl.Player3)
+                        {
+                            _resetPlayer = PlayerControl.Player3;
+                            _maxControlNum = PlayerControl.MAX;
+                        }
+                        else
+                        {
+                            _resetPlayer = PlayerControl.Player1;
+                            _maxControlNum = PlayerControl.Player3;
+                        }
+                        _controlChoiceMode = false;
+                        if (InputAttribute != null)
+                            InputAttribute.Event(_keys[keyDown]);
+                    }
                 }
+            }
+            else
+            {
+                if (_playerControls.ContainsKey(_curPlayer))
+                {
+                    string keyDown = _playerControls[_curPlayer].Update();
+                    if (keyDown != null)
+                    {
+                        if (InputAttribute != null)
+                            InputAttribute.Event(_keys[keyDown]);
+                    }
+                }
+            }
+
+
+            if(Input.GetKeyUp(KeyCode.Z))
+            {
+                if (InputAttribute != Calculate.Instance)
+                {
+                    GameObject.Find("UI Root").transform.FindChild("Size").FindChild("Calculate").gameObject.SetActive(true);
+                    _backupInputAttribute = InputAttribute;
+                    InputAttribute = Calculate.Instance;
+                }
+                else
+                {
+                    InputAttribute = _backupInputAttribute;
+                    GameObject.Find("UI Root").transform.FindChild("Size").FindChild("Calculate").gameObject.SetActive(false);
+                }
+            }
+
+            if(Input.GetKeyUp(KeyCode.B))
+            {
+                GameData.AddCredit();
             }
         }
     }

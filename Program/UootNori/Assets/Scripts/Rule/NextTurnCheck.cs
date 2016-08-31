@@ -14,11 +14,16 @@ public class NextTurnCheck : Attribute {
     GameObject [] _players = new GameObject[(int)PLAYER_KIND.MAX];
 
     static public NextTurnCheck s_instance;
-    static public NextTurnCheck Instance {get{ return s_instance;}}
-
-    NextTurnCheck()
+    static public NextTurnCheck Instance 
     {
-        s_instance = this;
+        get
+        {
+            if (s_instance == null)
+            {
+                s_instance = GameObject.Find("Flow").transform.FindChild("GameFlow").FindChild("InGame").FindChild("InGameFlow").FindChild("GamePlay").FindChild("NextTurn").GetComponent<NextTurnCheck>();
+            }
+            return s_instance;
+        }
     }
 
     public void GameTurnMarking(PLAYER_KIND kind)
@@ -31,10 +36,56 @@ public class NextTurnCheck : Attribute {
             _players[1] = gp.FindChild("Play02").gameObject;
         }
 
+        /*
         PLAYER_KIND offMarking = (kind == PLAYER_KIND.PLAYER_1 ? PLAYER_KIND.PLAYER_2 : PLAYER_KIND.PLAYER_1);
         _players[(int)offMarking].transform.FindChild("Select_P").gameObject.SetActive(false);
         _players[(int)kind].transform.FindChild("Select_P").gameObject.SetActive(true);
+        */
+    }
 
+    public void GoalIn(PLAYER_KIND kind, int goalInNum)
+    {
+        ///PLAYER_KIND offMarking = (kind == PLAYER_KIND.PLAYER_1 ? PLAYER_KIND.PLAYER_2 : PLAYER_KIND.PLAYER_1);
+        /// 
+        string view;
+        if (kind == PLAYER_KIND.PLAYER_1)
+        {
+            if (GameData.IsPlayer1IsCharacter1)
+                view = "CH_01";
+            else
+                view = "CH_02";
+        }
+        else
+        {
+            if (GameData.IsPlayer1IsCharacter1)
+                view = "CH_02";
+            else
+                view = "CH_01";
+        }
+
+        GameObject character = _players[(int)kind].transform.FindChild("Texture (1)").FindChild(view).gameObject;
+        character.SetActive(true);
+        character.transform.FindChild("billboard_P").FindChild("Population_P").FindChild("Population_Label_P").GetComponent<TextMesh>().text = goalInNum.ToString(); 
+        character.transform.FindChild("billboard_P").FindChild("Population_P").gameObject.SetActive(true);
+    }
+
+    public void Reset()
+    {
+        for (int i = 0; i < (int)PLAYER_KIND.MAX; ++i)
+        {
+            for (int j = 0; j < (int)PLAYER_KIND.MAX; ++j)
+            {
+                GameObject character = _players[i].transform.FindChild("Texture (1)").FindChild("CH_0"+(j+1).ToString()).gameObject;
+                character.SetActive(false);
+                character.transform.FindChild("billboard_P").FindChild("Population_P").FindChild("Population_Label_P").GetComponent<TextMesh>().text = "0"; 
+                character.transform.FindChild("billboard_P").FindChild("Population_P").gameObject.SetActive(false);
+            }
+        }
+
+        GameObject camera = GameObject.Find("Field_Camera");
+        camera.transform.localEulerAngles = new Vector3(camera.transform.localEulerAngles.x, camera.transform.localEulerAngles.y, 0.0f);
+        camera = GameObject.Find("UI Root").transform.FindChild("Camera").gameObject;
+        camera.transform.localEulerAngles = new Vector3(camera.transform.localEulerAngles.x, camera.transform.localEulerAngles.y, 0.0f);
     }
     
 	// Use this for initialization
@@ -51,10 +102,14 @@ public class NextTurnCheck : Attribute {
         {
             _cameraRot.Run();
             _uiCameraRot.Run();
+        }
+
+        if (_player1Mover != null)
+        {
             _player1Mover.Run();
             _player2Mover.Run();
 
-            if (_cameraRot.IsDone)
+            if (_player1Mover.IsDone)
             {
                 _isDone = true;
                 transform.parent.GetComponent<Attribute>().ReturnActive = "UootThrow";
@@ -65,14 +120,30 @@ public class NextTurnCheck : Attribute {
 	}
 
     void OnEnable()
-    {   
-        GameObject camera = GameObject.Find("Field_Camera");
-        _cameraRot = new Rotation(camera, new Vector3(0.0f, 0.0f, 180.0f), 0.45f,Physical.Type.RELATIVE);
-        camera = GameObject.Find("UI Root").transform.FindChild("Camera").gameObject;
-        _uiCameraRot = new Rotation(camera, new Vector3(0.0f, 0.0f, 180.0f), 0.45f,Physical.Type.RELATIVE);
+    {
+        if (GameData._is4p)
+        {
+            if (InputManager.Instance.CurPlayer == PlayerControl.Player2 || InputManager.Instance.CurPlayer == PlayerControl.Player4)
+            {
+                if (!GameData.s_IsNotControlChange)
+                {
+                    GameObject camera = GameObject.Find("Field_Camera");
+                    _cameraRot = new Rotation(camera, new Vector3(0.0f, 0.0f, 180.0f), 1.8f, Physical.Type.RELATIVE);
+                    camera = GameObject.Find("UI Root").transform.FindChild("Camera").gameObject;
+                    _uiCameraRot = new Rotation(camera, new Vector3(0.0f, 0.0f, 180.0f), 1.8f, Physical.Type.RELATIVE);
+                }
+                else
+                {
+                    _cameraRot = null;
+                    _uiCameraRot = null;
+                }
+            }
+        }
 
         Vector3 moveOffset = _players[1].transform.position - _players[0].transform.position;
-        _player1Mover = new Move(_players[0], moveOffset, 0.45f);
-        _player2Mover = new Move(_players[1], -moveOffset, 0.45f);
+        _player1Mover = new Move(_players[0], moveOffset, 1.8f);
+        _player2Mover = new Move(_players[1], -moveOffset, 1.8f);
     }
+
+
 }

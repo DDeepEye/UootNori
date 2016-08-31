@@ -27,6 +27,8 @@ public class UootThrow : Attribute {
     public const int OUT = 512;
 
     private bool _isOut = false;
+    private bool _isPriorityMode = true;
+   
 
     List<int> _animalProbability = new List<int>();
     int [] _probabilityOffset = new int[(int)Animal.MAX];
@@ -43,6 +45,7 @@ public class UootThrow : Attribute {
     PatternSystem.Arrange _aniArrange;
 
     static UootThrow s_inst = null;
+
     const float THROW_STANBY_TIME = 10.0f;
     float _curThrowStanbyTime = 0.0f;
 
@@ -51,14 +54,22 @@ public class UootThrow : Attribute {
 
     static public UootThrow GetInstance()
     {
+        if (s_inst == null)
+        {
+            s_inst = GameObject.Find("Flow").transform.FindChild("GameFlow").FindChild("InGame").FindChild("InGameFlow").FindChild("GamePlay").FindChild("UootThrow").GetComponent<UootThrow>();
+        }
         return s_inst;
+    }
+
+    public void ResetGame()
+    {
+        _isPriorityMode = true;
     }
 
     void UootAniInit()
     {
         if(_uootAniObj == null)
         {
-            s_inst = this;
             _uootAniObj = GameObject.Find("Uoot_ani");
 
             s_uootAni = _uootAniObj.GetComponent<Animator>();
@@ -186,9 +197,28 @@ public class UootThrow : Attribute {
         _curStep();
 	}
 
+    bool _isPlaye1Priority;
+
+    Queue<Animal> _animalQueue = new Queue<Animal>();
+
+    void PrioritySettring()
+    {
+        _isPlaye1Priority = Random.Range(0, 2) == 0 ? true : false;
+        int animal = Random.Range((int)Animal.GE, (int)Animal.MO);
+        if (_isPlaye1Priority)
+        {
+            _animalQueue.Enqueue((Animal)animal - 1);
+            _animalQueue.Enqueue((Animal)animal);
+        }
+        else
+        {
+            _animalQueue.Enqueue((Animal)animal);
+            _animalQueue.Enqueue((Animal)animal - 1);
+        }
+    }
     void ThrowStanbyCheck()
     {
-        if (_curThrowStanbyTime < THROW_STANBY_TIME)
+        if (_curThrowStanbyTime < THROW_STANBY_TIME && !_isPriorityMode)
         {
             _curThrowStanbyTime += Time.deltaTime;
         }
@@ -196,23 +226,56 @@ public class UootThrow : Attribute {
         {
             _curThrowStanbyTime = 0.0f;
             _curStep = ThrowCheck;
-            AnimalProbabiley();
-            ThrowToData();
+            if (!_isPriorityMode)
+            {
+                AnimalProbabiley();
+                ThrowToData();
+            }
             UootAniInit();
         }
     }
 
     void ThrowCheck()
     {
-       
         if (UootThrowAniCheck())
         {   
+            if (_isPriorityMode)
+            {
+                if (_animalQueue.Count > 0)
+                {
+                    _isDone = true;
+                    Attribute at = transform.parent.GetComponent<Attribute>();
+                    at.ReturnActive = "NextTurn";
+
+                }
+                else
+                {
+                    if (_isPlaye1Priority)
+                    {   
+                        _isDone = true;
+                        Attribute at = transform.parent.GetComponent<Attribute>();
+                        at.ReturnActive = "NextTurn";
+                        InputManager.Instance.CurPlayer = InputManager.Instance._resetPlayer;
+                        GameData.s_IsNotControlChange = true;
+
+                    }
+                    else
+                    {
+                        _curStep = ThrowStanbyCheck;
+                        InputManager.Instance.CurPlayer = InputManager.Instance._resetPlayer + 1;
+                    }
+                    _isPriorityMode = false;
+                }
+                return;
+            }
             if (_isOut)
             {
                 _isDone = true;
                 Attribute at = transform.parent.GetComponent<Attribute>();
                 at.ReturnActive = "NextTurn";
                 GameData.TurnRollBack();
+                GameData.RefreshAnimalView(false);
+
                 return;
             }
 
@@ -228,6 +291,7 @@ public class UootThrow : Attribute {
                 Attribute at = transform.parent.GetComponent<Attribute>();
                 at.ReturnActive = "";
                 InGameControlerManager.Instance.ReadyToCharacterMode();
+
             }
         }
    
@@ -236,7 +300,14 @@ public class UootThrow : Attribute {
 
     void OnEnable()
     {
+        if (_isPriorityMode)
+        {
+            if (_animalQueue.Count == 0)
+                PrioritySettring();
+        }
+
         _curStep = ThrowStanbyCheck;
+
         InputManager.Instance.InputAttribute = this;
     }
 
@@ -257,23 +328,33 @@ public class UootThrow : Attribute {
     }
 
 
-    List<Animal> _animalQueue = new List<Animal>(){Animal.BACK_DO, Animal.UOOT, Animal.BACK_DO, Animal.DO};
+    List<Animal> _tempanimalQueue = new List<Animal>() { Animal.BACK_DO, Animal.DO, Animal.DO, Animal.DO };
+    ///int cnt = 0;
     void ThrowToData()
     {
+
+        _isOut = false;        
         /*
         if (GameData.CurTurn == PLAYER_KIND.PLAYER_1)
         {
-            if (_animalQueue.Count > 0)
-            {
-                GameData.AddAnimal(_animalQueue[0]);
-                _animalQueue.RemoveAt(0);
-                return;
-            }
+            ++cnt;
+            if (cnt > 1)
+                _isOut = true;
+            
+            GameData.AddAnimal(Animal.BACK_DO);
+            return;
+        }*/
+
+
+        if (_tempanimalQueue.Count > 0)
+        {
+            GameData.AddAnimal(_tempanimalQueue[0]);
+            _tempanimalQueue.RemoveAt(0);
+
+            return;
         }
-        */
 
 
-        _isOut = false;
         int rr = Random.Range(1, _animalProbability[_animalProbability.Count - 1]);
         for (int i = 0; i < _animalProbability.Count; ++i)
         {
@@ -285,12 +366,15 @@ public class UootThrow : Attribute {
             }
         }
 
-        int outResult = Random.Range(0, 10000);
-        if (OUT > outResult)
+        if (!_isPriorityMode)
         {
-            Debug.Log("OUT !!!");
-            _isOut = true;
-            return;
+            int outResult = Random.Range(0, 10000);
+            if (OUT > outResult)
+            {
+                Debug.Log("OUT !!!");
+                _isOut = true;
+                return;
+            }
         }
     }
 
@@ -310,9 +394,11 @@ public class UootThrow : Attribute {
         uootThrowFlow.Add(new UootThrowPlayer(aninum));
         uootThrowFlow.Add(new PatternSystem.Timer(null, 2.9f));
         if(!_isOut) uootThrowFlow.Add(new UootThrowResultRefresh());
-        uootThrowFlow.Add(new PatternSystem.Timer(null, 2.0f));
+        uootThrowFlow.Add(new PatternSystem.Timer(null, 1.0f));
+        uootThrowFlow.Add(new UootCollect());
+        uootThrowFlow.Add(new PatternSystem.Timer(null, 3.0f));
         _aniArrange = new PatternSystem.Arrange(null, PatternSystem.Arrange.ArrangeType.SERIES, uootThrowFlow, 1);
-    }
+    }    
     
 
     bool UootThrowAniCheck()
@@ -326,7 +412,19 @@ public class UootThrow : Attribute {
     public void UootUpsideTurn()
     {
         s_uootAni.gameObject.SetActive(false);
-        _uootAnimaion[(int)GameData.GetLastAnimal()]();
+
+        Animal animal;
+        if (_isPriorityMode)
+        {
+            animal = _animalQueue.Dequeue();
+        }
+        else
+        {
+            animal = GameData.GetLastAnimal();
+        }
+
+        _uootAnimaion[(int)animal]();
+
     }
 
     public override void Event(KeyEvent key)
@@ -340,8 +438,12 @@ public class UootThrow : Attribute {
             {
                 _curThrowStanbyTime = 0.0f;
                 _curStep = ThrowCheck;
-                AnimalProbabiley();
-                ThrowToData();
+                if (!_isPriorityMode)
+                {
+                    AnimalProbabiley();
+                    ThrowToData();
+                }
+
                 UootAniInit();
             }
         }
