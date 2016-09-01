@@ -300,6 +300,7 @@ namespace UootNori
             UootThrow.s_uootAni.gameObject.SetActive(true);
             UootThrow.s_uootAni.SetInteger("state", _aniNum);
             GameData.s_animaleEffect.SetActive(false);
+            SoundPlayer.Instance.Play("sound0/effect/Yut_Throw");
         }
     }
 
@@ -440,6 +441,7 @@ namespace UootNori
         {
             base.Run();
             _target.SetInteger("state", 5);
+            SoundPlayer.Instance.Play("sound0/effect/Bag_Catch");
             /*
             SkinnedMeshRenderer smr = _target.transform.FindChild("CH01").GetComponent<SkinnedMeshRenderer>();
             foreach (Material m in smr.materials)
@@ -511,6 +513,23 @@ namespace UootNori
             }
             if (_curTime == _timer)
                 _isDone = true;
+        }
+    }
+
+    public class SoundPlay : Container
+    {
+        string _path;
+        public SoundPlay(string path)
+        {
+            _path = path;
+        }
+
+        public override void Run()
+        {
+            if (IsDone)
+                return;
+            _isDone = true;
+            SoundPlayer.Instance.Play(_path);
         }
     }
 
@@ -1876,6 +1895,7 @@ namespace UootNori
                 case MoverAdjustKind.GOALIN:
                     s_players[(int)mover.PlayerKind].GoalIn(mover.GetPiecesNum());
                     NextTurnCheck.Instance.GoalIn(mover.PlayerKind, s_players[(int)mover.PlayerKind].GetGoalInNum());
+                    ///SoundPlayer.Instance.Play("sound0/effect/UI_Btn_Out");
                     break;
                 case MoverAdjustKind.KILL_ONESELF:
                     s_players[(int)mover.PlayerKind].Out(mover.GetPiecesNum());
@@ -1981,6 +2001,7 @@ namespace UootNori
 
         public static void AddCredit()
         {
+            SoundPlayer.Instance.Play("sound0/effect/Coin");
             ++_cur1creditToCount;
             if(_1creditToCount == _cur1creditToCount)
             {

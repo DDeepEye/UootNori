@@ -45,6 +45,7 @@ public class NextTurnCheck : Attribute {
 
     public void GoalIn(PLAYER_KIND kind, int goalInNum)
     {
+        return;
         ///PLAYER_KIND offMarking = (kind == PLAYER_KIND.PLAYER_1 ? PLAYER_KIND.PLAYER_2 : PLAYER_KIND.PLAYER_1);
         /// 
         string view;
@@ -71,6 +72,7 @@ public class NextTurnCheck : Attribute {
 
     public void Reset()
     {
+        return;
         for (int i = 0; i < (int)PLAYER_KIND.MAX; ++i)
         {
             for (int j = 0; j < (int)PLAYER_KIND.MAX; ++j)

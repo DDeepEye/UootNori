@@ -173,6 +173,7 @@ namespace UootNori
             if(Input.GetKeyUp(KeyCode.B))
             {
                 GameData.AddCredit();
+                Title.Instance.OnCredit();
             }
         }
     }

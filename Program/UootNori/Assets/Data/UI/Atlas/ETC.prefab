@@ -42,6 +42,32 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   material: {fileID: 2100000, guid: 1519d05b7a477214ba128f8e973baf3a, type: 2}
   mSprites:
+  - name: button1
+    x: 0
+    y: 47
+    width: 110
+    height: 102
+    borderLeft: 0
+    borderRight: 0
+    borderTop: 0
+    borderBottom: 0
+    paddingLeft: 10
+    paddingRight: 8
+    paddingTop: 19
+    paddingBottom: 7
+  - name: button2
+    x: 392
+    y: 79
+    width: 110
+    height: 95
+    borderLeft: 0
+    borderRight: 0
+    borderTop: 0
+    borderBottom: 0
+    paddingLeft: 10
+    paddingRight: 8
+    paddingTop: 26
+    paddingBottom: 7
   - name: ETC_B_Uoot_0
     x: 0
     y: 332
@@ -56,7 +82,7 @@ MonoBehaviour:
     paddingTop: 0
     paddingBottom: 0
   - name: ETC_B_Uoot_1
-    x: 398
+    x: 392
     y: 344
     width: 189
     height: 168
@@ -69,7 +95,7 @@ MonoBehaviour:
     paddingTop: 0
     paddingBottom: 0
   - name: ETC_B_Uoot_2
-    x: 210
+    x: 207
     y: 333
     width: 184
     height: 179
@@ -82,7 +108,7 @@ MonoBehaviour:
     paddingTop: 0
     paddingBottom: 0
   - name: ETC_B_Uoot_3
-    x: 591
+    x: 582
     y: 333
     width: 177
     height: 179
@@ -96,7 +122,7 @@ MonoBehaviour:
     paddingBottom: 0
   - name: ETC_B_Uoot_4
     x: 0
-    y: 147
+    y: 150
     width: 189
     height: 181
     borderLeft: 0
@@ -108,8 +134,8 @@ MonoBehaviour:
     paddingTop: 0
     paddingBottom: 0
   - name: ETC_B_Uoot_5
-    x: 398
-    y: 172
+    x: 392
+    y: 175
     width: 189
     height: 168
     borderLeft: 0
@@ -121,8 +147,8 @@ MonoBehaviour:
     paddingTop: 0
     paddingBottom: 0
   - name: ETC_blind
-    x: 311
-    y: 4
+    x: 111
+    y: 9
     width: 64
     height: 64
     borderLeft: 30
@@ -134,8 +160,8 @@ MonoBehaviour:
     paddingTop: 0
     paddingBottom: 0
   - name: ETC_Calculate_frame_01
-    x: 311
-    y: 72
+    x: 111
+    y: 74
     width: 78
     height: 75
     borderLeft: 33
@@ -147,8 +173,8 @@ MonoBehaviour:
     paddingTop: 0
     paddingBottom: 0
   - name: ETC_Calculate_frame_02
-    x: 210
-    y: 53
+    x: 864
+    y: 418
     width: 97
     height: 94
     borderLeft: 40
@@ -160,7 +186,7 @@ MonoBehaviour:
     paddingTop: 0
     paddingBottom: 0
   - name: ETC_CH_frame
-    x: 840
+    x: 962
     y: 459
     width: 55
     height: 53
@@ -173,8 +199,8 @@ MonoBehaviour:
     paddingTop: 0
     paddingBottom: 0
   - name: ETC_CH01
-    x: 101
-    y: 47
+    x: 760
+    y: 416
     width: 103
     height: 96
     borderLeft: 0
@@ -186,8 +212,8 @@ MonoBehaviour:
     paddingTop: 16
     paddingBottom: 16
   - name: ETC_CH02
-    x: 0
-    y: 32
+    x: 207
+    y: 42
     width: 97
     height: 111
     borderLeft: 0
@@ -199,8 +225,8 @@ MonoBehaviour:
     paddingTop: 8
     paddingBottom: 9
   - name: ETC_frame
-    x: 210
-    y: 151
+    x: 207
+    y: 154
     width: 182
     height: 178
     borderLeft: 90
@@ -212,8 +238,8 @@ MonoBehaviour:
     paddingTop: 0
     paddingBottom: 0
   - name: ETC_S_Uoot_0
-    x: 398
-    y: 104
+    x: 305
+    y: 89
     width: 64
     height: 64
     borderLeft: 0
@@ -225,8 +251,8 @@ MonoBehaviour:
     paddingTop: 0
     paddingBottom: 0
   - name: ETC_S_Uoot_1
-    x: 398
-    y: 36
+    x: 305
+    y: 24
     width: 64
     height: 64
     borderLeft: 0
@@ -238,8 +264,8 @@ MonoBehaviour:
     paddingTop: 0
     paddingBottom: 0
   - name: ETC_S_Uoot_2
-    x: 466
-    y: 104
+    x: 392
+    y: 14
     width: 64
     height: 64
     borderLeft: 0
@@ -251,8 +277,8 @@ MonoBehaviour:
     paddingTop: 0
     paddingBottom: 0
   - name: ETC_S_Uoot_3
-    x: 466
-    y: 36
+    x: 503
+    y: 110
     width: 64
     height: 64
     borderLeft: 0
@@ -264,8 +290,8 @@ MonoBehaviour:
     paddingTop: 0
     paddingBottom: 0
   - name: ETC_S_Uoot_4
-    x: 772
-    y: 448
+    x: 503
+    y: 45
     width: 64
     height: 64
     borderLeft: 0
@@ -277,8 +303,8 @@ MonoBehaviour:
     paddingTop: 0
     paddingBottom: 0
   - name: ETC_S_Uoot_5
-    x: 772
-    y: 380
+    x: 760
+    y: 351
     width: 64
     height: 64
     borderLeft: 0

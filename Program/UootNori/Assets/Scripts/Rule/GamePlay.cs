@@ -67,4 +67,9 @@ public class GamePlay : Arrange {
             }
         }
     }
+    protected override void OnEnable()
+    {
+        base.OnEnable();
+        SoundPlayer.Instance.BGMPlay("sound0/bgm/bgm03");
+    }
 }

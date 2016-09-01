@@ -19,6 +19,8 @@ public class InGame : Arrange
         ///InputManager.Instance.CurPlayer = PlayerControl.Player1;
         
         base.OnEnable();
+
+
     }
 
     void OnDisable()

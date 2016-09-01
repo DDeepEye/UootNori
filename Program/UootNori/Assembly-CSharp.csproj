@@ -215,6 +215,7 @@
      <Compile Include="Assets\Scripts\Rule\TurnFix.cs" />
      <Compile Include="Assets\Scripts\Rule\UootThrow.cs" />
      <Compile Include="Assets\Scripts\Rule\VsSelect.cs" />
+     <Compile Include="Assets\Scripts\Sound\SoundPlayer.cs" />
      <None Include="Assets\NGUI\Examples\Shaders\Unlit - Depth Cutout.shader" />
      <None Include="Assets\NGUI\ReadMe - 3.9.9.txt" />
      <None Include="Assets\NGUI\Resources\Shaders\Unlit - Transparent Masked 1.shader" />

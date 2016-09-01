@@ -81,6 +81,7 @@ public class InGameControlerManager : FlowContainer.Attribute
                         --_choiceIndex;
                     }
                     _selecterMovers[_choiceIndex]._select.SetActive(true);
+                    SoundPlayer.Instance.Play("sound0/effect/UI_Btn_Out");
                 }
                 break;
             case KeyEvent.RIGHT_EVENT:
@@ -94,6 +95,7 @@ public class InGameControlerManager : FlowContainer.Attribute
                         ++_choiceIndex;
                     }
                     _selecterMovers[_choiceIndex]._select.SetActive(true);
+                    SoundPlayer.Instance.Play("sound0/effect/UI_Btn_Out");
                 }
                 break;
             case KeyEvent.ENTER_EVENT:
@@ -120,6 +122,7 @@ public class InGameControlerManager : FlowContainer.Attribute
                         _curCheck = ShootEffectRun;
                         ShootEffectContainerCreate();
                     }
+                    SoundPlayer.Instance.Play("sound0/effect/UI_Btn_ChSel_OK");
                 }
                 break;
         }
@@ -319,7 +322,8 @@ public class InGameControlerManager : FlowContainer.Attribute
             if (IsDone)
                 return;
             _isDone = true;
-            InGameControlerManager.Instance.Shoot();                                          
+            InGameControlerManager.Instance.Shoot();     
+            SoundPlayer.Instance.Play("sound0/effect/Gun0");
         }
     }
 

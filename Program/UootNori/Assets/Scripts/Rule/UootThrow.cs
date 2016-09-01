@@ -246,7 +246,6 @@ public class UootThrow : Attribute {
                     _isDone = true;
                     Attribute at = transform.parent.GetComponent<Attribute>();
                     at.ReturnActive = "NextTurn";
-
                 }
                 else
                 {
@@ -257,14 +256,18 @@ public class UootThrow : Attribute {
                         at.ReturnActive = "NextTurn";
                         InputManager.Instance.CurPlayer = InputManager.Instance._resetPlayer;
                         GameData.s_IsNotControlChange = true;
-
                     }
                     else
                     {
                         _curStep = ThrowStanbyCheck;
                         InputManager.Instance.CurPlayer = InputManager.Instance._resetPlayer + 1;
                     }
+                    if(GameData.CurTurn == PLAYER_KIND.PLAYER_1)
+                        SoundPlayer.Instance.Play("sound0/voice/no/VoiceNo_Turn0");
+                    else
+                        SoundPlayer.Instance.Play("sound0/voice/ki/VoiceKi_Turn0");
                     _isPriorityMode = false;
+                    SoundPlayer.Instance.BGMPlay("sound0/bgm/bgm05");
                 }
                 return;
             }
@@ -304,6 +307,13 @@ public class UootThrow : Attribute {
         {
             if (_animalQueue.Count == 0)
                 PrioritySettring();
+        }
+        else
+        {
+            if(GameData.CurTurn == PLAYER_KIND.PLAYER_1)
+                SoundPlayer.Instance.Play("sound0/voice/no/VoiceNo_Turn0");
+            else
+                SoundPlayer.Instance.Play("sound0/voice/ki/VoiceKi_Turn0");
         }
 
         _curStep = ThrowStanbyCheck;
@@ -345,14 +355,14 @@ public class UootThrow : Attribute {
             return;
         }*/
 
-
+        /*
         if (_tempanimalQueue.Count > 0)
         {
             GameData.AddAnimal(_tempanimalQueue[0]);
             _tempanimalQueue.RemoveAt(0);
 
             return;
-        }
+        }*/
 
 
         int rr = Random.Range(1, _animalProbability[_animalProbability.Count - 1]);
@@ -395,6 +405,7 @@ public class UootThrow : Attribute {
         uootThrowFlow.Add(new PatternSystem.Timer(null, 2.9f));
         if(!_isOut) uootThrowFlow.Add(new UootThrowResultRefresh());
         uootThrowFlow.Add(new PatternSystem.Timer(null, 1.0f));
+        if(GameData.GetLastAnimal() == Animal.MO) uootThrowFlow.Add(new SoundPlay("sound0/effect/Item_MoOrNak_Use"));
         uootThrowFlow.Add(new UootCollect());
         uootThrowFlow.Add(new PatternSystem.Timer(null, 3.0f));
         _aniArrange = new PatternSystem.Arrange(null, PatternSystem.Arrange.ArrangeType.SERIES, uootThrowFlow, 1);
@@ -424,7 +435,6 @@ public class UootThrow : Attribute {
         }
 
         _uootAnimaion[(int)animal]();
-
     }
 
     public override void Event(KeyEvent key)
