@@ -1830,6 +1830,14 @@ namespace UootNori
             s_readyField[s_indexReadyField].SetActive(false);
             s_indexReadyField = UnityEngine.Random.RandomRange(0, 5);
             s_readyField[s_indexReadyField].SetActive(true);
+            if (CurTurn == PLAYER_KIND.PLAYER_1)
+            {
+                NextTurnCheck.Instance.Left();
+            }
+            else
+            {
+                NextTurnCheck.Instance.Right();
+            }
         }
 
         public static void OutPiecessViewRefresh()

@@ -319,6 +319,7 @@ public class UootThrow : Attribute {
         _curStep = ThrowStanbyCheck;
 
         InputManager.Instance.InputAttribute = this;
+        NextTurnCheck.Instance.ArrowVisible(true);
     }
 
     void OnDisable()
@@ -455,6 +456,7 @@ public class UootThrow : Attribute {
                 }
 
                 UootAniInit();
+                NextTurnCheck.Instance.ArrowVisible(false);
             }
         }
     }

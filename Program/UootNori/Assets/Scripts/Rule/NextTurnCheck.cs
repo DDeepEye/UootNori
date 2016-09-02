@@ -10,6 +10,9 @@ public class NextTurnCheck : Attribute {
     Rotation _uiCameraRot;
     PatternSystem.Move _player1Mover;
     PatternSystem.Move _player2Mover;
+    GameObject _left;
+    GameObject _right;
+    GameObject _curArrow;
 
     GameObject [] _players = new GameObject[(int)PLAYER_KIND.MAX];
 
@@ -34,6 +37,11 @@ public class NextTurnCheck : Attribute {
             Transform gp = uiroot.transform.FindChild("Size").FindChild("GamePlay");
             _players[0] = gp.FindChild("Play01").gameObject;
             _players[1] = gp.FindChild("Play02").gameObject;
+            _left = gp.transform.FindChild("S_Uoot_P").FindChild("Left_p").gameObject;
+            _left.SetActive(true);
+            _curArrow = _left;
+            _right = gp.transform.FindChild("S_Uoot_P").FindChild("right_p").gameObject;
+            _right.SetActive(false);
         }
 
         /*
@@ -41,6 +49,25 @@ public class NextTurnCheck : Attribute {
         _players[(int)offMarking].transform.FindChild("Select_P").gameObject.SetActive(false);
         _players[(int)kind].transform.FindChild("Select_P").gameObject.SetActive(true);
         */
+    }
+
+    public void Left()
+    {
+        _left.SetActive(true);
+        _curArrow = _left;
+        _right.SetActive(false);
+    }
+
+    public void Right()
+    {
+        _left.SetActive(false);
+        _curArrow = _right;
+        _right.SetActive(true);
+    }
+
+    public void ArrowVisible(bool isVisible)
+    {
+        _curArrow.SetActive(isVisible);
     }
 
     public void GoalIn(PLAYER_KIND kind, int goalInNum)

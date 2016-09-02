@@ -1,23 +1,20 @@
 ﻿<Properties StartupItem="Assembly-CSharp.csproj">
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" PreferredExecutionTarget="Unity.Instance.Unity Editor" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="Assets/Scripts/Rule/Title.cs">
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets/Scripts/Rule/NextTurnCheck.cs">
     <Files>
-      <File FileName="Assets/Scripts/Sound/SoundPlayer.cs" Line="14" Column="31" />
-      <File FileName="Assets/Scripts/Rule/Title.cs" Line="72" Column="12" />
-      <File FileName="Assets/Scripts/Rule/Rule.cs" Line="1" Column="1" />
+      <File FileName="Assets/Scripts/Rule/NextTurnCheck.cs" Line="42" Column="31" />
+      <File FileName="Assets/Scripts/Sound/SoundPlayer.cs" Line="12" Column="1" />
+      <File FileName="Assets/Scripts/Rule/Title.cs" Line="22" Column="1" />
+      <File FileName="Assets/Scripts/Rule/Rule.cs" Line="1815" Column="10" />
+      <File FileName="Assets/Scripts/Rule/UootThrow.cs" Line="459" Column="52" />
+      <File FileName="Assets/Scripts/Input/InputManager.cs" Line="62" Column="15" />
+      <File FileName="Assets/Scripts/Rule/VsSelect.cs" Line="80" Column="1" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>
     <BreakpointStore>
       <Breakpoint file="/Users/leejihoon/Desktop/Developer/Projects/GitHub/UootPlay/Program/UootNori/Assets/Scripts/Rule/Rule.cs" line="153" column="1" />
       <Breakpoint file="/Users/leejihoon/Desktop/Developer/Projects/GitHub/UootPlay/Program/UootNori/Assets/Scripts/Rule/Rule.cs" line="118" column="32" />
-      <Breakpoint file="/Users/leejihoon/Desktop/Developer/Projects/GitHub/UootPlay/Program/UootNori/Assets/Scripts/Rule/NextTurnCheck.cs" line="67" column="6" />
-      <Breakpoint file="/Users/leejihoon/Desktop/Developer/Projects/GitHub/UootPlay/Program/UootNori/Assets/Scripts/Rule/VsSelect.cs" line="80" column="31" />
-      <Breakpoint file="/Users/leejihoon/Desktop/Developer/Projects/GitHub/UootPlay/Program/UootNori/Assets/Scripts/Rule/VsSelect.cs" line="81" column="1" />
-      <Breakpoint file="/Users/leejihoon/Desktop/Developer/Projects/GitHub/UootPlay/Program/UootNori/Assets/Scripts/Input/InputManager.cs" line="61" column="22" />
-      <Breakpoint file="/Users/leejihoon/Desktop/Developer/Projects/GitHub/UootPlay/Program/UootNori/Assets/Scripts/Input/InputManager.cs" line="175" column="38" />
-      <Breakpoint file="/Users/leejihoon/Desktop/Developer/Projects/GitHub/UootPlay/Program/UootNori/Assets/Scripts/Rule/Title.cs" line="22" column="36" />
-      <Breakpoint file="/Users/leejihoon/Desktop/Developer/Projects/GitHub/UootPlay/Program/UootNori/Assets/Scripts/Sound/SoundPlayer.cs" line="12" column="36" />
     </BreakpointStore>
   </MonoDevelop.Ide.DebuggingService.Breakpoints>
   <MonoDevelop.Ide.DebuggingService.PinnedWatches />
