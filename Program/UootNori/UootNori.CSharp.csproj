@@ -242,6 +242,7 @@
     <Compile Include="Assets\Scripts\Rule\TurnFix.cs" />
     <Compile Include="Assets\Scripts\Rule\UootThrow.cs" />
     <Compile Include="Assets\Scripts\Rule\VsSelect.cs" />
+    <Compile Include="Assets\Scripts\Sound\SoundPlayer.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Assets\Data\Field\Materials\Caustics.shader" />
