@@ -129,6 +129,11 @@ namespace UootNori
                         {
                             _resetPlayer = PlayerControl.Player3;
                             _maxControlNum = PlayerControl.MAX;
+
+                            if (InputManager.Instance._resetPlayer == PlayerControl.Player3)
+                            {
+                                NextTurnCheck.Instance.reverseCamera();
+                            }
                         }
                         else
                         {

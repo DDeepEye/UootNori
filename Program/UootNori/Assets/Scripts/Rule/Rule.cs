@@ -1352,6 +1352,7 @@ namespace UootNori
             s_startPoint[0] = rf.transform.FindChild("CH_01").gameObject;
             s_startPoint[1] = rf.transform.FindChild("CH_02").gameObject;
             s_startPoint[0].SetActive(true);
+            s_startPoint[0].SetActive(false);
 
             TextMesh tm = s_startPoint[0].transform.FindChild("billboard_P").FindChild("Population_P").FindChild("Population_Label_P").GetComponent<TextMesh>();
             tm.text = s_players[0].GetOutFieldNum().ToString();

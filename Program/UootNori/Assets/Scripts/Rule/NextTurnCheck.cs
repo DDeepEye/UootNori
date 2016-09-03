@@ -24,6 +24,19 @@ public class NextTurnCheck : Attribute {
             if (s_instance == null)
             {
                 s_instance = GameObject.Find("Flow").transform.FindChild("GameFlow").FindChild("InGame").FindChild("InGameFlow").FindChild("GamePlay").FindChild("NextTurn").GetComponent<NextTurnCheck>();
+
+                if (s_instance._players[0] == null)
+                {
+                    GameObject uiroot = GameObject.Find("UI Root");
+                    Transform gp = uiroot.transform.FindChild("Size").FindChild("GamePlay");
+                    s_instance._players[0] = gp.FindChild("Play01").gameObject;
+                    s_instance._players[1] = gp.FindChild("Play02").gameObject;
+                    s_instance._left = gp.transform.FindChild("S_Uoot_P").FindChild("Left_p").gameObject;
+                    s_instance._left.SetActive(true);
+                    s_instance._curArrow = s_instance._left;
+                    s_instance._right = gp.transform.FindChild("S_Uoot_P").FindChild("right_p").gameObject;
+                    s_instance._right.SetActive(false);
+                }
             }
             return s_instance;
         }
@@ -70,9 +83,24 @@ public class NextTurnCheck : Attribute {
         _curArrow.SetActive(isVisible);
     }
 
-    public void GoalIn(PLAYER_KIND kind, int goalInNum)
+    public void reverseCamera()
     {
-        return;
+        GameObject camera = GameObject.Find("Field_Camera");
+        camera.transform.localEulerAngles = new Vector3(camera.transform.localEulerAngles.x, camera.transform.localEulerAngles.y, 180.0f);
+        camera = GameObject.Find("UI Root").transform.FindChild("Camera").gameObject;
+        camera.transform.localEulerAngles = new Vector3(camera.transform.localEulerAngles.x, camera.transform.localEulerAngles.y, 180.0f);
+    }
+
+    public void intactlyCamera()
+    {
+        GameObject camera = GameObject.Find("Field_Camera");
+        camera.transform.localEulerAngles = new Vector3(camera.transform.localEulerAngles.x, camera.transform.localEulerAngles.y, 0.0f);
+        camera = GameObject.Find("UI Root").transform.FindChild("Camera").gameObject;
+        camera.transform.localEulerAngles = new Vector3(camera.transform.localEulerAngles.x, camera.transform.localEulerAngles.y, 0.0f);
+    }
+
+    public void GoalIn(PLAYER_KIND kind, int goalInNum)
+    {   
         ///PLAYER_KIND offMarking = (kind == PLAYER_KIND.PLAYER_1 ? PLAYER_KIND.PLAYER_2 : PLAYER_KIND.PLAYER_1);
         /// 
         string view;
@@ -98,8 +126,7 @@ public class NextTurnCheck : Attribute {
     }
 
     public void Reset()
-    {
-        return;
+    {   
         for (int i = 0; i < (int)PLAYER_KIND.MAX; ++i)
         {
             for (int j = 0; j < (int)PLAYER_KIND.MAX; ++j)

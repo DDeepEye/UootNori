@@ -204,6 +204,7 @@ public class UootThrow : Attribute {
     void PrioritySettring()
     {
         _isPlaye1Priority = Random.Range(0, 2) == 0 ? true : false;
+        _isPlaye1Priority = false;
         int animal = Random.Range((int)Animal.GE, (int)Animal.MO);
         if (_isPlaye1Priority)
         {
@@ -224,6 +225,7 @@ public class UootThrow : Attribute {
         }
         else
         {
+            NextTurnCheck.Instance.ArrowVisible(false);
             _curThrowStanbyTime = 0.0f;
             _curStep = ThrowCheck;
             if (!_isPriorityMode)
@@ -262,10 +264,9 @@ public class UootThrow : Attribute {
                         _curStep = ThrowStanbyCheck;
                         InputManager.Instance.CurPlayer = InputManager.Instance._resetPlayer + 1;
                     }
-                    if(GameData.CurTurn == PLAYER_KIND.PLAYER_1)
+                    if(GameData.CurTurn == PLAYER_KIND.PLAYER_2)
                         SoundPlayer.Instance.Play("sound0/voice/no/VoiceNo_Turn0");
-                    else
-                        SoundPlayer.Instance.Play("sound0/voice/ki/VoiceKi_Turn0");
+                    
                     _isPriorityMode = false;
                     SoundPlayer.Instance.BGMPlay("sound0/bgm/bgm05");
                 }
@@ -339,7 +340,7 @@ public class UootThrow : Attribute {
     }
 
 
-    List<Animal> _tempanimalQueue = new List<Animal>() { Animal.BACK_DO, Animal.DO, Animal.DO, Animal.DO };
+    List<Animal> _tempanimalQueue = new List<Animal>() { Animal.BACK_DO, Animal.DO, Animal.DO, Animal.DO, Animal.BACK_DO, Animal.DO, Animal.DO, Animal.DO };
     ///int cnt = 0;
     void ThrowToData()
     {
@@ -363,7 +364,8 @@ public class UootThrow : Attribute {
             _tempanimalQueue.RemoveAt(0);
 
             return;
-        }*/
+        }
+         * */
 
 
         int rr = Random.Range(1, _animalProbability[_animalProbability.Count - 1]);

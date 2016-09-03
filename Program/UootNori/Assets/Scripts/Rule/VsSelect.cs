@@ -78,6 +78,10 @@ public class VsSelect : Attribute
                 GameData.ConsumeCredit(_curChoice == _2_2_);
 
                 InputManager.Instance._resetPlayer = (_curChoice == _2_2_) ? PlayerControl.Player1 : InputManager.Instance._resetPlayer;
+                if (InputManager.Instance._resetPlayer == PlayerControl.Player1)
+                {
+                    NextTurnCheck.Instance.intactlyCamera();
+                }
                 InputManager.Instance._maxControlNum = (_curChoice == _2_2_) ? PlayerControl.MAX : InputManager.Instance._maxControlNum;
 
                 break;
