@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 using FlowContainer;
+using UootNori;
 
 public class GamePlay : Arrange {
 
@@ -70,6 +71,7 @@ public class GamePlay : Arrange {
     protected override void OnEnable()
     {
         base.OnEnable();
+
         SoundPlayer.Instance.BGMPlay("sound0/bgm/bgm03");
     }
 }

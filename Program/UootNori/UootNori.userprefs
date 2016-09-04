@@ -1,14 +1,19 @@
 ﻿<Properties StartupItem="Assembly-CSharp.csproj">
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" PreferredExecutionTarget="Unity.Instance.Unity Editor" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="Assets/Scripts/Rule/NextTurnCheck.cs">
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets/Scripts/Rule/UootThrow.cs">
     <Files>
-      <File FileName="Assets/Scripts/Rule/NextTurnCheck.cs" Line="42" Column="31" />
-      <File FileName="Assets/Scripts/Sound/SoundPlayer.cs" Line="12" Column="1" />
-      <File FileName="Assets/Scripts/Rule/Title.cs" Line="22" Column="1" />
-      <File FileName="Assets/Scripts/Rule/Rule.cs" Line="1815" Column="10" />
-      <File FileName="Assets/Scripts/Rule/UootThrow.cs" Line="459" Column="52" />
-      <File FileName="Assets/Scripts/Input/InputManager.cs" Line="62" Column="15" />
-      <File FileName="Assets/Scripts/Rule/VsSelect.cs" Line="80" Column="1" />
+      <File FileName="Assets/Scripts/Rule/Rule.cs" Line="1373" Column="46" />
+      <File FileName="Assets/Scripts/Rule/Title.cs" Line="62" Column="38" />
+      <File FileName="Assets/Scripts/Rule/NextTurnCheck.cs" Line="89" Column="39" />
+      <File FileName="Assets/Scripts/Sound/SoundPlayer.cs" Line="1" Column="1" />
+      <File FileName="Assets/Scripts/Rule/UootThrow.cs" Line="206" Column="68" />
+      <File FileName="Assets/Scripts/Input/InputManager.cs" Line="85" Column="10" />
+      <File FileName="Assets/Scripts/Rule/VsSelect.cs" Line="64" Column="52" />
+      <File FileName="Assets/Scripts/Rule/GameOver.cs" Line="39" Column="43" />
+      <File FileName="Assets/Scripts/Rule/CharacterSelect.cs" Line="62" Column="13" />
+      <File FileName="Assets/Scripts/Rule/InGame.cs" Line="23" Column="10" />
+      <File FileName="Assets/Scripts/Rule/GamePlay.cs" Line="77" Column="2" />
+      <File FileName="Assets/Scripts/Rule/PriorityView.cs" Line="21" Column="9" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>

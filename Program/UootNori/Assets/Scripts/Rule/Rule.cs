@@ -1389,6 +1389,12 @@ namespace UootNori
             tm.text = s_players[0].GetOutFieldNum().ToString();
         }
 
+        public static void StartPointVisible(bool visible)
+        {
+            s_startPoint[0].SetActive(visible);
+            s_startPoint[1].SetActive(visible);
+        }
+
         public static void OpenAnimalChoice()
         {
             foreach (GameObject go in s_animalStateList)

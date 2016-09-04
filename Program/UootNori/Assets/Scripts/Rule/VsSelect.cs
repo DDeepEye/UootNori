@@ -57,6 +57,12 @@ public class VsSelect : Attribute
         _vsSelect.SetActive(true);
         _curChoice = _1_1_;
         _curSelectWaitTime = 0.0f;
+
+        if (InputManager.Instance.CurPlayer <= PlayerControl.Player2)
+            NextTurnCheck.Instance.intactlyCamera();
+        else
+            NextTurnCheck.Instance.reverseCamera();
+
     }
 
     public override void Event(KeyEvent key)
@@ -77,11 +83,7 @@ public class VsSelect : Attribute
                 _vsSelect.SetActive(false);
                 GameData.ConsumeCredit(_curChoice == _2_2_);
 
-                InputManager.Instance._resetPlayer = (_curChoice == _2_2_) ? PlayerControl.Player1 : InputManager.Instance._resetPlayer;
-                if (InputManager.Instance._resetPlayer == PlayerControl.Player1)
-                {
-                    NextTurnCheck.Instance.intactlyCamera();
-                }
+                InputManager.Instance.ResetPlayer = (_curChoice == _2_2_) ? PlayerControl.Player1 : InputManager.Instance.ResetPlayer;
                 InputManager.Instance._maxControlNum = (_curChoice == _2_2_) ? PlayerControl.MAX : InputManager.Instance._maxControlNum;
 
                 break;

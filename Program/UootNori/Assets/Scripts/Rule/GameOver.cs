@@ -36,5 +36,6 @@ public class GameOver : Attribute
         }
         _gameOver.SetActive(true);
         _curTime = 0.0f;
+        GameData.StartPointVisible(false);
     }
 }

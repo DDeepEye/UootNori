@@ -204,7 +204,6 @@ public class UootThrow : Attribute {
     void PrioritySettring()
     {
         _isPlaye1Priority = Random.Range(0, 2) == 0 ? true : false;
-        _isPlaye1Priority = false;
         int animal = Random.Range((int)Animal.GE, (int)Animal.MO);
         if (_isPlaye1Priority)
         {
@@ -256,13 +255,13 @@ public class UootThrow : Attribute {
                         _isDone = true;
                         Attribute at = transform.parent.GetComponent<Attribute>();
                         at.ReturnActive = "NextTurn";
-                        InputManager.Instance.CurPlayer = InputManager.Instance._resetPlayer;
+                        InputManager.Instance.CurPlayer = InputManager.Instance.ResetPlayer;
                         GameData.s_IsNotControlChange = true;
                     }
                     else
                     {
                         _curStep = ThrowStanbyCheck;
-                        InputManager.Instance.CurPlayer = InputManager.Instance._resetPlayer + 1;
+                        InputManager.Instance.CurPlayer = InputManager.Instance.ResetPlayer + 1;
                     }
                     if(GameData.CurTurn == PLAYER_KIND.PLAYER_2)
                         SoundPlayer.Instance.Play("sound0/voice/no/VoiceNo_Turn0");

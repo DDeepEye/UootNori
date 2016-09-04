@@ -47,6 +47,25 @@ namespace UootNori
 
         public bool _controlChoiceMode = false;
         public PlayerControl _resetPlayer = PlayerControl.Player1;
+        public PlayerControl ResetPlayer 
+        {
+            get
+            {
+                return _resetPlayer;
+            }
+            set
+            {
+                _resetPlayer = value;
+                if (_resetPlayer <= PlayerControl.Player2)
+                {
+                    NextTurnCheck.Instance.intactlyCamera();
+                }
+                else
+                {
+                    NextTurnCheck.Instance.reverseCamera();
+                }
+            }
+        }
 
         Dictionary<string, KeyEvent> _keys = new Dictionary<string, KeyEvent>()
         {
@@ -59,7 +78,7 @@ namespace UootNori
         {
             ++_curPlayer;
             if (_curPlayer == _maxControlNum)
-                _curPlayer = _resetPlayer;
+                _curPlayer = ResetPlayer;
         }
 
         public void SetPlayerNum(PlayerControl playerNum)
@@ -119,30 +138,28 @@ namespace UootNori
         {
             if (_controlChoiceMode)
             {
-                for (PlayerControl i = 0; i < PlayerControl.MAX; ++i)
+                if (GameData.GetCreditNum() > 0)
                 {
-                    string keyDown = _playerControls[i].Update();
-                    if (keyDown != null)
+                    for (PlayerControl i = 0; i < PlayerControl.MAX; ++i)
                     {
-                        CurPlayer = (PlayerControl)i;
-                        if (i >= PlayerControl.Player3)
+                        string keyDown = _playerControls[i].Update();
+                        if (keyDown != null)
                         {
-                            _resetPlayer = PlayerControl.Player3;
-                            _maxControlNum = PlayerControl.MAX;
-
-                            if (InputManager.Instance._resetPlayer == PlayerControl.Player3)
+                            CurPlayer = (PlayerControl)i;
+                            if (i >= PlayerControl.Player3)
                             {
-                                NextTurnCheck.Instance.reverseCamera();
+                                ResetPlayer = PlayerControl.Player3;
+                                _maxControlNum = PlayerControl.MAX;
                             }
+                            else
+                            {
+                                ResetPlayer = PlayerControl.Player1;
+                                _maxControlNum = PlayerControl.Player3;
+                            }
+                            _controlChoiceMode = false;
+                            if (InputAttribute != null)
+                                InputAttribute.Event(_keys[keyDown]);
                         }
-                        else
-                        {
-                            _resetPlayer = PlayerControl.Player1;
-                            _maxControlNum = PlayerControl.Player3;
-                        }
-                        _controlChoiceMode = false;
-                        if (InputAttribute != null)
-                            InputAttribute.Event(_keys[keyDown]);
                     }
                 }
             }

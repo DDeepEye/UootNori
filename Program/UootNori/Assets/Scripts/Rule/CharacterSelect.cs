@@ -56,6 +56,11 @@ public class CharacterSelect : Arrange
         _characterSelect.SetActive(true);
         _curChoice = _character1;
         _curSelectWaitTime = 0.0f;
+
+        if (InputManager.Instance.CurPlayer <= PlayerControl.Player2)
+            NextTurnCheck.Instance.intactlyCamera();
+        else
+            NextTurnCheck.Instance.reverseCamera();
     }
 
     public override void Event(KeyEvent key)
