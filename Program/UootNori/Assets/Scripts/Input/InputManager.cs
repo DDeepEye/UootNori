@@ -76,25 +76,25 @@ namespace UootNori
 
             keys = new Dictionary<KeyCode, string>() 
             { 
-                {KeyCode.A,"left"},
-                {KeyCode.S,"right"},
-                {KeyCode.D,"enter"} 
+                {KeyCode.S,"left"},
+                {KeyCode.D,"right"},
+                {KeyCode.Z,"enter"} 
             };
             playerControlKeys.Add(PlayerControl.Player2, keys);
+
+            keys = new Dictionary<KeyCode, string>() 
+            { 
+                {KeyCode.K,"left"},
+                {KeyCode.B,"right"},
+                {KeyCode.L,"enter"} 
+            };
+            playerControlKeys.Add(PlayerControl.Player3, keys);
 
             keys = new Dictionary<KeyCode, string>() 
             { 
                 {KeyCode.I,"left"},
                 {KeyCode.O,"right"},
                 {KeyCode.P,"enter"} 
-            };
-            playerControlKeys.Add(PlayerControl.Player3, keys);
-
-            keys = new Dictionary<KeyCode, string>() 
-            { 
-                {KeyCode.J,"left"},
-                {KeyCode.K,"right"},
-                {KeyCode.L,"enter"} 
             };
             playerControlKeys.Add(PlayerControl.Player4, keys);
 
@@ -160,7 +160,7 @@ namespace UootNori
             }
 
 
-            if(Input.GetKeyUp(KeyCode.Z))
+            if(Input.GetKeyUp(KeyCode.C))
             {
                 if (InputAttribute != Calculate.Instance)
                 {
@@ -175,7 +175,7 @@ namespace UootNori
                 }
             }
 
-            if(Input.GetKeyUp(KeyCode.B))
+            if(Input.GetKeyUp(KeyCode.X))
             {
                 GameData.AddCredit();
                 Title.Instance.OnCredit();
