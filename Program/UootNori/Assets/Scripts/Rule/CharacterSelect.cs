@@ -74,7 +74,9 @@ public class CharacterSelect : Arrange
                 _curChoice.SetActive(true);
                 break;
             case KeyEvent.ENTER_EVENT:
-                GameData.Player2IsCharacter1(_curChoice == _character2 ? true : false);
+                bool result = ((int)InputManager.Instance.CurPlayer % 2) == 0 ? true : false;
+
+                GameData.Player2IsCharacter1(_curChoice == _character2 ? result : !result);
                 _isDone = true;
                 _characterSelect.SetActive(false);
                 break;

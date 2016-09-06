@@ -262,6 +262,7 @@ public class UootThrow : Attribute {
                     {
                         _curStep = ThrowStanbyCheck;
                         InputManager.Instance.CurPlayer = InputManager.Instance.ResetPlayer + 1;
+                        NextTurnCheck.Instance.ArrowVisible(true);
                     }
                     if(GameData.CurTurn == PLAYER_KIND.PLAYER_2)
                         SoundPlayer.Instance.Play("sound0/voice/no/VoiceNo_Turn0");
@@ -294,7 +295,6 @@ public class UootThrow : Attribute {
                 Attribute at = transform.parent.GetComponent<Attribute>();
                 at.ReturnActive = "";
                 InGameControlerManager.Instance.ReadyToCharacterMode();
-
             }
         }
    
@@ -356,7 +356,7 @@ public class UootThrow : Attribute {
             return;
         }*/
 
-        /*
+
         if (_tempanimalQueue.Count > 0)
         {
             GameData.AddAnimal(_tempanimalQueue[0]);
@@ -364,7 +364,7 @@ public class UootThrow : Attribute {
 
             return;
         }
-         * */
+
 
 
         int rr = Random.Range(1, _animalProbability[_animalProbability.Count - 1]);
