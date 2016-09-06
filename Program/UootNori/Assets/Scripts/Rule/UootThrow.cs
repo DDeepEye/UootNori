@@ -356,7 +356,7 @@ public class UootThrow : Attribute {
             return;
         }*/
 
-
+        /*
         if (_tempanimalQueue.Count > 0)
         {
             GameData.AddAnimal(_tempanimalQueue[0]);
@@ -364,6 +364,7 @@ public class UootThrow : Attribute {
 
             return;
         }
+        */
 
 
 
