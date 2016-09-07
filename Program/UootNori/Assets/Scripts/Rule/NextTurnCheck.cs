@@ -125,7 +125,7 @@ public class NextTurnCheck : Attribute {
         character.transform.FindChild("billboard_P").FindChild("Population_P").gameObject.SetActive(true);
     }
 
-    public void Reset()
+    public void GameOverReset()
     {   
         for (int i = 0; i < (int)PLAYER_KIND.MAX; ++i)
         {

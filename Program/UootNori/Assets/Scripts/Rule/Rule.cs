@@ -573,11 +573,29 @@ namespace UootNori
             {
                 s_moverName[0] = "Character/CH_01";
                 s_moverName[1] = "Character/CH_02";
+                if (s_originPiecess[0] != null)
+                {
+                    if (s_originPiecess[0].name == "CH_02")
+                    {
+                        GameObject b = s_originPiecess[0];
+                        s_originPiecess[0] = s_originPiecess[1];
+                        s_originPiecess[1] = b;
+                    }
+                }
             }
             else
             {
                 s_moverName[1] = "Character/CH_01";
                 s_moverName[0] = "Character/CH_02";
+                if (s_originPiecess[0] != null)
+                {
+                    if (s_originPiecess[0].name == "CH_01")
+                    {
+                        GameObject b = s_originPiecess[0];
+                        s_originPiecess[0] = s_originPiecess[1];
+                        s_originPiecess[1] = b;
+                    }
+                }
             }
         }
         
@@ -1552,10 +1570,7 @@ namespace UootNori
             return Animal.NONE;
         }
 
-        public static void Reset()
-        {
-            
-        }
+
         public static void TurnSave()
         {
         }
@@ -2009,9 +2024,7 @@ namespace UootNori
                 s_players[i] = new PlayerData((PLAYER_KIND)i, PIECESMAX);
             }
 
-            NextTurnCheck.Instance.Reset();
-
-
+            NextTurnCheck.Instance.GameOverReset();
         }
 
         public static void AddCredit()

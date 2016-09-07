@@ -31,13 +31,6 @@ public class InGame : Arrange
 
     void OnDisable()
     {
-        if (gamePlay == null)
-        {
-            gamePlay = GameObject.Find("UI Root").transform.FindChild("Size").FindChild("GamePlay").gameObject;
-        }
-
-
-            
         gamePlay.SetActive(false);
     }
 }

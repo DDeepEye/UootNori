@@ -136,7 +136,7 @@ namespace UootNori
         // Update is called once per frame
         void Update ()
         {
-            if (_controlChoiceMode)
+            if (_controlChoiceMode && InputAttribute != Calculate.Instance)
             {
                 if (GameData.GetCreditNum() > 0)
                 {

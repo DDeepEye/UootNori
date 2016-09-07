@@ -339,7 +339,7 @@ public class UootThrow : Attribute {
     }
 
 
-    List<Animal> _tempanimalQueue = new List<Animal>() { Animal.BACK_DO, Animal.DO, Animal.DO, Animal.DO, Animal.BACK_DO, Animal.DO, Animal.DO, Animal.DO };
+    List<Animal> _tempanimalQueue = new List<Animal>() { Animal.BACK_DO, Animal.DO, Animal.DO, Animal.DO, Animal.BACK_DO, Animal.DO, Animal.DO, Animal.BACK_DO, Animal.DO, Animal.DO, Animal.DO, Animal.BACK_DO, Animal.DO, Animal.DO};
     ///int cnt = 0;
     void ThrowToData()
     {
@@ -365,6 +365,7 @@ public class UootThrow : Attribute {
             return;
         }
         */
+
 
 
 
