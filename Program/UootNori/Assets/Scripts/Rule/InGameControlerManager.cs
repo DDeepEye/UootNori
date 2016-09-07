@@ -189,7 +189,7 @@ public class InGameControlerManager : FlowContainer.Attribute
     void TimeCheck()
     {
         _curTime += Time.deltaTime;
-        if (_curTime > LimitTime)
+        if (_curTime > LimitTime || GameData.s_isDemo)
         {
             _curStep(KeyEvent.ENTER_EVENT);
         }

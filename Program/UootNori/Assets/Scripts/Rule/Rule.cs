@@ -1050,6 +1050,8 @@ namespace UootNori
 
     public class GameData
     {
+        public static bool s_isDemo = false;
+        
         public static int PIECESMAX = 5;
         public static int _1creditToCount = 1;
 

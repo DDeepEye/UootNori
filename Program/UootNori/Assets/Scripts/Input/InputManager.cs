@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
-
+using FlowContainer;
 
 namespace UootNori
 {
@@ -196,6 +196,14 @@ namespace UootNori
             {
                 GameData.AddCredit();
                 Title.Instance.OnCredit();
+
+                if (GameData.s_isDemo)
+                {
+                    GameData.s_isDemo = false;
+                    InputAttribute.IsDone = true;
+                    InputAttribute.transform.parent.GetComponent<Attribute>().ReturnActive = "Title";
+                    GameData.ReSetGame(false);
+                }
             }
         }
     }

@@ -7,6 +7,7 @@ using UootNori;
 public class Title : Attribute {
 
     float _curButtonImgChagneTime = 0.0f;
+    float _curDemoTime = 0.0f;
 
     GameObject _titleScene;
 
@@ -48,6 +49,17 @@ public class Title : Attribute {
             _buttonImage.spriteName = _buttonImageName;
             _curButtonImgChagneTime = 0.0f;
         }
+
+        if (GameData.GetCreditNum() == 0)
+        {
+            _curDemoTime += Time.deltaTime;
+            if (_curDemoTime > 5.0f)
+            {
+                GameData.s_isDemo = true;
+                _titleScene.SetActive(false);
+                _isDone = true;
+            }
+        }
 	}
 
     void OnEnable()
@@ -70,12 +82,14 @@ public class Title : Attribute {
             _buttonObj.SetActive(false);
 
         SoundPlayer.Instance.BGMPlay("sound0/bgm/bgm01");
-        
+
+        _curDemoTime = 0.0f;
     }
     public override void Reset()
     {
         base.Reset();
         _curButtonImgChagneTime = 0.0f;
+        _curDemoTime = 0.0f;
     }
 
     public override void Event(KeyEvent key)

@@ -30,6 +30,7 @@ public class GamePlay : Arrange {
                     {
                         switch(ReturnActive)
                         {   
+                            case "Title":
                             case "Result":
                                 {
                                     _isDone = true;

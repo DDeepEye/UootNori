@@ -35,12 +35,19 @@ public class VsSelect : Attribute
             return;
 
         _curSelectWaitTime += Time.deltaTime;
-        if (_curSelectWaitTime > 5.0f)
+        float limit = GameData.s_isDemo ? 2.0f : 5.0f;
+
+        if (_curSelectWaitTime > limit)
         {
             _isDone = true;                
             _vsSelect.SetActive(false);
-            GameData.ConsumeCredit(_curChoice == _2_2_);
+            if(!GameData.s_isDemo)
+                GameData.ConsumeCredit(_curChoice == _2_2_);
         }
+    }
+    void OnDisable()
+    {
+        _vsSelect.SetActive(false);
     }
 
     void OnEnable()

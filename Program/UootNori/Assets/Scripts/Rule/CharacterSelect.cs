@@ -34,7 +34,8 @@ public class CharacterSelect : Arrange
             return;
 
         _curSelectWaitTime += Time.deltaTime;
-        if (_curSelectWaitTime > 5.0f)
+        float limit = GameData.s_isDemo ? 2.0f : 5.0f;
+        if (_curSelectWaitTime > limit)
         {
             GameData.Player2IsCharacter1(_curChoice == _character2 ? true : false);
             _isDone = true;
@@ -61,6 +62,11 @@ public class CharacterSelect : Arrange
             NextTurnCheck.Instance.intactlyCamera();
         else
             NextTurnCheck.Instance.reverseCamera();
+    }
+
+    void OnDisable()
+    {
+        _characterSelect.SetActive(false);
     }
 
     public override void Event(KeyEvent key)

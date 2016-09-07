@@ -16,6 +16,8 @@ public class NextTurnCheck : Attribute {
 
     GameObject [] _players = new GameObject[(int)PLAYER_KIND.MAX];
 
+    Vector3 [] _originPosition = new Vector3[(int)PLAYER_KIND.MAX];
+
     static public NextTurnCheck s_instance;
     static public NextTurnCheck Instance 
     {
@@ -36,6 +38,8 @@ public class NextTurnCheck : Attribute {
                     s_instance._curArrow = s_instance._left;
                     s_instance._right = gp.transform.FindChild("S_Uoot_P").FindChild("right_p").gameObject;
                     s_instance._right.SetActive(false);
+                    s_instance._originPosition[0] = s_instance._players[0].transform.localPosition;
+                    s_instance._originPosition[1] = s_instance._players[1].transform.localPosition;
                 }
             }
             return s_instance;
@@ -142,6 +146,9 @@ public class NextTurnCheck : Attribute {
         camera.transform.localEulerAngles = new Vector3(camera.transform.localEulerAngles.x, camera.transform.localEulerAngles.y, 0.0f);
         camera = GameObject.Find("UI Root").transform.FindChild("Camera").gameObject;
         camera.transform.localEulerAngles = new Vector3(camera.transform.localEulerAngles.x, camera.transform.localEulerAngles.y, 0.0f);
+
+        _players[0].transform.localPosition = _originPosition[0];
+        _players[1].transform.localPosition = _originPosition[1];
     }
     
 	// Use this for initialization
@@ -199,7 +206,7 @@ public class NextTurnCheck : Attribute {
         Vector3 moveOffset = _players[1].transform.position - _players[0].transform.position;
         _player1Mover = new Move(_players[0], moveOffset, 1.8f);
         _player2Mover = new Move(_players[1], -moveOffset, 1.8f);
+
+        InputManager.Instance.InputAttribute = this;
     }
-
-
 }

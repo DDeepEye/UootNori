@@ -64,6 +64,7 @@ public class UootThrow : Attribute {
     public void ResetGame()
     {
         _isPriorityMode = true;
+        _animalQueue.Clear();
     }
 
     void UootAniInit()
@@ -218,7 +219,7 @@ public class UootThrow : Attribute {
     }
     void ThrowStanbyCheck()
     {
-        if (_curThrowStanbyTime < THROW_STANBY_TIME && !_isPriorityMode)
+        if ((_curThrowStanbyTime < THROW_STANBY_TIME && !_isPriorityMode) && !GameData.s_isDemo)
         {
             _curThrowStanbyTime += Time.deltaTime;
         }

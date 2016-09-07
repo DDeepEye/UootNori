@@ -78,6 +78,7 @@ public class ManMove : Attribute {
 
     void OnEnable()
     {
+        InputManager.Instance.InputAttribute = this;
         if(_mover != null)
         {
             _moveProc = GameData.MoveContainer(_mover, _moveAnimal);

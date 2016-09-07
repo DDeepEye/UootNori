@@ -66,6 +66,15 @@ public class Continue : Attribute {
 
     void OnEnable()
     {
+        if (GameData.s_isDemo)
+        {
+            _isDone = true;
+            GameData.ReSetGame(false);
+            transform.parent.GetComponent<Attribute>().ReturnActive = "Title";
+            _continue.SetActive(false);
+            return;
+        }
+
         if (_continue == null)
         {
             _continue = GameObject.Find("UI Root").transform.FindChild("Size").FindChild("Continue").gameObject;

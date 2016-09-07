@@ -12,7 +12,7 @@ namespace FlowContainer
         public string ReturnActive {get{return _returnActive; } set{ _returnActive = value;}}
 
         protected bool _isDone = false;
-        public bool IsDone {get{ return _isDone; }}
+        public bool IsDone {get{ return _isDone; } set{ _isDone = value;}}
 
         public virtual void Reset()
         {
