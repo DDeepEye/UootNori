@@ -2043,7 +2043,7 @@ namespace UootNori
                 s_players[i] = new PlayerData((PLAYER_KIND)i, PIECESMAX);
             }
 
-            NextTurnCheck.Instance.GameOverReset();
+            NextTurnCheck.Instance.GameOverReset(isRegame);
         }
 
         public static void AddCredit()

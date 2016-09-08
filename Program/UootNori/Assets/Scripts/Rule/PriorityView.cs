@@ -45,6 +45,10 @@ public class PriorityView : Attribute {
         _priorityScene.SetActive(true);
         InputManager.Instance.InputAttribute = this;
     }
+    void OnDisable()
+    {
+        _priorityScene.SetActive(false);
+    }
     public override void Reset()
     {
         base.Reset();

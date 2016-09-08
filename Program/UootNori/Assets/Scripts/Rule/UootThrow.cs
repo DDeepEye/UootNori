@@ -360,8 +360,7 @@ public class UootThrow : Attribute {
     ///int cnt = 0;
     void ThrowToData()
     {
-
-        _isOut = false;        
+        _isOut = false;
         /*
         if (GameData.CurTurn == PLAYER_KIND.PLAYER_1)
         {
@@ -380,11 +379,7 @@ public class UootThrow : Attribute {
             _tempanimalQueue.RemoveAt(0);
 
             return;
-        }
-        */
-
-
-
+        }*/
 
         int rr = Random.Range(1, _animalProbability[_animalProbability.Count - 1]);
         for (int i = 0; i < _animalProbability.Count; ++i)

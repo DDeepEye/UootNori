@@ -129,7 +129,7 @@ public class NextTurnCheck : Attribute {
         character.transform.FindChild("billboard_P").FindChild("Population_P").gameObject.SetActive(true);
     }
 
-    public void GameOverReset()
+    public void GameOverReset(bool isReGame)
     {   
         for (int i = 0; i < (int)PLAYER_KIND.MAX; ++i)
         {
@@ -147,8 +147,11 @@ public class NextTurnCheck : Attribute {
         camera = GameObject.Find("UI Root").transform.FindChild("Camera").gameObject;
         camera.transform.localEulerAngles = new Vector3(camera.transform.localEulerAngles.x, camera.transform.localEulerAngles.y, 0.0f);
 
-        _players[0].transform.localPosition = _originPosition[0];
-        _players[1].transform.localPosition = _originPosition[1];
+        if (!isReGame)
+        {
+            _players[0].transform.localPosition = _originPosition[0];
+            _players[1].transform.localPosition = _originPosition[1];
+        }
     }
     
 	// Use this for initialization
