@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using UootNori;
 
 public class SoundPlayer : MonoBehaviour{
     static SoundPlayer s_instance;
@@ -17,6 +18,9 @@ public class SoundPlayer : MonoBehaviour{
 
     public void Play(string resourcePath)
     {
+        if (GameData.s_isDemo)
+            return;
+        
         AudioClip clip;
         if (_audioClips.ContainsKey(resourcePath))
         {
@@ -41,6 +45,8 @@ public class SoundPlayer : MonoBehaviour{
 
     public void BGMPlay(string resourcePath)
     {
+        if (GameData.s_isDemo)
+            return;
         AudioClip clip;
         if (_audioClips.ContainsKey(resourcePath))
         {
@@ -57,6 +63,13 @@ public class SoundPlayer : MonoBehaviour{
         _bgmPlayer.clip = clip;
         _bgmPlayer.loop = true;
         _bgmPlayer.Play();
+    }
+
+    public void BGMStop()
+    {
+        if (_bgmPlayer != null)
+            _bgmPlayer.Stop();
+            
     }
 
     void Update()

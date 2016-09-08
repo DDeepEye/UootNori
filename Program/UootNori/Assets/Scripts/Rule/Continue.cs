@@ -87,6 +87,5 @@ public class Continue : Attribute {
         _curCount = 20;
         _curTime = 0.0f;
         InputManager.Instance.InputAttribute = this;
-        SoundPlayer.Instance.BGMPlay("sound0/bgm/bgm10");
     }
 }

@@ -341,6 +341,23 @@ namespace UootNori
         }
     }
 
+    public class UootSound : Container
+    {
+        string _soundFile;
+        public UootSound(string soundFile)
+        {
+            _soundFile = soundFile;
+        }
+
+        public override void Run()
+        {
+            if (IsDone)
+                return;
+            _isDone = true;
+            SoundPlayer.Instance.Play(_soundFile);
+        }
+    }
+
 
     public abstract class CharacterAni : Container
     {

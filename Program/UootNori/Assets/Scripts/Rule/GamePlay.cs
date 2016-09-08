@@ -35,6 +35,7 @@ public class GamePlay : Arrange {
                                 {
                                     _isDone = true;
                                     transform.parent.GetComponent<Attribute>().ReturnActive = ReturnActive;
+                                    SoundPlayer.Instance.BGMStop();
                                 }
                                 break;
                             default:
@@ -73,6 +74,12 @@ public class GamePlay : Arrange {
     {
         base.OnEnable();
 
-        SoundPlayer.Instance.BGMPlay("sound0/bgm/bgm03");
+        int bgmindex = Random.Range(1, 13);
+        string bgmPath;
+        if (bgmindex > 9)
+            bgmPath = "sound0/bgm/bgm" + bgmindex.ToString();
+        else
+            bgmPath = "sound0/bgm/bgm0" + bgmindex.ToString();
+        SoundPlayer.Instance.BGMPlay(bgmPath);
     }
 }

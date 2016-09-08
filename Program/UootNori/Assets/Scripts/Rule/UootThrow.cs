@@ -17,6 +17,8 @@ public class UootThrow : Attribute {
     빽도: (0.6)*(0.4^3)*(4C1)=0.0512(약 5.12%) 
     */
 
+
+
     public const int DO = 1536;
     public const int GE = 3456;
     public const int GUL = 3456;
@@ -38,6 +40,8 @@ public class UootThrow : Attribute {
 
     const int UOOT_NUM = 4;
     GameObject [] _uoots = new GameObject[UOOT_NUM];
+
+    string[] _voiceKeyword = new string[4];
     
     delegate void UootAnimaion();
     UootAnimaion[] _uootAnimaion = new UootAnimaion[(int)UootNori.Animal.MAX];
@@ -57,6 +61,7 @@ public class UootThrow : Attribute {
         if (s_inst == null)
         {
             s_inst = GameObject.Find("Flow").transform.FindChild("GameFlow").FindChild("InGame").FindChild("InGameFlow").FindChild("GamePlay").FindChild("UootThrow").GetComponent<UootThrow>();
+            s_inst.ShuppleVoice();
         }
         return s_inst;
     }
@@ -65,6 +70,21 @@ public class UootThrow : Attribute {
     {
         _isPriorityMode = true;
         _animalQueue.Clear();
+        s_inst.ShuppleVoice();
+    }
+
+    public void ShuppleVoice()
+    {
+        int cnt = 0;
+        List<string> keywords = new List<string>(){ "Ch","Ki","No","Su" };
+
+        while (keywords.Count > 0)
+        {
+            int i = Random.Range(0, keywords.Count);
+            _voiceKeyword[cnt] = keywords[i];
+            keywords.Remove(_voiceKeyword[cnt]);
+            ++cnt;
+        }
     }
 
     void UootAniInit()
@@ -266,10 +286,9 @@ public class UootThrow : Attribute {
                         NextTurnCheck.Instance.ArrowVisible(true);
                     }
                     if(GameData.CurTurn == PLAYER_KIND.PLAYER_2)
-                        SoundPlayer.Instance.Play("sound0/voice/no/VoiceNo_Turn0");
+                        SoundPlayer.Instance.Play("sound0/voice/"+_voiceKeyword[(int)InputManager.Instance.CurPlayer]+"/Voice"+_voiceKeyword[(int)InputManager.Instance.CurPlayer]+"_Turn0");
                     
                     _isPriorityMode = false;
-                    SoundPlayer.Instance.BGMPlay("sound0/bgm/bgm05");
                 }
                 return;
             }
@@ -311,10 +330,7 @@ public class UootThrow : Attribute {
         }
         else
         {
-            if(GameData.CurTurn == PLAYER_KIND.PLAYER_1)
-                SoundPlayer.Instance.Play("sound0/voice/no/VoiceNo_Turn0");
-            else
-                SoundPlayer.Instance.Play("sound0/voice/ki/VoiceKi_Turn0");
+            SoundPlayer.Instance.Play("sound0/voice/"+_voiceKeyword[(int)InputManager.Instance.CurPlayer]+"/Voice"+_voiceKeyword[(int)InputManager.Instance.CurPlayer]+"_Turn0");
         }
 
         _curStep = ThrowStanbyCheck;
@@ -393,6 +409,8 @@ public class UootThrow : Attribute {
         }
     }
 
+
+    string [] uootSounds = new string[(int)UootNori.Animal.MAX] {"Do0","Gae0","Gul0","Yut0","No0","Back0"};
     void UootThrowAni()
     {   
         int aninum = Random.Range(1, 7);
@@ -402,6 +420,10 @@ public class UootThrow : Attribute {
             aninum = Random.Range(11, 17);
         }
 
+        string voiceDefaultPath = "sound0/voice/";
+        string YutResult = "_YutResult_";
+
+
         UootThrow.s_uootAni.SetInteger("state", 0);
         List<Container> uootThrowFlow = new List<Container>();
         uootThrowFlow.Add(new UootUpSideTurn());
@@ -410,7 +432,27 @@ public class UootThrow : Attribute {
         uootThrowFlow.Add(new PatternSystem.Timer(null, 2.9f));
         if(!_isOut) uootThrowFlow.Add(new UootThrowResultRefresh());
         uootThrowFlow.Add(new PatternSystem.Timer(null, 1.0f));
-        if(GameData.GetLastAnimal() == Animal.MO) uootThrowFlow.Add(new SoundPlay("sound0/effect/Item_MoOrNak_Use"));
+        string sound;
+        if (!_isPriorityMode)
+        {
+            if (
+                _isOut)sound = voiceDefaultPath + 
+                    _voiceKeyword[(int)InputManager.Instance.CurPlayer]+"/"+
+                    "Voice"+
+                    _voiceKeyword[(int)InputManager.Instance.CurPlayer] + 
+                    YutResult + 
+                    "Nak0";
+            else
+                sound = voiceDefaultPath + 
+                    _voiceKeyword[(int)InputManager.Instance.CurPlayer]+"/"+
+                    "Voice"+
+                    _voiceKeyword[(int)InputManager.Instance.CurPlayer] + 
+                    YutResult +
+                    uootSounds[(int)GameData.GetLastAnimal()];
+            uootThrowFlow.Add(new SoundPlay(sound));
+        }
+
+
         uootThrowFlow.Add(new UootCollect());
         uootThrowFlow.Add(new PatternSystem.Timer(null, 3.0f));
         _aniArrange = new PatternSystem.Arrange(null, PatternSystem.Arrange.ArrangeType.SERIES, uootThrowFlow, 1);

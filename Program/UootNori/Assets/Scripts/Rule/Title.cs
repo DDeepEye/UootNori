@@ -81,8 +81,6 @@ public class Title : Attribute {
         else
             _buttonObj.SetActive(false);
 
-        SoundPlayer.Instance.BGMPlay("sound0/bgm/bgm01");
-
         _curDemoTime = 0.0f;
     }
     public override void Reset()
