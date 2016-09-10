@@ -165,7 +165,20 @@ namespace UootNori
             }
             else
             {
-                if (_playerControls.ContainsKey(_curPlayer))
+                if (InputAttribute == Calculate.Instance)
+                {
+                    foreach (KeyValuePair<PlayerControl, InputControler> c in _playerControls)
+                    {
+                        string keyDown = c.Value.Update();
+                        if (keyDown != null)
+                        {
+                            if (InputAttribute != null)
+                                InputAttribute.Event(_keys[keyDown]);
+                        }
+                    }
+                    
+                }
+                else if (_playerControls.ContainsKey(_curPlayer))
                 {
                     string keyDown = _playerControls[_curPlayer].Update();
                     if (keyDown != null)
