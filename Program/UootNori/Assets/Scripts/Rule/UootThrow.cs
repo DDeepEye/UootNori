@@ -19,14 +19,15 @@ public class UootThrow : Attribute {
 
 
 
-    public const int DO = 1536;
-    public const int GE = 3456;
-    public const int GUL = 3456;
-    public const int UOOT = 1296;
-    public const int MO = 256;
-    public const int BACK_DO = 512;
+    public const int DO = 1900;
+    public const int GE = 3500;
+    public const int GUL = 3200;
+    public const int UOOT = 700;
+    public const int MO = 700;
+    public const int BACK_DO = 200;
 
-    public const int OUT = 512;
+    public const int OUT = 100;
+    public int _outOffset;
 
     private bool _isOut = false;
     private bool _isPriorityMode = true;
@@ -71,6 +72,12 @@ public class UootThrow : Attribute {
         _isPriorityMode = true;
         _animalQueue.Clear();
         s_inst.ShuppleVoice();
+        _outOffset = 0;
+
+        for (int i = 0; i < _probabilityOffset.Length; ++i)
+        {
+            _probabilityOffset[i] = 0;
+        }
     }
 
     public void ShuppleVoice()
@@ -341,10 +348,14 @@ public class UootThrow : Attribute {
 
     void OnDisable()
     {
+        
     }
 
     void AnimalProbabiley()
     {
+        _probabilityOffset[3] += 35;
+        _probabilityOffset[4] += 35;
+        _probabilityOffset[5] += 35;
         _animalProbability.Clear();
         int prob = DO;
         _animalProbability.Add(prob+_probabilityOffset[0]);
@@ -394,8 +405,9 @@ public class UootThrow : Attribute {
 
         if (!_isPriorityMode)
         {
+            _outOffset += 10;
             int outResult = Random.Range(0, 10000);
-            if (OUT > outResult)
+            if (OUT + _outOffset > outResult)
             {
                 Debug.Log("OUT !!!");
                 _isOut = true;
