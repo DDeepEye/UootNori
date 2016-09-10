@@ -53,7 +53,7 @@ public class Title : Attribute {
         if (GameData.GetCreditNum() == 0)
         {
             _curDemoTime += Time.deltaTime;
-            if (_curDemoTime > 5.0f)
+            if (_curDemoTime > 60.0f * 15.0f)
             {
                 GameData.s_isDemo = true;
                 _titleScene.SetActive(false);

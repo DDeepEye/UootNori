@@ -1,13 +1,14 @@
 ﻿<Properties StartupItem="Assembly-CSharp.csproj">
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" PreferredExecutionTarget="Unity.Instance.Unity Editor" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="Assets/Scripts/Rule/NextTurnCheck.cs">
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets/Scripts/Rule/Title.cs">
     <Files>
-      <File FileName="Assets/Scripts/Rule/UootThrow.cs" Line="76" Column="31" />
-      <File FileName="Assets/Scripts/Rule/NextTurnCheck.cs" Line="152" Column="70" />
-      <File FileName="Assets/Scripts/Rule/Rule.cs" Line="2047" Column="10" />
-      <File FileName="Assets/Scripts/Rule/PriorityView.cs" Line="44" Column="57" />
-      <File FileName="Assets/Scripts/Rule/Calculate.cs" Line="326" Column="1" />
-      <File FileName="Assets/Scripts/Rule/CharacterSelect.cs" Line="86" Column="32" />
+      <File FileName="Assets/Scripts/Rule/Rule.cs" Line="1" Column="1" />
+      <File FileName="Assets/Scripts/Rule/UootThrow.cs" Line="240" Column="28" />
+      <File FileName="Assets/Scripts/Rule/NextTurnCheck.cs" Line="90" Column="23" />
+      <File FileName="Assets/Scripts/Rule/PriorityView.cs" Line="1" Column="1" />
+      <File FileName="Assets/Scripts/Rule/Calculate.cs" Line="1" Column="1" />
+      <File FileName="Assets/Scripts/Rule/CharacterSelect.cs" Line="1" Column="1" />
+      <File FileName="Assets/Scripts/Rule/Title.cs" Line="59" Column="45" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>
