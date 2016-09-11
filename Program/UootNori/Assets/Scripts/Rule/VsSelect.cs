@@ -92,6 +92,7 @@ public class VsSelect : Attribute
 
                 InputManager.Instance.ResetPlayer = (_curChoice == _2_2_) ? PlayerControl.Player1 : InputManager.Instance.ResetPlayer;
                 InputManager.Instance._maxControlNum = (_curChoice == _2_2_) ? PlayerControl.MAX : InputManager.Instance._maxControlNum;
+                SoundPlayer.Instance.Play("sound0/effect/Button0");
 
                 break;
         }

@@ -23,7 +23,7 @@ public class UootThrow : Attribute {
     public const int GE = 3500;
     public const int GUL = 3200;
     public const int UOOT = 700;
-    public const int MO = 700;
+    public const int MO = 500;
     public const int BACK_DO = 200;
 
     public const int OUT = 100;
@@ -92,6 +92,11 @@ public class UootThrow : Attribute {
             keywords.Remove(_voiceKeyword[cnt]);
             ++cnt;
         }
+    }
+
+    public string CurVoicePath()
+    {
+        return "sound0/voice/" + _voiceKeyword[(int)InputManager.Instance.CurPlayer] + "/Voice" + _voiceKeyword[(int)InputManager.Instance.CurPlayer];
     }
 
     void UootAniInit()

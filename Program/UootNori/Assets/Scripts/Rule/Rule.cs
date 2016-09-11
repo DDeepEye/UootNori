@@ -43,6 +43,7 @@ namespace UootNori
 
             mover.Containers.AddContainer(new CharacterDelete(deleteTarget));
             GameData.FieldInNumToMoverPiecesIsSame(mover.PlayerKind);
+            SoundPlayer.Instance.Play("sound0/sound/MarClear0");
         }
     }
 
@@ -79,6 +80,7 @@ namespace UootNori
             }
 
             mover.Containers.AddContainer(new CharacterDelete(deleteTarget));
+            SoundPlayer.Instance.Play("sound0/sound/MarAllKill0");
         }
     }
 
@@ -113,6 +115,8 @@ namespace UootNori
             mover.Containers.AddContainer(new FieldSet(_sendRoad._field, mover));            
             mover.CurRoad._field.Mover = null;
             mover.CurRoad = _sendRoad;
+
+            SoundPlayer.Instance.Play("sound0/sound/MarMove0");
             
             Debug.Log("field run Send1toSend2 !!");
         }
@@ -130,6 +134,7 @@ namespace UootNori
                 mover.Containers.AddContainer(new CharacterAdd(mover.Pieces));
                 mover.Containers.AddContainer(new Timer(null, 1.2f));
                 mover.Containers.AddContainer(new CharacterIdle(mover.Pieces));
+                SoundPlayer.Instance.Play(UootThrow.GetInstance().CurVoicePath() + "_up0");
             }
 
             GameData.FieldInNumToMoverPiecesIsSame(mover.PlayerKind);
@@ -148,6 +153,7 @@ namespace UootNori
                 mover.Containers.AddContainer(new CharacterRemove(mover.Pieces));
                 mover.Containers.AddContainer(new Timer(null, 1.2f));
                 mover.Containers.AddContainer(new CharacterIdle(mover.Pieces));
+                SoundPlayer.Instance.Play("sound0/sound/MarMimus0");
             }
 
             GameData.FieldInNumToMoverPiecesIsSame(mover.PlayerKind);
@@ -159,6 +165,7 @@ namespace UootNori
         public override void Run(PiecesMoveContainer mover)
         {
             GameData.OneMoreUootThrow();
+            SoundPlayer.Instance.Play("sound0/sound/Maronemore0");
         }
     }
 

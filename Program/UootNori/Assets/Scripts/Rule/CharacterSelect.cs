@@ -85,6 +85,7 @@ public class CharacterSelect : Arrange
                 GameData.Player2IsCharacter1(_curChoice == _character2 ? result : !result);
                 _isDone = true;
                 _characterSelect.SetActive(false);
+                SoundPlayer.Instance.Play("sound0/effect/Button0");
                 break;
         }
     }
