@@ -1857,6 +1857,7 @@ namespace UootNori
 
         static public bool s_IsNotControlChange = false;
 
+        static int _turnCnt = 0;
         public static void NextTurn()
         {
             s_startPoint[(int)_curTurn].SetActive(false);
@@ -1878,6 +1879,15 @@ namespace UootNori
             else
             {
                 NextTurnCheck.Instance.Right();
+            }
+
+            ++_turnCnt;
+            if(s_isDemo && _turnCnt >= 10)
+            {
+                s_isDemo = false;
+                InputManager.Instance.InputAttribute.IsDone = true;
+                InputManager.Instance.InputAttribute.transform.parent.GetComponent<FlowContainer.Attribute>().ReturnActive = "Title";
+                ReSetGame(false);
             }
         }
 
@@ -2044,6 +2054,7 @@ namespace UootNori
             }
 
             NextTurnCheck.Instance.GameOverReset(isRegame);
+            _turnCnt = 0;
         }
 
         public static void AddCredit()

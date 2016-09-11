@@ -47,6 +47,9 @@ namespace UootNori
 
         public bool _controlChoiceMode = false;
         public PlayerControl _resetPlayer = PlayerControl.Player1;
+
+        Dictionary<PLAYER_KIND, List<InputControler>> _inputControls = new Dictionary<PLAYER_KIND, List<InputControler>>();
+
         public PlayerControl ResetPlayer 
         {
             get
@@ -83,6 +86,14 @@ namespace UootNori
 
         public void SetPlayerNum(PlayerControl playerNum)
         {
+            
+            _inputControls.Clear();
+            List<InputControler> keies1 = new List<InputControler>();
+            List<InputControler> keies2 = new List<InputControler>();
+
+            _inputControls.Add(PLAYER_KIND.PLAYER_1, keies1);
+            _inputControls.Add(PLAYER_KIND.PLAYER_2, keies2);
+
             Dictionary<PlayerControl, Dictionary<KeyCode, string>> playerControlKeys = new Dictionary<PlayerControl, Dictionary<KeyCode, string>>();
             
             Dictionary<KeyCode, string> keys = new Dictionary<KeyCode, string>() 
@@ -91,7 +102,7 @@ namespace UootNori
                 {KeyCode.W,"right"},
                 {KeyCode.E,"enter"} 
             };
-            playerControlKeys.Add(PlayerControl.Player1, keys);
+            playerControlKeys.Add(PlayerControl.Player1, keys);            
 
             keys = new Dictionary<KeyCode, string>() 
             { 
@@ -99,7 +110,7 @@ namespace UootNori
                 {KeyCode.D,"right"},
                 {KeyCode.Z,"enter"} 
             };
-            playerControlKeys.Add(PlayerControl.Player2, keys);
+            playerControlKeys.Add(PlayerControl.Player2, keys);            
 
             keys = new Dictionary<KeyCode, string>() 
             { 
@@ -107,15 +118,15 @@ namespace UootNori
                 {KeyCode.B,"right"},
                 {KeyCode.L,"enter"} 
             };
-            playerControlKeys.Add(PlayerControl.Player3, keys);
+            playerControlKeys.Add(PlayerControl.Player3, keys);            
 
             keys = new Dictionary<KeyCode, string>() 
             { 
                 {KeyCode.I,"left"},
-                {KeyCode.O,"right"},
-                {KeyCode.P,"enter"} 
+                {KeyCode.P,"right"},
+                {KeyCode.O,"enter"} 
             };
-            playerControlKeys.Add(PlayerControl.Player4, keys);
+            playerControlKeys.Add(PlayerControl.Player4, keys);            
 
             _playerControls.Clear();
 
@@ -123,9 +134,13 @@ namespace UootNori
             {
                 InputControler ic = new InputControler(playerControlKeys[pc]);
                 _playerControls.Add(pc, ic);
+                List<InputControler> keies = ((int)pc % 2 == 0) ? keies1 : keies2;
+                keies.Add(ic);
             }
             _maxControlNum = playerNum;
             ++_maxControlNum;
+
+            
 
         }
         // Use this for initialization
@@ -181,10 +196,28 @@ namespace UootNori
                 else if (_playerControls.ContainsKey(_curPlayer))
                 {
                     string keyDown = _playerControls[_curPlayer].Update();
-                    if (keyDown != null)
+                    if (GameData._is4p)
                     {
-                        if (InputAttribute != null)
-                            InputAttribute.Event(_keys[keyDown]);
+                        List<InputControler> keies = _inputControls[GameData.CurTurn];
+                        for (int i = 0; i < keies.Count; ++i)
+                        {
+                            keyDown = keies[i].Update();
+                            if (keyDown != null)
+                            {
+                                if (InputAttribute != null)
+                                    InputAttribute.Event(_keys[keyDown]);
+                                break;
+                            }
+                        }
+                    }
+                    else
+                    {
+                        keyDown = _playerControls[_curPlayer].Update();
+                        if (keyDown != null)
+                        {
+                            if (InputAttribute != null)
+                                InputAttribute.Event(_keys[keyDown]);
+                        }
                     }
                 }
             }

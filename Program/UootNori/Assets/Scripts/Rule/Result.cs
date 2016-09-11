@@ -58,8 +58,5 @@ public class Result : Attribute {
             gp.FindChild("Play02").FindChild("Win_Label_Count_P").GetComponent<UILabel>().text = ((int.Parse(gp.FindChild("Play02").FindChild("Win_Label_Count_P").GetComponent<UILabel>().text)) + 1).ToString();
             gp.FindChild("Play01").FindChild("Lose_Label_Count_P").GetComponent<UILabel>().text = ((int.Parse(gp.FindChild("Play01").FindChild("Lose_Label_Count_P").GetComponent<UILabel>().text)) + 1).ToString();
         }
-
-
-
     }
 }
