@@ -389,6 +389,7 @@ public class UootThrow : Attribute {
         }*/
 
         
+        /*
         if (_tempanimalQueue.Count > 0)
         {
             GameData.AddAnimal(_tempanimalQueue[0]);
@@ -396,6 +397,7 @@ public class UootThrow : Attribute {
 
             return;
         }
+         * */
 
         int rr = Random.Range(1, _animalProbability[_animalProbability.Count - 1]);
         for (int i = 0; i < _animalProbability.Count; ++i)
