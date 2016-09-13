@@ -78,10 +78,10 @@ public class CharacterSelect : Arrange
                 _curChoice.SetActive(false);
                 _curChoice = (_curChoice == _character1 ? _character2 : _character1);
                 _curChoice.SetActive(true);
+                SoundPlayer.Instance.Play("sound0/effect/Button0");
                 break;
             case KeyEvent.ENTER_EVENT:
                 bool result = ((int)InputManager.Instance.CurPlayer % 2) == 0 ? true : false;
-
                 GameData.Player2IsCharacter1(_curChoice == _character2 ? result : !result);
                 _isDone = true;
                 _characterSelect.SetActive(false);

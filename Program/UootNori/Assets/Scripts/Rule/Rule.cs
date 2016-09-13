@@ -43,6 +43,7 @@ namespace UootNori
 
             mover.Containers.AddContainer(new CharacterDelete(deleteTarget));
             GameData.FieldInNumToMoverPiecesIsSame(mover.PlayerKind);
+            SoundPlayer.Instance.Play("sound0/sound/MarClear0");
         }
     }
 
@@ -79,6 +80,7 @@ namespace UootNori
             }
 
             mover.Containers.AddContainer(new CharacterDelete(deleteTarget));
+            SoundPlayer.Instance.Play("sound0/sound/MarAllKill0");
         }
     }
 
@@ -113,6 +115,8 @@ namespace UootNori
             mover.Containers.AddContainer(new FieldSet(_sendRoad._field, mover));            
             mover.CurRoad._field.Mover = null;
             mover.CurRoad = _sendRoad;
+
+            SoundPlayer.Instance.Play("sound0/sound/MarMove0");
             
             Debug.Log("field run Send1toSend2 !!");
         }
@@ -130,6 +134,7 @@ namespace UootNori
                 mover.Containers.AddContainer(new CharacterAdd(mover.Pieces));
                 mover.Containers.AddContainer(new Timer(null, 1.2f));
                 mover.Containers.AddContainer(new CharacterIdle(mover.Pieces));
+                SoundPlayer.Instance.Play(UootThrow.GetInstance().CurVoicePath() + "_up0");
             }
 
             GameData.FieldInNumToMoverPiecesIsSame(mover.PlayerKind);
@@ -148,6 +153,7 @@ namespace UootNori
                 mover.Containers.AddContainer(new CharacterRemove(mover.Pieces));
                 mover.Containers.AddContainer(new Timer(null, 1.2f));
                 mover.Containers.AddContainer(new CharacterIdle(mover.Pieces));
+                SoundPlayer.Instance.Play("sound0/sound/MarMimus0");
             }
 
             GameData.FieldInNumToMoverPiecesIsSame(mover.PlayerKind);
@@ -159,6 +165,7 @@ namespace UootNori
         public override void Run(PiecesMoveContainer mover)
         {
             GameData.OneMoreUootThrow();
+            SoundPlayer.Instance.Play("sound0/sound/Maronemore0");
         }
     }
 
@@ -1183,6 +1190,21 @@ namespace UootNori
             ///InputManager.Instance.SetPlayerNum(s_plyerControlNum);
             NextTurnCheck.Instance.GameTurnMarking(PLAYER_KIND.PLAYER_1);
             Calculate.Instance.EidtEnable();
+            if (!PlayerPrefs.HasKey("coin"))
+            {
+                PlayerPrefs.SetInt("coin", 0);
+            }
+            else
+            {
+                _curCreditCount = PlayerPrefs.GetInt("coin");
+                GameObject credit = GameObject.Find("UI Root").transform.FindChild("Size").FindChild("Credit_Group_P").gameObject;
+                credit.transform.FindChild("Credit_P").GetComponent<UILabel>().text = "CREDIT " + _curCreditCount.ToString();
+                if(_curCreditCount > 0)
+                {
+                    Title.Instance.OnCredit();
+                }
+            }
+            
         }
 
         private static void WayInit()
@@ -2070,6 +2092,8 @@ namespace UootNori
             }
 
             Calculate.Instance.AddCash();
+            PlayerPrefs.SetInt("coin", _curCreditCount);
+            
         }
 
         public static bool _is4p = false;
@@ -2095,6 +2119,7 @@ namespace UootNori
 
             GameObject credit = GameObject.Find("UI Root").transform.FindChild("Size").FindChild("Credit_Group_P").gameObject;
             credit.transform.FindChild("Credit_P").GetComponent<UILabel>().text = "CREDIT "+_curCreditCount.ToString();
+            PlayerPrefs.SetInt("coin", _curCreditCount);
         }
 
         public static int GetCreditNum()

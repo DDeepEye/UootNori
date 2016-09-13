@@ -23,7 +23,7 @@ public class UootThrow : Attribute {
     public const int GE = 3500;
     public const int GUL = 3200;
     public const int UOOT = 700;
-    public const int MO = 700;
+    public const int MO = 500;
     public const int BACK_DO = 200;
 
     public const int OUT = 100;
@@ -92,6 +92,11 @@ public class UootThrow : Attribute {
             keywords.Remove(_voiceKeyword[cnt]);
             ++cnt;
         }
+    }
+
+    public string CurVoicePath()
+    {
+        return "sound0/voice/" + _voiceKeyword[(int)InputManager.Instance.CurPlayer] + "/Voice" + _voiceKeyword[(int)InputManager.Instance.CurPlayer];
     }
 
     void UootAniInit()
@@ -367,7 +372,7 @@ public class UootThrow : Attribute {
     }
 
 
-    List<Animal> _tempanimalQueue = new List<Animal>() { Animal.BACK_DO, Animal.DO, Animal.DO, Animal.DO, Animal.BACK_DO, Animal.DO, Animal.DO, Animal.BACK_DO, Animal.DO, Animal.DO, Animal.DO, Animal.BACK_DO, Animal.DO, Animal.DO};
+    List<Animal> _tempanimalQueue = new List<Animal>() { Animal.MO, Animal.DO, Animal.MO, Animal.DO, Animal.MO, Animal.DO, Animal.MO, Animal.DO, Animal.MO, Animal.DO, Animal.MO, Animal.DO, Animal.MO, Animal.DO };
     ///int cnt = 0;
     void ThrowToData()
     {
@@ -383,6 +388,7 @@ public class UootThrow : Attribute {
             return;
         }*/
 
+        
         /*
         if (_tempanimalQueue.Count > 0)
         {
@@ -390,7 +396,8 @@ public class UootThrow : Attribute {
             _tempanimalQueue.RemoveAt(0);
 
             return;
-        }*/
+        }
+         * */
 
         int rr = Random.Range(1, _animalProbability[_animalProbability.Count - 1]);
         for (int i = 0; i < _animalProbability.Count; ++i)
@@ -417,7 +424,7 @@ public class UootThrow : Attribute {
     }
 
 
-    string [] uootSounds = new string[(int)UootNori.Animal.MAX] {"Do0","Gae0","Gul0","Yut0","No0","Back0"};
+    string [] uootSounds = new string[(int)UootNori.Animal.MAX] {"Do0","Gae0","Gul0","Yut0","Mo0","Back0"};
     void UootThrowAni()
     {   
         int aninum = Random.Range(1, 7);
