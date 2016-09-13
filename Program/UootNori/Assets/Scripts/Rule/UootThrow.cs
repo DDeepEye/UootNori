@@ -372,7 +372,7 @@ public class UootThrow : Attribute {
     }
 
 
-    List<Animal> _tempanimalQueue = new List<Animal>() { Animal.BACK_DO, Animal.DO, Animal.DO, Animal.DO, Animal.BACK_DO, Animal.DO, Animal.DO, Animal.BACK_DO, Animal.DO, Animal.DO, Animal.DO, Animal.BACK_DO, Animal.DO, Animal.DO};
+    List<Animal> _tempanimalQueue = new List<Animal>() { Animal.MO, Animal.DO, Animal.MO, Animal.DO, Animal.MO, Animal.DO, Animal.MO, Animal.DO, Animal.MO, Animal.DO, Animal.MO, Animal.DO, Animal.MO, Animal.DO };
     ///int cnt = 0;
     void ThrowToData()
     {
@@ -388,14 +388,14 @@ public class UootThrow : Attribute {
             return;
         }*/
 
-        /*
+        
         if (_tempanimalQueue.Count > 0)
         {
             GameData.AddAnimal(_tempanimalQueue[0]);
             _tempanimalQueue.RemoveAt(0);
 
             return;
-        }*/
+        }
 
         int rr = Random.Range(1, _animalProbability[_animalProbability.Count - 1]);
         for (int i = 0; i < _animalProbability.Count; ++i)
@@ -422,7 +422,7 @@ public class UootThrow : Attribute {
     }
 
 
-    string [] uootSounds = new string[(int)UootNori.Animal.MAX] {"Do0","Gae0","Gul0","Yut0","No0","Back0"};
+    string [] uootSounds = new string[(int)UootNori.Animal.MAX] {"Do0","Gae0","Gul0","Yut0","Mo0","Back0"};
     void UootThrowAni()
     {   
         int aninum = Random.Range(1, 7);

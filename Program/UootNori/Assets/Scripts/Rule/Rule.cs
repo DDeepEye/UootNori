@@ -1190,6 +1190,21 @@ namespace UootNori
             ///InputManager.Instance.SetPlayerNum(s_plyerControlNum);
             NextTurnCheck.Instance.GameTurnMarking(PLAYER_KIND.PLAYER_1);
             Calculate.Instance.EidtEnable();
+            if (!PlayerPrefs.HasKey("coin"))
+            {
+                PlayerPrefs.SetInt("coin", 0);
+            }
+            else
+            {
+                _curCreditCount = PlayerPrefs.GetInt("coin");
+                GameObject credit = GameObject.Find("UI Root").transform.FindChild("Size").FindChild("Credit_Group_P").gameObject;
+                credit.transform.FindChild("Credit_P").GetComponent<UILabel>().text = "CREDIT " + _curCreditCount.ToString();
+                if(_curCreditCount > 0)
+                {
+                    Title.Instance.OnCredit();
+                }
+            }
+            
         }
 
         private static void WayInit()
@@ -2077,6 +2092,8 @@ namespace UootNori
             }
 
             Calculate.Instance.AddCash();
+            PlayerPrefs.SetInt("coin", _curCreditCount);
+            
         }
 
         public static bool _is4p = false;
@@ -2102,6 +2119,7 @@ namespace UootNori
 
             GameObject credit = GameObject.Find("UI Root").transform.FindChild("Size").FindChild("Credit_Group_P").gameObject;
             credit.transform.FindChild("Credit_P").GetComponent<UILabel>().text = "CREDIT "+_curCreditCount.ToString();
+            PlayerPrefs.SetInt("coin", _curCreditCount);
         }
 
         public static int GetCreditNum()
