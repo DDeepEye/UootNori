@@ -67,12 +67,15 @@ public class UootThrow : Attribute {
         return s_inst;
     }
 
-    public void ResetGame()
+    public void ResetGame(bool isregame)
     {
-        _isPriorityMode = true;
-        _animalQueue.Clear();
-        s_inst.ShuppleVoice();
-        _outOffset = 0;
+        if (!isregame)
+        {
+            _isPriorityMode = true;
+            _animalQueue.Clear();
+            s_inst.ShuppleVoice();
+            _outOffset = 0;
+        }
 
         for (int i = 0; i < _probabilityOffset.Length; ++i)
         {

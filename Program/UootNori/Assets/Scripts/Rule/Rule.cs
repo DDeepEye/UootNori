@@ -2047,11 +2047,12 @@ namespace UootNori
                 s_players[i].Reset();
             }
 
+            UootThrow.GetInstance().ResetGame(isRegame);
+
             if (!isRegame)
             {
                 _curTurn = PLAYER_KIND.PLAYER_1;
                 s_startPoint[0].SetActive(true);
-                UootThrow.GetInstance().ResetGame();
 
                 Transform gp = GameObject.Find("UI Root").transform.FindChild("Size").FindChild("GamePlay");
 
