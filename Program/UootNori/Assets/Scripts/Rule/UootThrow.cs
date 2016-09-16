@@ -73,10 +73,10 @@ public class UootThrow : Attribute {
         {
             _isPriorityMode = true;
             _animalQueue.Clear();
-            s_inst.ShuppleVoice();
-            _outOffset = 0;
+            s_inst.ShuppleVoice();            
         }
 
+        _outOffset = 0;
         for (int i = 0; i < _probabilityOffset.Length; ++i)
         {
             _probabilityOffset[i] = 0;
