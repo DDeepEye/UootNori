@@ -704,7 +704,7 @@ namespace UootNori
         {
             List<Container> containers = new List<Container>();            
             int forwardNum = GameData.GetForwardNum(animal);
-            ///PiecesMoveContainer mover = GameData.InFieldMoverCheck(CurRoad, forwardNum);
+            PiecesMoveContainer mover = GameData.InFieldMoverCheck(CurRoad, forwardNum);
 
             if (_animal != Animal.MAX)
             {
@@ -771,8 +771,7 @@ namespace UootNori
                             if (forwardNum == i + 1)
                             {
                                 if (_curRoad._field.Mover != null)
-                                {
-                                    
+                                {   
                                     if (PlayerKind == _curRoad._field.Mover.PlayerKind)
                                     {
                                         containers.Add(new CharacterRide(_pieces));
@@ -782,6 +781,18 @@ namespace UootNori
                                         containers.Add(new CharacterAttack(_pieces, _curRoad._field.Mover.Pieces));
                                     }
                                     containers.Add(new CharacterFadeOut(_curRoad._field.Mover.Pieces));
+                                }
+                                else if(mover != null)
+                                {
+                                    if (PlayerKind == mover.PlayerKind)
+                                    {
+                                        containers.Add(new CharacterRide(_pieces));
+                                    }
+                                    else
+                                    {
+                                        containers.Add(new CharacterAttack(_pieces, mover.Pieces));
+                                    }
+                                    containers.Add(new CharacterFadeOut(mover.Pieces));
                                 }
                                 else
                                 {
@@ -844,6 +855,18 @@ namespace UootNori
                             containers.Add(new CharacterFadeOut(_curRoad._field.Mover.Pieces));
                             ///containers.Add(new Timer(null, 0.25f));
 
+                        }
+                        else if(mover != null)
+                        {
+                            if (PlayerKind == mover.PlayerKind)
+                            {
+                                containers.Add(new CharacterRide(_pieces));
+                            }
+                            else
+                            {
+                                containers.Add(new CharacterAttack(_pieces, mover.Pieces));
+                            }
+                            containers.Add(new CharacterFadeOut(mover.Pieces));
                         }
                         else
                         {
@@ -1659,7 +1682,21 @@ namespace UootNori
         public static PiecesMoveContainer InFieldMoverCheck(Road curRoad, int forward)
         {
             Road r = curRoad;
-            if(forward >= 0)
+            if (forward == 0)
+            {
+                if (curRoad == GetStartRoad() || curRoad._field == GetExitField())
+                {
+                    if (GetStartRoad()._field.Mover != null)
+                    {
+                        return GetStartRoad()._field.Mover;
+                    }
+                    if (GetExitField().Mover != null)
+                    {
+                        return GetExitField().Mover;
+                    }
+                }
+            }
+            else if(forward > 0)
             {
                 for(int i = 0; i < forward; ++i)
                 {                    
@@ -1671,7 +1708,13 @@ namespace UootNori
                 if (NextRoad(r) == null)
                 {
                     if (GetStartRoad()._field.Mover != null)
+                    {
                         return GetStartRoad()._field.Mover;
+                    }
+                    if (GetExitField().Mover != null)
+                    {
+                        return GetExitField().Mover;
+                    }
                 }
             }
             else
@@ -1687,7 +1730,13 @@ namespace UootNori
                 if (PrevRoad(r) == null)
                 {
                     if (GetExitField().Mover != null)
+                    {
                         return GetExitField().Mover;
+                    }
+                    if (GetStartRoad()._field.Mover != null)
+                    {
+                        return GetStartRoad()._field.Mover;
+                    }
                 }
             }
             return r._field.Mover;

@@ -1,9 +1,9 @@
 ﻿<Properties StartupItem="Assembly-CSharp.csproj">
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" PreferredExecutionTarget="Unity.Instance.Unity Editor" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="Assets/Scripts/Rule/Rule.cs">
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets/Scripts/Rule/UootThrow.cs">
     <Files>
-      <File FileName="Assets/Scripts/Rule/UootThrow.cs" Line="72" Column="14" />
-      <File FileName="Assets/Scripts/Rule/Rule.cs" Line="2055" Column="49" />
+      <File FileName="Assets/Scripts/Rule/UootThrow.cs" Line="405" Column="11" />
+      <File FileName="Assets/Scripts/Rule/Rule.cs" Line="1" Column="1" />
       <File FileName="Assets/Scripts/Sound/SoundPlayer.cs" Line="1" Column="1" />
       <File FileName="Assets/Scripts/Rule/NextTurnCheck.cs" Line="1" Column="1" />
       <File FileName="Assets/Scripts/Rule/PriorityView.cs" Line="1" Column="1" />
@@ -13,7 +13,7 @@
       <File FileName="Assets/Scripts/Input/InputManager.cs" Line="1" Column="1" />
       <File FileName="Assets/Scripts/Rule/GameOver.cs" Line="1" Column="1" />
       <File FileName="Assets/Scripts/Rule/Continue.cs" Line="1" Column="1" />
-      <File FileName="Assets/Scripts/Rule/Result.cs" Line="59" Column="60" />
+      <File FileName="Assets/Scripts/Rule/Result.cs" Line="1" Column="1" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>
@@ -23,6 +23,8 @@
       <Breakpoint file="/Users/leejihoon/Desktop/Developer/Projects/GitHub/UootPlay/Program/UootNori/Assets/Scripts/Rule/Rule.cs" line="604" column="26" />
       <Breakpoint file="/Users/leejihoon/Desktop/Developer/Projects/GitHub/UootPlay/Program/UootNori/Assets/Scripts/Rule/Calculate.cs" line="273" column="25" />
       <Breakpoint file="/Users/leejihoon/Desktop/Developer/Projects/GitHub/UootPlay/Program/UootNori/Assets/Scripts/Rule/NextTurnCheck.cs" line="134" column="13" />
+      <Breakpoint file="/Users/leejihoon/Desktop/Developer/Projects/GitHub/UootPlay/Program/UootNori/Assets/Scripts/Rule/Rule.cs" line="705" column="13" />
+      <Breakpoint file="/Users/leejihoon/Desktop/Developer/Projects/GitHub/UootPlay/Program/UootNori/Assets/Scripts/Rule/Rule.cs" line="771" column="30" />
     </BreakpointStore>
   </MonoDevelop.Ide.DebuggingService.Breakpoints>
   <MonoDevelop.Ide.DebuggingService.PinnedWatches />

@@ -19,6 +19,13 @@ namespace UootNori
         LEFT_EVENT,
         RIGHT_EVENT,
         ENTER_EVENT,
+
+        DO_EVENT,
+        GE_EVENT,
+        KUL_EVENT,
+        YUT_EVENT,
+        MO_EVENT,
+        BACKDO_EVENT,
     }
 
     public class InputManager : MonoBehaviour 
@@ -249,6 +256,17 @@ namespace UootNori
                     InputAttribute.IsDone = true;
                     InputAttribute.transform.parent.GetComponent<Attribute>().ReturnActive = "Title";
                     GameData.ReSetGame(false);
+                }
+            }
+
+            KeyCode[] kcs = new KeyCode[]{ KeyCode.Alpha1, KeyCode.Alpha2, KeyCode.Alpha3, KeyCode.Alpha4, KeyCode.Alpha5, KeyCode.Alpha6, };
+            KeyEvent[] kes = new KeyEvent[]{ KeyEvent.DO_EVENT, KeyEvent.GE_EVENT,KeyEvent.KUL_EVENT,KeyEvent.YUT_EVENT,KeyEvent.MO_EVENT,KeyEvent.BACKDO_EVENT,};
+            for (int i = 0; i < kcs.Length; ++i)
+            {
+                if (Input.GetKeyUp(kcs[i]))
+                {
+                    if (InputAttribute != null)
+                        InputAttribute.Event(kes[i]);
                 }
             }
         }

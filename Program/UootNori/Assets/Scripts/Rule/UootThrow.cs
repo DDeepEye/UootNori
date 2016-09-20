@@ -375,7 +375,7 @@ public class UootThrow : Attribute {
     }
 
 
-    List<Animal> _tempanimalQueue = new List<Animal>() { Animal.MO, Animal.DO, Animal.MO, Animal.DO, Animal.MO, Animal.DO, Animal.MO, Animal.DO, Animal.MO, Animal.DO, Animal.MO, Animal.DO, Animal.MO, Animal.DO };
+    List<Animal> _tempanimalQueue = new List<Animal>() { Animal.BACK_DO, Animal.DO, Animal.BACK_DO, Animal.DO, Animal.BACK_DO, Animal.DO, Animal.BACK_DO, Animal.DO, Animal.BACK_DO, Animal.DO, Animal.BACK_DO, Animal.DO, Animal.BACK_DO, Animal.DO };
     ///int cnt = 0;
     void ThrowToData()
     {
@@ -391,16 +391,19 @@ public class UootThrow : Attribute {
             return;
         }*/
 
-        
         /*
-        if (_tempanimalQueue.Count > 0)
+        if (GameData.CurTurn == PLAYER_KIND.PLAYER_1)
         {
-            GameData.AddAnimal(_tempanimalQueue[0]);
-            _tempanimalQueue.RemoveAt(0);
+            if (_tempanimalQueue.Count > 0)
+            {
+                GameData.AddAnimal(_tempanimalQueue[0]);
+                _tempanimalQueue.RemoveAt(0);
 
-            return;
+                return;
+            }
         }
-         * */
+        */
+
 
         int rr = Random.Range(1, _animalProbability[_animalProbability.Count - 1]);
         for (int i = 0; i < _animalProbability.Count; ++i)
@@ -506,21 +509,107 @@ public class UootThrow : Attribute {
         if (!gameObject.active)
             return;
 
-        if (key == KeyEvent.ENTER_EVENT)
+        switch (key)
         {
-            if (_curStep != ThrowCheck)
-            {
-                _curThrowStanbyTime = 0.0f;
-                _curStep = ThrowCheck;
-                if (!_isPriorityMode)
+            case KeyEvent.ENTER_EVENT:
+                if (_curStep != ThrowCheck)
                 {
-                    AnimalProbabiley();
-                    ThrowToData();
-                }
+                    _curThrowStanbyTime = 0.0f;
+                    _curStep = ThrowCheck;
+                    if (!_isPriorityMode)
+                    {
+                        AnimalProbabiley();
+                        ThrowToData();
+                    }
 
-                UootAniInit();
-                NextTurnCheck.Instance.ArrowVisible(false);
-            }
+                    UootAniInit();
+                    NextTurnCheck.Instance.ArrowVisible(false);
+                }
+                break;
+            case KeyEvent.DO_EVENT:
+                if (_curStep != ThrowCheck)
+                {
+                    _curThrowStanbyTime = 0.0f;
+                    _curStep = ThrowCheck;
+                    if (!_isPriorityMode)
+                    {
+                        GameData.AddAnimal(Animal.DO);
+                    }
+
+                    UootAniInit();
+                    NextTurnCheck.Instance.ArrowVisible(false);
+                }
+                break;
+            case KeyEvent.GE_EVENT:
+                if (_curStep != ThrowCheck)
+                {
+                    _curThrowStanbyTime = 0.0f;
+                    _curStep = ThrowCheck;
+                    if (!_isPriorityMode)
+                    {
+                        GameData.AddAnimal(Animal.GE);
+                    }
+
+                    UootAniInit();
+                    NextTurnCheck.Instance.ArrowVisible(false);
+                }
+                break;
+            case KeyEvent.KUL_EVENT:
+                if (_curStep != ThrowCheck)
+                {
+                    _curThrowStanbyTime = 0.0f;
+                    _curStep = ThrowCheck;
+                    if (!_isPriorityMode)
+                    {
+                        GameData.AddAnimal(Animal.KUL);
+                    }
+
+                    UootAniInit();
+                    NextTurnCheck.Instance.ArrowVisible(false);
+                }
+                break;
+            case KeyEvent.YUT_EVENT:
+                if (_curStep != ThrowCheck)
+                {
+                    _curThrowStanbyTime = 0.0f;
+                    _curStep = ThrowCheck;
+                    if (!_isPriorityMode)
+                    {
+                        GameData.AddAnimal(Animal.UOOT);
+                    }
+
+                    UootAniInit();
+                    NextTurnCheck.Instance.ArrowVisible(false);
+                }
+                break;
+            case KeyEvent.MO_EVENT:
+                if (_curStep != ThrowCheck)
+                {
+                    _curThrowStanbyTime = 0.0f;
+                    _curStep = ThrowCheck;
+                    if (!_isPriorityMode)
+                    {
+                        GameData.AddAnimal(Animal.MO);
+                    }
+
+                    UootAniInit();
+                    NextTurnCheck.Instance.ArrowVisible(false);
+                }
+                break;
+            case KeyEvent.BACKDO_EVENT:
+                if (_curStep != ThrowCheck)
+                {
+                    _curThrowStanbyTime = 0.0f;
+                    _curStep = ThrowCheck;
+                    if (!_isPriorityMode)
+                    {
+                        GameData.AddAnimal(Animal.BACK_DO);
+                    }
+
+                    UootAniInit();
+                    NextTurnCheck.Instance.ArrowVisible(false);
+                }
+                break;
         }
     }
 }
