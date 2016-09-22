@@ -55,6 +55,7 @@ public class Continue : Attribute {
             if (isReGame)
                 transform.parent.GetComponent<Attribute>().ReturnActive = "GamePlay";
             _continue.SetActive(false);
+            InputManager.Instance.InputAttribute = null;
         }
         else
         {
