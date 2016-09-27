@@ -9,6 +9,7 @@ public class Initialize : MonoBehaviour {
 	// Use this for initialization
 	void Start () {
         Screen.fullScreen = true;
+        Screen.SetResolution(1366, 768, true);
         GameData.Init();
 	}
 	
