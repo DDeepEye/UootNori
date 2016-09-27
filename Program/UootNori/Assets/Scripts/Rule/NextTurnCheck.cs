@@ -168,19 +168,34 @@ public class NextTurnCheck : Attribute {
         {
             _cameraRot.Run();
             _uiCameraRot.Run();
-        }
-
-        if (_player1Mover != null)
-        {
-            _player1Mover.Run();
-            _player2Mover.Run();
-
-            if (_player1Mover.IsDone)
+            if (_cameraRot.IsDone)
             {
                 _isDone = true;
                 transform.parent.GetComponent<Attribute>().ReturnActive = "UootThrow";
                 GameData.NextTurn();
                 GameTurnMarking(GameData.CurTurn);
+            }
+
+            if (_player1Mover != null)
+            {
+                _player1Mover.Run();
+                _player2Mover.Run();
+            }
+        }
+        else
+        {
+            if (_player1Mover != null)
+            {
+                _player1Mover.Run();
+                _player2Mover.Run();
+
+                if (_player1Mover.IsDone)
+                {
+                    _isDone = true;
+                    transform.parent.GetComponent<Attribute>().ReturnActive = "UootThrow";
+                    GameData.NextTurn();
+                    GameTurnMarking(GameData.CurTurn);
+                }
             }
         }
 	}
@@ -194,9 +209,9 @@ public class NextTurnCheck : Attribute {
                 if (!GameData.s_IsNotControlChange)
                 {
                     GameObject camera = GameObject.Find("Field_Camera");
-                    _cameraRot = new Rotation(camera, new Vector3(0.0f, 0.0f, 180.0f), 1.8f, Physical.Type.RELATIVE);
+                    _cameraRot = new Rotation(camera, new Vector3(0.0f, 0.0f, 180.0f), 3.6f, Physical.Type.RELATIVE);
                     camera = GameObject.Find("UI Root").transform.FindChild("Camera").gameObject;
-                    _uiCameraRot = new Rotation(camera, new Vector3(0.0f, 0.0f, 180.0f), 1.8f, Physical.Type.RELATIVE);
+                    _uiCameraRot = new Rotation(camera, new Vector3(0.0f, 0.0f, 180.0f), 3.6f, Physical.Type.RELATIVE);
                 }
                 else
                 {
@@ -204,11 +219,16 @@ public class NextTurnCheck : Attribute {
                     _uiCameraRot = null;
                 }
             }
+            else
+            {
+                _cameraRot = null;
+                _uiCameraRot = null;
+            }
         }
 
         Vector3 moveOffset = _players[1].transform.position - _players[0].transform.position;
-        _player1Mover = new Move(_players[0], moveOffset, 1.8f);
-        _player2Mover = new Move(_players[1], -moveOffset, 1.8f);
+        _player1Mover = new Move(_players[0], moveOffset, 1.0f);
+        _player2Mover = new Move(_players[1], -moveOffset, 1.0f);
 
         InputManager.Instance.InputAttribute = this;
     }
