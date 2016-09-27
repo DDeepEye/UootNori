@@ -1471,7 +1471,7 @@ Camera:
   far clip plane: 10
   field of view: 60
   orthographic: 1
-  orthographic size: 1
+  orthographic size: 1.4
   m_Depth: 0
   m_CullingMask:
     serializedVersion: 2
@@ -7736,12 +7736,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2c5ecb5660b11414fb042fb826e03b73, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  scalingStyle: 0
-  manualWidth: 1280
-  manualHeight: 720
+  scalingStyle: 1
+  manualWidth: 1366
+  manualHeight: 768
   minimumHeight: 1080
   maximumHeight: 1920
-  fitWidth: 0
+  fitWidth: 1
   fitHeight: 1
   adjustByDPI: 0
   shrinkPortraitUI: 0
@@ -7753,7 +7753,7 @@ Transform:
   m_GameObject: {fileID: 315988517}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 24.2, z: 0}
-  m_LocalScale: {x: 0.0018518518, y: 0.0018518518, z: 0.0018518518}
+  m_LocalScale: {x: 0.0026007802, y: 0.0026007802, z: 0.0026007802}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_Children:
   - {fileID: 57857281}
@@ -32706,6 +32706,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2f7b61a8c02cf4c12a38826ba7a07c26, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _outOffset: 0
 --- !u!1001 &1476483892
 Prefab:
   m_ObjectHideFlags: 0
