@@ -108,6 +108,7 @@ namespace UootNori
                 {
                     mover.Containers.AddContainer(new CharacterAttack(mover.Pieces, _sendRoad._field.Mover.Pieces));
                 }
+                mover.Containers.AddContainer(new CharacterIdle(mover.Pieces));
             }
             
             mover.Containers.AddContainer(new JumpingMove(mover.Pieces, p, 0.15f));
@@ -1879,7 +1880,7 @@ namespace UootNori
             {
                 if (animalState[a] > 0)
                 {
-                    ++index;
+                    
                     GameObject s = s_animalStateList[index];
                     s.SetActive(true);
                     s.GetComponent<AnimalContainer>()._animal = a;
@@ -1894,6 +1895,7 @@ namespace UootNori
                         s.transform.FindChild(animalNumObj).GetComponent<UILabel>().text = animalState[a].ToString();
                         s.transform.FindChild(animalNumObj).gameObject.SetActive(false);
                     }
+                    ++index;
                 }
             }
 

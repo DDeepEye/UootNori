@@ -10,6 +10,8 @@ public class NextTurnCheck : Attribute {
     Rotation _uiCameraRot;
     PatternSystem.Move _player1Mover;
     PatternSystem.Move _player2Mover;
+
+    PatternSystem.Arrange _rot;
     GameObject _left;
     GameObject _right;
     GameObject _curArrow;
@@ -142,16 +144,21 @@ public class NextTurnCheck : Attribute {
             }
         }
 
-        GameObject camera = GameObject.Find("Field_Camera");
-        camera.transform.localEulerAngles = new Vector3(camera.transform.localEulerAngles.x, camera.transform.localEulerAngles.y, 0.0f);
-        camera = GameObject.Find("UI Root").transform.FindChild("Camera").gameObject;
-        camera.transform.localEulerAngles = new Vector3(camera.transform.localEulerAngles.x, camera.transform.localEulerAngles.y, 0.0f);
-
         if (!isReGame)
         {
             _players[0].transform.localPosition = _originPosition[0];
             _players[1].transform.localPosition = _originPosition[1];
+
+            GameObject camera = GameObject.Find("Field_Camera");
+            camera.transform.localEulerAngles = new Vector3(camera.transform.localEulerAngles.x, camera.transform.localEulerAngles.y, 0.0f);
+            camera = GameObject.Find("UI Root").transform.FindChild("Camera").gameObject;
+            camera.transform.localEulerAngles = new Vector3(camera.transform.localEulerAngles.x, camera.transform.localEulerAngles.y, 0.0f);
         }
+
+        _cameraRot = null;
+        _uiCameraRot = null;
+        _player1Mover = null;
+        _player2Mover = null;
     }
     
 	// Use this for initialization
@@ -201,7 +208,7 @@ public class NextTurnCheck : Attribute {
 	}
 
     void OnEnable()
-    {
+    {   
         if (GameData._is4p)
         {
             if (InputManager.Instance.CurPlayer == PlayerControl.Player2 || InputManager.Instance.CurPlayer == PlayerControl.Player4)
