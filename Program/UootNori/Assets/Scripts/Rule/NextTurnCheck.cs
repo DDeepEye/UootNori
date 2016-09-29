@@ -209,9 +209,9 @@ public class NextTurnCheck : Attribute {
                 if (!GameData.s_IsNotControlChange)
                 {
                     GameObject camera = GameObject.Find("Field_Camera");
-                    _cameraRot = new Rotation(camera, new Vector3(0.0f, 0.0f, 180.0f), 3.6f, Physical.Type.RELATIVE);
+                    _cameraRot = new Rotation(camera, new Vector3(0.0f, 0.0f, 180.0f), 2.6f, Physical.Type.RELATIVE);
                     camera = GameObject.Find("UI Root").transform.FindChild("Camera").gameObject;
-                    _uiCameraRot = new Rotation(camera, new Vector3(0.0f, 0.0f, 180.0f), 3.6f, Physical.Type.RELATIVE);
+                    _uiCameraRot = new Rotation(camera, new Vector3(0.0f, 0.0f, 180.0f), 2.6f, Physical.Type.RELATIVE);
                 }
                 else
                 {
