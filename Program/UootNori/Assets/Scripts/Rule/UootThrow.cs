@@ -36,7 +36,9 @@ public class UootThrow : Attribute {
     List<int> _animalProbability = new List<int>();
     int [] _probabilityOffset = new int[(int)Animal.MAX];
     public static Animator s_uootAni;
-    GameObject _uootAniObj;
+    GameObject  _uootAniObj;
+    GameObject  _gauge;
+    float       _gaugeOffSet = 0.0f;
     int _curAniIndex;
 
     const int UOOT_NUM = 4;
@@ -128,6 +130,17 @@ public class UootThrow : Attribute {
             _uootAnimaion[(int)UootNori.Animal.UOOT] = Uoot;
             _uootAnimaion[(int)UootNori.Animal.MO] = Mo;
             _uootAnimaion[(int)UootNori.Animal.BACK_DO] = BackDo;
+
+            string[] gaugePath = { "Size", "GamePlay", "S_Uoot_P", "Texture", "Gauge" };
+
+            GameObject finder = GameObject.Find("UI Root");
+
+            foreach (string p in gaugePath)
+            {
+                finder = finder.transform.FindChild(p).gameObject;
+            }
+            _gauge = finder;
+
         }        
         UootThrowAni();
     }
@@ -274,6 +287,11 @@ public class UootThrow : Attribute {
          * */
     }
 
+    void GaugeUpdate()
+    {
+    }
+     
+
     void ThrowCheck()
     {
         if (UootThrowAniCheck())
@@ -354,6 +372,7 @@ public class UootThrow : Attribute {
 
         InputManager.Instance.InputAttribute = this;
         NextTurnCheck.Instance.ArrowVisible(true);
+        _gauge.SetActive(true);
     }
 
     void OnDisable()
