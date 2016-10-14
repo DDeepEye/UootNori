@@ -34,7 +34,7 @@ public class CharacterSelect : Arrange
             return;
 
         _curSelectWaitTime += Time.deltaTime;
-        float limit = GameData.s_isDemo ? 2.0f : 5.0f;
+        float limit = GameData.s_isDemo ? 2.0f : 10.0f;
         if (_curSelectWaitTime > limit)
         {
             GameData.Player2IsCharacter1(_curChoice == _character2 ? true : false);

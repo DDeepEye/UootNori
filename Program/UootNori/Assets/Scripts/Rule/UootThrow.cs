@@ -254,6 +254,7 @@ public class UootThrow : Attribute {
     }
     void ThrowStanbyCheck()
     {
+        /*
         if ((_curThrowStanbyTime < THROW_STANBY_TIME && !_isPriorityMode) && !GameData.s_isDemo)
         {
             _curThrowStanbyTime += Time.deltaTime;
@@ -270,6 +271,7 @@ public class UootThrow : Attribute {
             }
             UootAniInit();
         }
+         * */
     }
 
     void ThrowCheck()
@@ -361,9 +363,9 @@ public class UootThrow : Attribute {
 
     void AnimalProbabiley()
     {
-        _probabilityOffset[3] += 35;
-        _probabilityOffset[4] += 35;
-        _probabilityOffset[5] += 35;
+        _probabilityOffset[3] += 25;
+        _probabilityOffset[4] += 25;
+        _probabilityOffset[5] += 25;
         _animalProbability.Clear();
         int prob = DO;
         _animalProbability.Add(prob+_probabilityOffset[0]);
@@ -418,7 +420,7 @@ public class UootThrow : Attribute {
 
         if (!_isPriorityMode)
         {
-            _outOffset += 10;
+            _outOffset += 5;
             int outResult = Random.Range(0, 10000);
             if (OUT + _outOffset > outResult)
             {
