@@ -49,6 +49,8 @@ public class Continue : Attribute {
 
                 if (GameData._curCreditCount == 0)
                     return;
+
+                GameData.ConsumeCredit(GameData._is4p);                
             }
             _isDone = true;
             GameData.ReSetGame(isReGame);

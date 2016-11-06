@@ -34,13 +34,17 @@ public class UootThrow : Attribute {
    
 
     List<int> _animalProbability = new List<int>();
-
-    float _stopValue = -1.0f;
     int [] _probabilityOffset = new int[(int)Animal.MAX];
     public static Animator s_uootAni;
     GameObject  _uootAniObj;
     GameObject  _gauge;
     UISlider _uiGauge;
+
+    GameObject  _choiceObj;
+    UISprite _choiceUI;
+    Animal _curRandomChoice = Animal.DO;
+
+
     float       _gaugeOffSet = 0.0f;
     bool _gaugeIsRight = true;
     int _curAniIndex;
@@ -80,6 +84,24 @@ public class UootThrow : Attribute {
             }
             s_inst._gauge = finder;
             s_inst._uiGauge = s_inst._gauge.GetComponent<UISlider>();
+
+            string[] choicePath = { "Size", "GamePlay", "S_Uoot_P", "Texture", "ChoiceBar" };
+            finder = GameObject.Find("UI Root");
+
+            foreach (string p in choicePath)
+            {
+                finder = finder.transform.FindChild(p).gameObject;
+            }
+            s_inst._choiceObj = finder;
+
+            string[] choiceUIPath = { "Size", "GamePlay", "S_Uoot_P", "Texture", "ChoiceBar", "01_P", "Uoot_Sprite_P" };
+            finder = GameObject.Find("UI Root");
+
+            foreach (string p in choiceUIPath)
+            {
+                finder = finder.transform.FindChild(p).gameObject;
+            }
+            s_inst._choiceUI = finder.GetComponent<UISprite>();
         }
         return s_inst;
     }
@@ -271,7 +293,7 @@ public class UootThrow : Attribute {
     }
     void ThrowStanbyCheck()
     {
-        /*
+        /* 
         if ((_curThrowStanbyTime < THROW_STANBY_TIME && !_isPriorityMode) && !GameData.s_isDemo)
         {
             _curThrowStanbyTime += Time.deltaTime;
@@ -305,52 +327,39 @@ public class UootThrow : Attribute {
         {
             GaugeUpdate();
         }
+
+        
     }
 
     void GaugeUpdate()
     {
         _uiGauge.value += (_gaugeIsRight == true ? _gaugeOffSet : -_gaugeOffSet);
+        if (_uiGauge.value >= 1.0f)
+        {
+            _uiGauge.value = 1.0f;
+            _gaugeIsRight = !_gaugeIsRight;
+            _gaugeOffSet = 0.0f;
+            ++_curRandomChoice;
+            if (_curRandomChoice == Animal.MAX)
+                _curRandomChoice = Animal.DO;
 
-        if (_stopValue < 0)
-        {
-            if (_uiGauge.value >= 1.0f)
-            {
-                _uiGauge.value = 1.0f;
-                _gaugeIsRight = !_gaugeIsRight;
-                _gaugeOffSet = 0.0f;
-            }
-            else if (_uiGauge.value <= 0.0f)
-            {
-                _uiGauge.value = 0.0f;
-                _gaugeIsRight = !_gaugeIsRight;
-                _gaugeOffSet = 0.0f;
-            }
-            _gaugeOffSet += 0.0015f;
+            string[] UootsSpriteName = { "ETC_S_Uoot_1", "ETC_S_Uoot_2", "ETC_S_Uoot_3", "ETC_S_Uoot_4", "ETC_S_Uoot_5", "ETC_S_Uoot_0", };
+            _choiceUI.spriteName = UootsSpriteName[(int)_curRandomChoice];
+
         }
-        else
+        else if (_uiGauge.value <= 0.0f)
         {
-            if (_uiGauge.value > _stopValue + 0.01 || _uiGauge.value < _stopValue - 0.01)
-            {
-                _gaugeOffSet += 0.0015f;
-                if (_uiGauge.value >= 1.0f)
-                {
-                    _uiGauge.value = 1.0f;
-                    _gaugeIsRight = !_gaugeIsRight;
-                    _gaugeOffSet = 0.0015f;
-                }
-                else if (_uiGauge.value <= 0.0f)
-                {
-                    _uiGauge.value = 0.0f;
-                    _gaugeIsRight = !_gaugeIsRight;
-                    _gaugeOffSet = 0.0015f;
-                }
-            }
-            else
-            {
-                _uiGauge.value = _stopValue;
-                _gaugeOffSet = 0.0f;
-            }
+            _uiGauge.value = 0.0f;
+            _gaugeIsRight = !_gaugeIsRight;
+            _gaugeOffSet = 0.0f;
+            ++_curRandomChoice;
+            if (_curRandomChoice == Animal.MAX)
+                _curRandomChoice = Animal.DO;
+            string[] UootsSpriteName = { "ETC_S_Uoot_1", "ETC_S_Uoot_2", "ETC_S_Uoot_3", "ETC_S_Uoot_4", "ETC_S_Uoot_5", "ETC_S_Uoot_0", };
+            _choiceUI.spriteName = UootsSpriteName[(int)_curRandomChoice];
         }
+
+        _gaugeOffSet += 0.0015f;
     }
      
 
@@ -359,10 +368,10 @@ public class UootThrow : Attribute {
         if (UootThrowAniCheck())
         {
             _gauge.SetActive(false);
+            _choiceObj.SetActive(false);
             _uiGauge.value = 0.0f;
             _gaugeOffSet = 0.0f;
             _gaugeIsRight = true;
-            _stopValue = -1.0f;
             if (_isPriorityMode)
             {                
                 if (_animalQueue.Count > 0)
@@ -392,6 +401,7 @@ public class UootThrow : Attribute {
                     
                     _isPriorityMode = false;
                     _gauge.SetActive(true);
+                    _choiceObj.SetActive(true);
                 }
                 return;
             }
@@ -407,10 +417,16 @@ public class UootThrow : Attribute {
             }
 
             if (GameData.GetLastAnimal() == Animal.UOOT || GameData.GetLastAnimal() == Animal.MO)
-            {                    
+            {   
+                /* 
                 AnimalProbabiley();
                 ThrowToData();
                 UootAniInit();
+                 * */
+                _curStep = ThrowStanbyCheck;
+                _gauge.SetActive(true);
+                _choiceObj.SetActive(true);
+                NextTurnCheck.Instance.ArrowVisible(true);
             }
             else
             {
@@ -435,6 +451,7 @@ public class UootThrow : Attribute {
         {
             SoundPlayer.Instance.Play("sound0/voice/"+_voiceKeyword[(int)InputManager.Instance.CurPlayer]+"/Voice"+_voiceKeyword[(int)InputManager.Instance.CurPlayer]+"_Turn0");
             _gauge.SetActive(true);
+            _choiceObj.SetActive(true);
             _uiGauge.value = 0.0f;
         }
 
@@ -466,7 +483,7 @@ public class UootThrow : Attribute {
     }
 
 
-    List<Animal> _tempanimalQueue = new List<Animal>() { Animal.DO, Animal.DO, Animal.BACK_DO, Animal.DO, Animal.BACK_DO, Animal.DO, Animal.BACK_DO, Animal.DO, Animal.BACK_DO, Animal.DO, Animal.BACK_DO, Animal.DO, Animal.BACK_DO, Animal.DO };
+    List<Animal> _tempanimalQueue = new List<Animal>() { Animal.BACK_DO, Animal.DO, Animal.BACK_DO, Animal.DO, Animal.BACK_DO, Animal.DO, Animal.BACK_DO, Animal.DO, Animal.BACK_DO, Animal.DO, Animal.BACK_DO, Animal.DO, Animal.BACK_DO, Animal.DO };
     ///int cnt = 0;
     void ThrowToData()
     {
@@ -495,20 +512,50 @@ public class UootThrow : Attribute {
         }
         */
 
-        float[] stopValues = {0.2f, 0.4f, 0.6f, 0.8f, 0.9f, 1.0f};
-
-
-        int rr = Random.Range(1, _animalProbability[_animalProbability.Count - 1]);
-        for (int i = 0; i < _animalProbability.Count; ++i)
+        if(_uiGauge.value > 0.4 && _uiGauge.value < 0.6)
         {
-            if (_animalProbability[i] > rr)
+            if (_uiGauge.value > 0.45 && _uiGauge.value < 0.55)
             {
-                GameData.AddAnimal((Animal)i);
-                _stopValue = stopValues[i];
-                ///Debug.Log(((Animal)i).ToString());
-                break;
+                GameData.AddAnimal(_curRandomChoice);
+            }   
+            else
+            {
+                int rr = Random.Range(0, 2);
+                if(rr == 0)
+                {
+                    GameData.AddAnimal(_curRandomChoice);
+                }
+                else
+                {
+                    rr = Random.Range(1, _animalProbability[_animalProbability.Count - 1]);
+                    for (int i = 0; i < _animalProbability.Count; ++i)
+                    {
+                        if (_animalProbability[i] > rr)
+                        {
+                            GameData.AddAnimal((Animal)i);
+                            ///Debug.Log(((Animal)i).ToString());
+                            break;
+                        }
+                    }
+                }
+            }   
+        }
+        else
+        {
+            int rr = Random.Range(1, _animalProbability[_animalProbability.Count - 1]);
+            for (int i = 0; i < _animalProbability.Count; ++i)
+            {
+                if (_animalProbability[i] > rr)
+                {
+                    GameData.AddAnimal((Animal)i);
+                    ///Debug.Log(((Animal)i).ToString());
+                    break;
+                }
             }
         }
+        
+
+        
 
         if (!_isPriorityMode)
         {
@@ -578,7 +625,6 @@ public class UootThrow : Attribute {
         if(_aniArrange.IsDone)
             return true;
         _aniArrange.Run();
-        GaugeUpdate();
         return false;
     }
 
@@ -621,6 +667,7 @@ public class UootThrow : Attribute {
                     NextTurnCheck.Instance.ArrowVisible(false);
                 }
                 break;
+                /*
             case KeyEvent.DO_EVENT:
                 if (_curStep != ThrowCheck)
                 {
@@ -704,7 +751,8 @@ public class UootThrow : Attribute {
                     UootAniInit();
                     NextTurnCheck.Instance.ArrowVisible(false);
                 }
-                break;
+                break;         
+                 * */
         }
     }
 }
