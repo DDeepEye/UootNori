@@ -18,6 +18,18 @@ public class UootThrow : Attribute {
     */
 
 
+    public enum UootState
+    {
+        DO,
+        UOOT,
+        KUL,
+        BACKDO,
+        GE,
+        MO,
+        OUT,
+        MAX,
+    }
+
 
     public const int DO = 1900;
     public const int GE = 3500;
@@ -45,6 +57,10 @@ public class UootThrow : Attribute {
     Animal _curRandomChoice = Animal.DO;
 
 
+    int _randTimer = 200;
+    float _curTimer;
+    UootState _curState = UootState.DO;
+
     float       _gaugeOffSet = 0.0f;
     bool _gaugeIsRight = true;
     int _curAniIndex;
@@ -61,7 +77,7 @@ public class UootThrow : Attribute {
 
     static UootThrow s_inst = null;
 
-    const float THROW_STANBY_TIME = 10.0f;
+    const float THROW_STANBY_TIME = 3.0f;
     float _curThrowStanbyTime = 0.0f;
 
     delegate void Step();
@@ -293,24 +309,17 @@ public class UootThrow : Attribute {
     }
     void ThrowStanbyCheck()
     {
-        /* 
-        if ((_curThrowStanbyTime < THROW_STANBY_TIME && !_isPriorityMode) && !GameData.s_isDemo)
+        if (GameData.s_isDemo)
         {
-            _curThrowStanbyTime += Time.deltaTime;
-        }
-        else
-        {
-            NextTurnCheck.Instance.ArrowVisible(false);
-            _curThrowStanbyTime = 0.0f;
-            _curStep = ThrowCheck;
-            if (!_isPriorityMode)
+            if ((_curThrowStanbyTime < THROW_STANBY_TIME && !_isPriorityMode))
             {
-                AnimalProbabiley();
-                ThrowToData();
+                _curThrowStanbyTime += Time.deltaTime;
             }
-            UootAniInit();
+            else
+            {
+                Event(KeyEvent.ENTER_EVENT);
+            }
         }
-         * */
 
         if (_isPriorityMode)
         {
@@ -327,12 +336,39 @@ public class UootThrow : Attribute {
         {
             GaugeUpdate();
         }
-
-        
     }
-
+    
     void GaugeUpdate()
     {
+        _curTimer += Time.deltaTime;
+        if((float)_randTimer*0.001f < _curTimer)
+        {
+            _curTimer = 0.0f;
+            _randTimer = Random.Range(100, 251);
+            ++_curState;
+            if(_curState >= UootState.MAX)
+            {
+                _curState = UootState.DO;
+                _choiceUI.color = new Color(1.0f, 1.0f, 1.0f, 1.0f);
+            }
+        }
+
+        if(_curState != UootState.OUT)
+        {
+            string[] UootsSpriteName = { "ETC_S_Uoot_1", "ETC_S_Uoot_4", "ETC_S_Uoot_3", "ETC_S_Uoot_0", "ETC_S_Uoot_2", "ETC_S_Uoot_5", };
+            Animal [] uoot = {Animal.DO, Animal.UOOT, Animal.KUL, Animal.BACK_DO, Animal.GE, Animal.MO};
+            _choiceUI.spriteName = UootsSpriteName[(int)_curState];
+            _curRandomChoice = uoot[(int)_curState];
+            _isOut = false;
+        }
+        else
+        {
+            _choiceUI.color = new Color(0.0f, 0.0f, 0.0f, 1.0f);
+            _isOut = true;
+        }
+        
+
+        /*
         _uiGauge.value += (_gaugeIsRight == true ? _gaugeOffSet : -_gaugeOffSet);
         if (_uiGauge.value >= 1.0f)
         {
@@ -360,6 +396,7 @@ public class UootThrow : Attribute {
         }
 
         _gaugeOffSet += 0.0015f;
+         */
     }
      
 
@@ -392,6 +429,14 @@ public class UootThrow : Attribute {
                     }
                     else
                     {
+                        _randTimer = Random.Range(100, 251);
+                        _choiceUI.color = new Color(1.0f, 1.0f, 1.0f, 1.0f);
+                        _curTimer = 0.0f;
+                        _isOut = false;
+                        _choiceUI.spriteName = "ETC_S_Uoot_1";
+                        _curRandomChoice = Animal.DO;
+                        _curState = UootState.DO;
+
                         _curStep = ThrowStanbyCheck;
                         InputManager.Instance.CurPlayer = InputManager.Instance.ResetPlayer + 1;
                         NextTurnCheck.Instance.ArrowVisible(true);
@@ -423,6 +468,15 @@ public class UootThrow : Attribute {
                 ThrowToData();
                 UootAniInit();
                  * */
+
+                _randTimer = Random.Range(100, 251);
+                _choiceUI.color = new Color(1.0f, 1.0f, 1.0f, 1.0f);
+                _curTimer = 0.0f;
+                _isOut = false;
+                _choiceUI.spriteName = "ETC_S_Uoot_1";
+                _curRandomChoice = Animal.DO;
+                _curState = UootState.DO;
+
                 _curStep = ThrowStanbyCheck;
                 _gauge.SetActive(true);
                 _choiceObj.SetActive(true);
@@ -454,6 +508,14 @@ public class UootThrow : Attribute {
             _choiceObj.SetActive(true);
             _uiGauge.value = 0.0f;
         }
+
+        _randTimer = Random.Range(100, 251);
+        _choiceUI.color = new Color(1.0f, 1.0f, 1.0f, 1.0f);
+        _curTimer = 0.0f;
+        _isOut = false;
+        _choiceUI.spriteName = "ETC_S_Uoot_1";
+        _curRandomChoice = Animal.DO;
+        _curState = UootState.DO;
 
         _curStep = ThrowStanbyCheck;
 
@@ -487,7 +549,8 @@ public class UootThrow : Attribute {
     ///int cnt = 0;
     void ThrowToData()
     {
-        _isOut = false;
+        
+        GameData.AddAnimal(_curRandomChoice);
         /*
         if (GameData.CurTurn == PLAYER_KIND.PLAYER_1)
         {
@@ -512,6 +575,7 @@ public class UootThrow : Attribute {
         }
         */
 
+        /*
         if(_uiGauge.value > 0.4 && _uiGauge.value < 0.6)
         {
             if (_uiGauge.value > 0.45 && _uiGauge.value < 0.55)
@@ -568,6 +632,7 @@ public class UootThrow : Attribute {
                 return;
             }
         }
+         * */
     }
 
 
